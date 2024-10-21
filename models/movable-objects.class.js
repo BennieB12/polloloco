@@ -1,4 +1,4 @@
-class MovableObject extends DrawableObjects {
+class MovableObject extends DrawableObject {
   speed = 0.15;
   otherDirection = false;
   speedY = 0;
@@ -16,16 +16,10 @@ class MovableObject extends DrawableObjects {
   }
 
   aboveGround() {
+    if(this instanceof ThrowableObject) {
+      return true
+    } else {
     return this.y < 240;
-  }
-
-  drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Chicken) {
-      ctx.beginPath();
-      ctx.lineWidth = "5";
-      ctx.strokeStyle = "blue";
-      ctx.rect(this.x, this.y, this.width, this.height);
-      ctx.stroke();
     }
   }
 
