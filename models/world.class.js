@@ -45,26 +45,28 @@ class World {
         this.statusBarHealth.setpercentage(this.character.energy);
       }
     });
+  
     this.level.coins.forEach((coin, index) => {
       if (this.character.isColliding(coin)) {
         this.collectCoin(index);
       }
     });
+  
     this.level.bottles.forEach((bottle, index) => {
       if (this.character.isColliding(bottle)) {
         this.collectBottle(index);
       }
     });
   }
+  
+  collectBottle(index) {
+    this.level.bottles.splice(index, 1);
+    this.statusBarBottle.addBottle();
+  }
 
   collectCoin(index) {
     this.level.coins.splice(index, 1);
     this.statusBarCoin.addCoin();
-  }
-
-  collectBottle(index) {
-    this.level.bottles.splice(index, 1);
-    this.statusBarBottle.addBottle();
   }
 
   draw() {
