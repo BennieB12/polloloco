@@ -52,7 +52,6 @@ class World {
     });
   }
 
-
   collectCoin(index) {
     this.level.coins.splice(index, 1);
     this.statusBarCoin.addCoin();
