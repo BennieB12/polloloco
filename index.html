@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="fonts.css" />
     <script src="models/drawable-object.class.js"></script>
     <script src="models/movable-objects.class.js"></script>
     <script src="models/character.class.js"></script>
@@ -18,16 +19,35 @@
     <script src="models/endboss.class.js"></script>
     <script src="level/level-1.js"></script>
     <script src="js/game.js"></script>
-    
+
     <title>El Pollo Loco</title>
-</head>
-<body onload="init()">
+  </head>
+  <body onload="init()">
+    <div class="img background"></div>
+    <img src="img/background.png" />
 
-    <h1>El Pollo Loco</h1>
-
-    <canvas id="canvas" width="720" height="480">
-        
-    </canvas>
+    <h1 class="overdraw">
+        <img src="img/rassels.jpg" class="rassels-img">
+      El Pollo Loco
+        <img src="img/rassels.jpg" class="rassels-img">
+    </h1>
     
-</body>
+
+    <canvas id="canvas" width="720" height="480"></canvas>
+    <h2>CONTROLS:</h2>
+    <div id="explanation">
+        <div class="d-flex-ex">
+            <h3>MOVE</h3>
+            <img src="img/arrow.jpg" id="img-ex1" class="overdraw" />
+        </div>
+        <div class="d-flex-ex">
+            <h3>JUMP</h3>
+            <img src="img/space.png" id="img-ex2" class="overdraw" />
+        </div>
+        <div class="d-flex-ex">
+            <h3>THROW</h3>
+            <img src="img/keyboard_key_d.png" id="img-ex3" class="overdraw" />
+        </div>
+    </div>
+  </body>
 </html>
