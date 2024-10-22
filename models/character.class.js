@@ -3,6 +3,7 @@ class Character extends MovableObject {
   height = 180;
   width = 104;
   speed = 4;
+  deadAnimationPlayed = false;
 
   IMAGES_WALKING = [
     "img/2_character_pepe/2_walk/W-21.png",
@@ -55,9 +56,11 @@ class Character extends MovableObject {
   }
 
   animate() {
-
     setInterval(() => {
       this.WALKING_SOUND.pause();
+      if (this.isDead()) {
+        return;
+      }
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false;
@@ -79,7 +82,12 @@ class Character extends MovableObject {
 
     setInterval(() => {
       if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
+        if (!this.deadAnimationPlayed) {
+          this.playAnimation(this.IMAGES_DEAD);
+          this.deadAnimationPlayed = true;
+        } else {
+          this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length -2]];
+        }
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         this.playAnimation(this.IMAGES_WALKING);
       } else if (this.isHurt()) {
