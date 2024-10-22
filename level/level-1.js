@@ -1,5 +1,12 @@
 const level1 = new Level(
-  [new Chicken(), new Chicken(), new Chicken(), new Chicken(), new Chicken(), new Chicken(), new Chicken(),],
+  [ new Chicken(100 + Math.random() * 2000),
+    new Chicken(200 + Math.random() * 2000),
+    new Chicken(300 + Math.random() * 2000),
+    new Chicken(400 + Math.random() * 2000),
+    new Chicken(500 + Math.random() * 2000),
+    new Chicken(600 + Math.random() * 2000),
+    new Chicken(700 + Math.random() * 2000),
+  ],
   [
     new Cloud("img/5_background/layers/4_clouds/2.png", 0, 0),
     new Cloud("img/5_background/layers/4_clouds/1.png", 100, 0),
