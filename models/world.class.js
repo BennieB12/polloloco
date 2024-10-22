@@ -50,11 +50,21 @@ class World {
         this.collectCoin(index);
       }
     });
+    this.level.bottles.forEach((bottle, index) => {
+      if (this.character.isColliding(bottle)) {
+        this.collectBottle(index);
+      }
+    });
   }
 
   collectCoin(index) {
     this.level.coins.splice(index, 1);
     this.statusBarCoin.addCoin();
+  }
+
+  collectBottle(index) {
+    this.level.bottles.splice(index, 1);
+    this.statusBarBottle.addBottle();
   }
 
   draw() {
