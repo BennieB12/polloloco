@@ -6,7 +6,9 @@ class World {
   ctx;
   keyboard;
   camera_x = 0;
-  statusBar = new Statusbar();
+  statusBarHealth = new Statusbar_health();
+  statusBarCoin = new Statusbar_coin();
+  statusBarBottle = new Statusbar_bottle();
   throwableObjects = [];
 
   
@@ -42,7 +44,7 @@ class World {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
         this.character.hit();
-        this.statusBar.setpercentage(this.character.energy);
+        this.statusBarHealth.setpercentage(this.character.energy);
       }
     });
   }
@@ -55,11 +57,17 @@ class World {
     this.addObjectsToMap(this.level.backgroundObjects);
     this.addToMap(this.character);
 
-    this.ctx.translate(-this.camera_x, 0);
-    this.addToMap(this.statusBar);
-    this.ctx.translate(this.camera_x, 0);
+ 
 
     this.addObjectsToMap(this.level.clouds);
+   
+    // reload the camera to set statusbar
+    this.ctx.translate(-this.camera_x, 0);
+    this.addToMap(this.statusBarHealth);
+    this.addToMap(this.statusBarCoin);
+    this.addToMap(this.statusBarBottle);
+    this.ctx.translate(this.camera_x, 0);
+    
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.throwableObjects);
 
