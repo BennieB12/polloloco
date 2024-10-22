@@ -60,6 +60,7 @@ class World {
  
 
     this.addObjectsToMap(this.level.clouds);
+    this.addObjectsToMap(this.level.bottles);
    
     // reload the camera to set statusbar
     this.ctx.translate(-this.camera_x, 0);

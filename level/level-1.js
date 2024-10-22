@@ -52,5 +52,14 @@ const level1 = new Level(
     new Coin(1100 + Math.random() * 2000),
     new Coin(1300 + Math.random() * 2000),
     new Coin(1700 + Math.random() * 2000),
-  ]
+  ],
+  [
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 2000),
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 2000),
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 2000),
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 2000),
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 2000),
+
+  ] 
+
 );
