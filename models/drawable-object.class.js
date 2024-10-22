@@ -16,7 +16,8 @@ class DrawableObject {
   draw(ctx) {
     ctx.save();
     ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-    ctx.rotate(this.rotationAngle * Math.PI / 180);
+    let scaleFactor = Math.cos(this.rotationAngle * Math.PI / 180);
+    ctx.scale(scaleFactor, 1);
     ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
     ctx.restore();
   }

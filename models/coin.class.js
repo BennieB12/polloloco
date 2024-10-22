@@ -14,13 +14,15 @@ class Coin extends DrawableObject{
     constructor(angle) {
       super().loadImage("img/8_coin/coin_1.png");
       this.loadImages(this.IMAGES_WALKING);
-      this.speed = 0.25 + Math.random() * 0.45;
       this.rotationAngle = angle;
       this.animateRotation();
     }
   
     rotateCoin() {
       this.rotationAngle += 5;
+      if (this.rotationAngle >= 360) {
+        this.rotationAngle = 0;
+      }
     }
 
     
