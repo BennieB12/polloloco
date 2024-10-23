@@ -62,12 +62,13 @@ class MovableObject extends DrawableObject {
 
   throwBottle() {
     if (this.bottles > 0) {
-      this.bottles--;
-      let bottle = new ThrowableObject(this.x + 100, this.y + 100);
-      this.world.throwableObjects.push(bottle);
-      this.world.statusBarBottle.setpercentage(this.bottles);
+        this.bottles--;
+        let bottle = new ThrowableObject(this.x, this.y, this.otherDirection);
+        this.world.throwableObjects.push(bottle);
+        this.world.statusBarBottle.setpercentage(this.bottles);
     }
-  }
+}
+  
 
   playAnimation(images) {
     let i = this.currentImage % images.length;
