@@ -32,9 +32,8 @@ class World {
   }
 
   checkThrowObjects() {
-    if (this.keyboard.D) {
-      let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
-      this.throwableObjects.push(bottle);
+    if (this.keyboard.D && this.character.bottles > 0) {
+      this.character.throwBottle();
     }
   }
 
@@ -61,8 +60,10 @@ class World {
   
   collectBottle(index) {
     this.level.bottles.splice(index, 1);
+    this.character.bottles++;
     this.statusBarBottle.addBottle();
   }
+
 
   collectCoin(index) {
     this.level.coins.splice(index, 1);

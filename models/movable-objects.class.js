@@ -5,6 +5,7 @@ class MovableObject extends DrawableObject {
   accelaration = 4;
   energy = 100;
   lastHit = 0;
+  bottles = 1;
 
   applyGravity() {
     setInterval(() => {
@@ -63,5 +64,14 @@ class MovableObject extends DrawableObject {
     let path = images[i];
     this.img = this.imageCache[path];
     this.currentImage++;
+  }
+
+  throwBottle() {
+    if (this.bottles > 0) {
+      this.bottles--;
+      let bottle = new ThrowableObject(this.x + 100, this.y + 100);
+      this.world.throwableObjects.push(bottle);
+      this.world.statusBarBottle.setpercentage(this.bottles);
+    }
   }
 }
