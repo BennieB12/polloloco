@@ -36,6 +36,9 @@ class ThrowableObject extends MovableObject {
 
   animateRotation() {
     setInterval(() => {
+      if (this.y <= 420) {
+        this.playAnimation(this.GROUND_IMAGES);
+      }
       this.playAnimation(this.ROTATE_IMAGES);
     }, 75);
   }

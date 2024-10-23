@@ -22,6 +22,7 @@ class Statusbar_bottle extends DrawableObject {
     if (this.bottles < 5) {
       this.bottles++;
       this.world.statusBarBottle.setpercentage(this.bottles);
+      this.bottles.push(this.world.throwableObjects);
     }
   }
 

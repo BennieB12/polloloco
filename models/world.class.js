@@ -55,7 +55,20 @@ class World {
         this.collectBottle(index);
       }
     });
+  
+    this.throwableObjects.forEach((bottle, bottleIndex) => {
+      this.level.enemies.forEach((enemy, enemyIndex) => {
+        if (bottle.isColliding(enemy)) {
+          enemy.energy -= 10;
+          if (enemy.energy <= 0) {
+            this.level.enemies.splice(enemyIndex, 1);
+          }
+          this.throwableObjects.splice(bottleIndex, 1);
+        }
+      });
+    });
   }
+  
   
   collectBottle(index) {
     this.level.bottles.splice(index, 1);
