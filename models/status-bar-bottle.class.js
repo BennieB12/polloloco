@@ -8,11 +8,8 @@ class Statusbar_bottle extends DrawableObject {
     " img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/100.png",
   ];
 
-  bottleCount = 100;
-  collectedBottles = 0;
-
   constructor() {
-    super().loadImage("img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/20.png");
+    super().loadImage("img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/0.png");
     this.loadImages(this.IMAGES);
     this.x = 0;
     this.y = 75;
@@ -22,28 +19,28 @@ class Statusbar_bottle extends DrawableObject {
   }
 
   addBottle() {
-    if (this.collectedBottles < 5) { 
-      this.collectedBottles++;
-      this.setpercentage(this.collectedBottles);
+    if (this.bottles < 5) {
+      this.bottles++;
+      this.world.statusBarBottle.setpercentage(this.bottles);
     }
   }
 
-  setpercentage(bottleCount) {
-    this.bottleCount = bottleCount;
-    let path = this.IMAGES[this.resolveImageIndex()]; 
+  setpercentage(bottles) {
+    this.bottles = bottles;
+    let path = this.IMAGES[this.resolveImageIndex(bottles)];
     this.img = this.imageCache[path];
   }
-  
-  resolveImageIndex() {
-    if (this.bottleCount == 5) {
+
+  resolveImageIndex(bottles) {
+    if (bottles == 5) {
       return 5;
-    } else if (this.bottleCount == 4) {
+    } else if (bottles == 4) {
       return 4;
-    } else if (this.bottleCount == 3) {
+    } else if (bottles == 3) {
       return 3;
-    } else if (this.bottleCount == 2) {
+    } else if (bottles == 2) {
       return 2;
-    } else if (this.bottleCount == 1) {
+    } else if (bottles == 1) {
       return 1;
     } else {
       return 0;

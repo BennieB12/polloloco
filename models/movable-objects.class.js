@@ -7,6 +7,7 @@ class MovableObject extends DrawableObject {
   lastHit = 0;
   bottles = 1;
 
+
   applyGravity() {
     setInterval(() => {
       if (this.aboveGround() || this.speedY > 0) {
@@ -59,13 +60,6 @@ class MovableObject extends DrawableObject {
     this.speedY = 25;
   }
 
-  playAnimation(images) {
-    let i = this.currentImage % images.length;
-    let path = images[i];
-    this.img = this.imageCache[path];
-    this.currentImage++;
-  }
-
   throwBottle() {
     if (this.bottles > 0) {
       this.bottles--;
@@ -74,4 +68,12 @@ class MovableObject extends DrawableObject {
       this.world.statusBarBottle.setpercentage(this.bottles);
     }
   }
+
+  playAnimation(images) {
+    let i = this.currentImage % images.length;
+    let path = images[i];
+    this.img = this.imageCache[path];
+    this.currentImage++;
+  }
+
 }

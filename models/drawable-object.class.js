@@ -8,6 +8,7 @@ class DrawableObject {
   currentImage = 0;
   rotationAngle = 0;
 
+
   loadImage(path) {
     this.img = new Image();
     this.img.src = path;

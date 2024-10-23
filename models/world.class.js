@@ -1,6 +1,5 @@
 class World {
   character = new Character();
-
   level = level1;
   canvas;
   ctx;
@@ -61,7 +60,7 @@ class World {
   collectBottle(index) {
     this.level.bottles.splice(index, 1);
     this.character.bottles++;
-    this.statusBarBottle.addBottle();
+    this.statusBarBottle.setpercentage(this.character.bottles);
   }
 
 
@@ -79,7 +78,6 @@ class World {
     this.addToMap(this.character);
 
     this.addObjectsToMap(this.level.clouds);
-    this.addObjectsToMap(this.level.bottles);
 
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.statusBarHealth);
@@ -89,6 +87,7 @@ class World {
 
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.coins, 0);
+    this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.throwableObjects);
 
     this.ctx.translate(-this.camera_x, 0);
