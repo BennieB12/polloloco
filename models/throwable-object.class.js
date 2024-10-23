@@ -1,6 +1,7 @@
 class ThrowableObject extends MovableObject {
 
   throwDirection = 1;
+  hasHit = false;
 
   ROTATE_IMAGES = [
     "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
@@ -18,15 +19,17 @@ class ThrowableObject extends MovableObject {
     "img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png",
   ];
 
-  constructor(x, y, otherDirection) {
+  constructor(x, y, otherDirection, world) {
     super().loadImage("img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png");
     this.loadImages(this.ROTATE_IMAGES);
+    this.loadImages(this.GROUND_IMAGES);
     this.otherDirection = otherDirection;
+    this.world = world;
     this.x = x;
     this.y = y;
     this.height = 60;
     this.width = 50;
-    this.throw(100, 150);
+    this.throw(50, 100);
     this.animateRotation();
   }
 
@@ -35,19 +38,53 @@ class ThrowableObject extends MovableObject {
     this.applyGravity();
 
     if (this.otherDirection) {
-     this.throwDirection = -1;
-    } 
+      this.throwDirection = -1;
+    }
     
-    let speedX = 20 *this.throwDirection;
+    let speedX = 20 * this.throwDirection;
   
-    setInterval(() => {
+    this.throwInterval = setInterval(() => {
       this.x += speedX;
+
+      if (this.hasHitGround() || this.hasHitTarget()) {
+        this.hasHit = true;
+        clearInterval(this.throwInterval);
+        this.playSplashAnimation(); 
+      }
     }, 30);
   }
 
-  animateRotation() {
+  hasHitGround() {
+    return this.y >= 300;
+  }
+
+  hasHitTarget() {
+    for (let i = 0; i < this.world.enemies.length; i++) {
+      let enemy = this.world.enemies[i];
+      if (this.isColliding(enemy)) {
+        enemy.hit();
+        return true; 
+      }
+    }
+    return false;
+  }
+
+  playSplashAnimation() {
+    this.clearRotation();
     setInterval(() => {
-      this.playAnimation(this.ROTATE_IMAGES);
+      this.playAnimation(this.GROUND_IMAGES); 
     }, 75);
+  }
+
+  animateRotation() {
+    this.rotationInterval = setInterval(() => {
+      if (!this.hasHit) {
+        this.playAnimation(this.ROTATE_IMAGES);
+      }
+    }, 75);
+  }
+
+  clearRotation() {
+    clearInterval(this.rotationInterval);
   }
 }
