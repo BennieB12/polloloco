@@ -39,8 +39,15 @@ class World {
   checkCollision() {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
-        this.character.hit();
-        this.statusBarHealth.setpercentage(this.character.energy);
+        if (this.character.isJumping && enemy instanceof Chicken) {
+          enemy.energy -= 8;
+          if (enemy.energy <= 0) {
+            this.level.enemies.splice(this.level.enemies.indexOf(enemy), 1);
+          }
+        } else {
+          this.character.hit();
+          this.statusBarHealth.setpercentage(this.character.energy);
+        }
       }
     });
   

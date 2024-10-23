@@ -6,13 +6,16 @@ class MovableObject extends DrawableObject {
   energy = 100;
   lastHit = 0;
   bottles = 1;
-
+  isJumping = false;
 
   applyGravity() {
     setInterval(() => {
       if (this.aboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.accelaration;
+      }
+      else {
+        this.isJumping = false;
       }
     }, 1000 / 25);
   }
@@ -58,6 +61,7 @@ class MovableObject extends DrawableObject {
 
   jump() {
     this.speedY = 35;
+    this.isJumping = true;
   }
 
   throwBottle() {
