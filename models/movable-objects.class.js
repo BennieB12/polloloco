@@ -3,7 +3,7 @@ class MovableObject extends DrawableObject {
   otherDirection = false;
   speedY = 0;
   accelaration = 4;
-  energy = 100;
+  energy;
   lastHit = 0;
   bottles = 1;
   isJumping = false;
@@ -24,7 +24,7 @@ class MovableObject extends DrawableObject {
     if(this instanceof ThrowableObject) {
       return true
     } else {
-    return this.y < 240;
+    return this.y < 300;
     }
   }
 

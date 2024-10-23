@@ -1,8 +1,9 @@
 class Character extends MovableObject {
-  y = 80;
-  height = 180;
-  width = 104;
+  y = 300;
+  height = 100;
+  width = 60;
   speed = 4;
+  energy = 100;
   deadAnimationPlayed = false;
 
   IMAGES_WALKING = [
@@ -42,59 +43,107 @@ class Character extends MovableObject {
     "img/2_character_pepe/4_hurt/H-43.png",
   ];
 
+  IMAGES_STAND = [
+    'img/2_character_pepe/1_idle/idle/I-1.png',
+    'img/2_character_pepe/1_idle/idle/I-2.png',
+    'img/2_character_pepe/1_idle/idle/I-3.png',
+    'img/2_character_pepe/1_idle/idle/I-4.png',
+    'img/2_character_pepe/1_idle/idle/I-4.png',
+    'img/2_character_pepe/1_idle/idle/I-5.png',
+    'img/2_character_pepe/1_idle/idle/I-6.png',
+    'img/2_character_pepe/1_idle/idle/I-7.png',
+    'img/2_character_pepe/1_idle/idle/I-8.png',
+    'img/2_character_pepe/1_idle/idle/I-9.png',
+    'img/2_character_pepe/1_idle/idle/I-10.png',
+  ];
+
   world;
   WALKING_SOUND = new Audio("audio/walk_right.mp3");
 
   constructor() {
-    super().loadImage("img/2_character_pepe/2_walk/W-21.png");
+    super().loadImage('img/2_character_pepe/1_idle/idle/I-1.png');
+    this.loadImages(this.IMAGES_STAND);
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
     this.applyGravity();
-    this.animate();
+    this.startAnimationIntervals();
   }
 
-  animate() {
+  startAnimationIntervals() {
     setInterval(() => {
-      this.WALKING_SOUND.pause();
-      if (this.isDead()) {
+      this.handleMovement();
+      this.handleAnimation();
+    }, 1000 / 20); 
+  }
+
+  handleMovement() {
+    this.WALKING_SOUND.pause();
+    if (this.isDead()) {
         return;
-      }
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+    }
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false;
-        this.WALKING_SOUND.play();
-      }
-
-      if (this.world.keyboard.LEFT && this.x > 0) {
+        if (!this.isPlayingSound) {
+            this.WALKING_SOUND.play().catch(error => {
+                console.log("Error playing sound:", error);
+            });
+            this.isPlayingSound = true;
+        }
+    } else if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
-        this.WALKING_SOUND.play();
-      }
-
-      if (this.world.keyboard.SPACE && !this.aboveGround() || this.world.keyboard.UP && !this.aboveGround()) {
-        this.jump();
-      }
-
-      this.world.camera_x = -this.x + 80;
-    }, 1000 / 60);
-
-    setInterval(() => {
-      if (this.isDead()) {
-        if (!this.deadAnimationPlayed) {
-          this.playAnimation(this.IMAGES_DEAD);
-          this.deadAnimationPlayed = true;
-        } else {
-          this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length -2]];
+        if (!this.isPlayingSound) {
+            this.WALKING_SOUND.play().catch(error => {
+                console.log("Error playing sound:", error);
+            });
+            this.isPlayingSound = true;
         }
-      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+    } else {
+        this.WALKING_SOUND.pause();
+        this.isPlayingSound = false;
+    }
+
+    if ((this.world.keyboard.SPACE && !this.aboveGround()) || (this.world.keyboard.UP && !this.aboveGround())) {
+        this.jump();
+    } else {
+        this.playAnimation(this.IMAGES_STAND);
+    }
+
+    this.world.camera_x = -this.x + 80;
+}
+
+  handleAnimation() {
+    if (this.isDead()) {
+        if (!this.deadAnimationPlayed) {
+            this.playAnimation(this.IMAGES_DEAD);
+            this.deadAnimationPlayed = true;
+        } else {
+            this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 2]];
+        }
+        this.WALKING_SOUND.pause();
+    } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         this.playAnimation(this.IMAGES_WALKING);
-      } else if (this.isHurt()) {
+        if (!this.isPlayingSound) {
+            this.WALKING_SOUND.play().catch(error => {
+                console.log("Error playing sound:", error);
+            });
+            this.isPlayingSound = true;
+        }
+    } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
-      } else if (this.aboveGround()) {
+        this.WALKING_SOUND.pause();
+    } else if (this.aboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
-      }
-    }, 50);
-  }
+        this.WALKING_SOUND.pause();
+    } else {
+        this.playAnimation(this.IMAGES_STAND);
+        this.WALKING_SOUND.pause(); 
+        this.isPlayingSound = false;
+    }
+}
+
+
 }
