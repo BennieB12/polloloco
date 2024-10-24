@@ -5,8 +5,7 @@ class Minichicken extends MovableObject {
     width = 30;
     energy = 4;
     animationSpeed = 1;
-
-    // Original walking images
+    
     IMAGES_WALKING = [
       "img/3_enemies_chicken/chicken_small/1_walk/1_w.png",
       "img/3_enemies_chicken/chicken_small/1_walk/2_w.png",
@@ -17,9 +16,7 @@ class Minichicken extends MovableObject {
       "img/3_enemies_chicken/chicken_normal/2_dead/dead.png",
     ];
 
-    // Add a random color property
-    randomColor = `hue-rotate(${Math.random() * 360}deg)`; // Random hue for color variation
-
+    randomColor = `hue-rotate(${Math.random() * 360}deg)`;
     constructor(x) {
       super().loadImage(this.IMAGES_WALKING[0]);
       this.loadImages(this.IMAGES_WALKING);
