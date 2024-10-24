@@ -13,15 +13,15 @@ class MovableObject extends DrawableObject {
 
   applyGravity() {
     setInterval(() => {
-      if (this.aboveGround() || this.speedY > 0) {
-        this.y -= this.speedY;
-        this.speedY -= this.accelaration;
-      }
-      else {
-        this.isJumping = false;
-      }
+        if (this.aboveGround() || this.speedY > 0) {
+            this.y -= this.speedY;
+            this.speedY -= this.accelaration;
+        } else {
+            this.isJumping = false;
+            this.y = 320;
+        }
     }, 1000 / 25);
-  }
+}
 
   aboveGround() {
     if(this instanceof ThrowableObject) {
