@@ -10,12 +10,14 @@ class World {
   statusBarBottle = new Statusbar_bottle();
   throwableObjects = [];
   gameOver = false;
+  gameStarted = false;
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.setWorld();
+    this.showStartScreen();
     this.run();
     this.draw();
   }
@@ -26,8 +28,10 @@ class World {
 
   run() {
     setInterval(() => {
-      this.checkCollision();
-      this.checkThrowObjects();
+      if (this.gameStarted) {
+        this.checkCollision();
+        this.checkThrowObjects();
+      }
     }, 200);
   }
 
@@ -91,24 +95,27 @@ class World {
 
   draw() {
     if (this.gameOver) return;
-    
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.translate(this.camera_x, 0);
-    this.addObjectsToMap(this.level.backgroundObjects);
-    this.addToMap(this.character);
-    this.addObjectsToMap(this.level.clouds);
+    if (!this.gameStarted) {
+      this.showStartScreen();
+    } else {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.translate(this.camera_x, 0);
+      this.addObjectsToMap(this.level.backgroundObjects);
+      this.addToMap(this.character);
+      this.addObjectsToMap(this.level.clouds);
 
-    this.ctx.translate(-this.camera_x, 0);
-    this.addToMap(this.statusBarHealth);
-    this.addToMap(this.statusBarCoin);
-    this.addToMap(this.statusBarBottle);
-    this.ctx.translate(this.camera_x, 0);
+      this.ctx.translate(-this.camera_x, 0);
+      this.addToMap(this.statusBarHealth);
+      this.addToMap(this.statusBarCoin);
+      this.addToMap(this.statusBarBottle);
+      this.ctx.translate(this.camera_x, 0);
 
-    this.addObjectsToMap(this.level.enemies);
-    this.addObjectsToMap(this.level.coins);
-    this.addObjectsToMap(this.level.bottles);
-    this.addObjectsToMap(this.throwableObjects);
-    this.ctx.translate(-this.camera_x, 0);
+      this.addObjectsToMap(this.level.enemies);
+      this.addObjectsToMap(this.level.coins);
+      this.addObjectsToMap(this.level.bottles);
+      this.addObjectsToMap(this.throwableObjects);
+      this.ctx.translate(-this.camera_x, 0);
+    }
 
     requestAnimationFrame(() => this.draw());
   }
@@ -134,6 +141,25 @@ class World {
   flipImageBack(mo) {
     mo.x = mo.x * -1;
     this.ctx.restore();
+  }
+
+  showStartScreen() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.ctx.font = "bold 60px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.fillText("Press SPACE to Start", this.canvas.width / 2, this.canvas.height / 2);
+
+    window.addEventListener("keydown", (event) => {
+      if (event.code === "Space") {
+        this.gameStarted = true;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      }
+    });
   }
 
   showEndScreen() {
