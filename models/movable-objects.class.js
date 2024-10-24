@@ -8,6 +8,8 @@ class MovableObject extends DrawableObject {
   bottles = 1;
   isJumping = false;
   animationSpeed = 5;
+  standingTimer = 0;
+  deadAnimationPlayed = false;
 
   applyGravity() {
     setInterval(() => {
@@ -63,6 +65,9 @@ class MovableObject extends DrawableObject {
   jump() {
     this.speedY = 35;
     this.isJumping = true;
+    if (this.isJumping === true) {
+      this.standingTimer = 0;
+    }
   }
 
   throwBottle() {

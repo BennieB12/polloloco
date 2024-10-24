@@ -55,7 +55,7 @@ class World {
   damageEnemy(enemy) {
       enemy.energy -= 8;
       if (enemy.energy <= 0) {
-          this.level.enemies.splice(this.level.enemies.indexOf(enemy), 1);
+            this.level.enemies.splice(this.level.enemies.indexOf(enemy), 1);
       }
   }
 

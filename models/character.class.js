@@ -1,12 +1,11 @@
 class Character extends MovableObject {
-  y = 300;
+  y = 320;
   height = 100;
   width = 60;
   speed = 6;
   energy = 100;
-  deadAnimationPlayed = false;
   isPlayingSound = false;
-  standingTimer = 0;
+
 
 
   IMAGES_WALKING = [
@@ -131,7 +130,7 @@ class Character extends MovableObject {
 
   handleJump() {
     if ((this.world.keyboard.SPACE && !this.aboveGround()) || (this.world.keyboard.UP && !this.aboveGround())) {
-      this.jump();
+      this.jump()
     }
   }
 

@@ -1,12 +1,13 @@
 const level1 = new Level(
   [
-    new Chicken(100 + Math.random() * 2000),
-    new Chicken(200 + Math.random() * 2000),
     new Chicken(300 + Math.random() * 2000),
-    new Chicken(400 + Math.random() * 2000),
-    new Chicken(500 + Math.random() * 2000),
+    new Chicken(800 + Math.random() * 2000),
     new Chicken(600 + Math.random() * 2000),
-    new Chicken(700 + Math.random() * 2000),
+    new Chicken(900 + Math.random() * 2000),
+    new Chicken(1100 + Math.random() * 2000),
+    new Minichicken(450 + Math.random() * 2000),
+    new Minichicken(450 + Math.random() * 2000),
+    new Minichicken(450 + Math.random() * 2000),
   ],
   [
     new Cloud("img/5_background/layers/4_clouds/2.png", 0, 0),
