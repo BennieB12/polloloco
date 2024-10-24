@@ -33,6 +33,12 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'F5') {
+    location.reload();
+  }
+});
+
 document.addEventListener("keyup", (e) => {
   if (e.keyCode === 38) {
     keyboard.UP = false;

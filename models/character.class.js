@@ -163,9 +163,13 @@ class Character extends MovableObject {
       this.deadAnimationPlayed = true;
     } else {
       this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 2]];
+      this.world.showEndScreen();
+      this.world.gameOver = true;
     }
     this.WALKING_SOUND.pause();
   }
+
+
 
   playMovementAnimation() {
     if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {

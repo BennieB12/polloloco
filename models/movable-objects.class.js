@@ -13,21 +13,21 @@ class MovableObject extends DrawableObject {
 
   applyGravity() {
     setInterval(() => {
-        if (this.aboveGround() || this.speedY > 0) {
-            this.y -= this.speedY;
-            this.speedY -= this.accelaration;
-        } else {
-            this.isJumping = false;
-            this.y = 320;
-        }
+      if (this.aboveGround() || this.speedY > 0) {
+        this.y -= this.speedY;
+        this.speedY -= this.accelaration;
+      } else {
+        this.isJumping = false;
+        this.y = 320;
+      }
     }, 1000 / 25);
-}
+  }
 
   aboveGround() {
-    if(this instanceof ThrowableObject) {
-      return true
+    if (this instanceof ThrowableObject) {
+      return true;
     } else {
-    return this.y < 300;
+      return this.y < 300;
     }
   }
 
@@ -72,21 +72,19 @@ class MovableObject extends DrawableObject {
 
   throwBottle() {
     if (this.bottles > 0) {
-        this.bottles--;
-        let bottle = new ThrowableObject(this.x, this.y, this.otherDirection);
-        this.world.throwableObjects.push(bottle);
-        this.world.statusBarBottle.setpercentage(this.bottles);
+      this.bottles--;
+      let bottle = new ThrowableObject(this.x, this.y, this.otherDirection);
+      this.world.throwableObjects.push(bottle);
+      this.world.statusBarBottle.setpercentage(this.bottles);
     }
-}
-  
-
-playAnimation(images, speed) {
-  if (this.currentImage % speed === 0) {
-    let i = (this.currentImage / speed) % images.length;
-    let path = images[i];
-    this.img = this.imageCache[path];
   }
-  this.currentImage++;
-}
 
+  playAnimation(images, speed) {
+    if (this.currentImage % speed === 0) {
+      let i = (this.currentImage / speed) % images.length;
+      let path = images[i];
+      this.img = this.imageCache[path];
+    }
+    this.currentImage++;
+  }
 }

@@ -36,28 +36,39 @@ class DrawableObject {
       this instanceof Bottle ||
       this instanceof Minichicken
     ) {
-        ctx.beginPath();
-        ctx.lineWidth = "2";
-        ctx.strokeStyle = "blue";
-        
-        let hitboxX = this.x + this.width * 0.1;
-        let hitboxY = this.y + this.height * 0.1;
-        let hitboxWidth = this.width * 0.75;
-        let hitboxHeight = this.height * 0.9;
+      ctx.beginPath();
+      ctx.lineWidth = "2";
+      ctx.strokeStyle = "blue";
 
+      let hitboxX = this.x + this.width * 0.1;
+      let hitboxY = this.y + this.height * 0.1;
+      let hitboxWidth = this.width * 0.75;
+      let hitboxHeight = this.height * 0.9;
 
-        if (this instanceof Coin || this instanceof Bottle) {
-          hitboxX = this.x + this.width * 0.2;  
-          hitboxY = this.y + this.height * 0.2; 
-          hitboxWidth = this.width * 0.6;
-          hitboxHeight = this.height * 0.5;
-        }
+      if (this instanceof Coin) {
+        hitboxX = this.x + this.width * 0.2;
+        hitboxY = this.y + this.height * 0.3;
+        hitboxWidth = this.width * 0.6;
+        hitboxHeight = this.height * 0.4;
+      }
+      if (this instanceof Character) {
+        hitboxX = this.x + this.width * 0.2;
+        hitboxY = this.y + this.height * 0.4;
+        hitboxWidth = this.width * 0.6;
+        hitboxHeight = this.height * 0.7;
+      }
 
-        ctx.rect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
-        ctx.stroke();
+      if (this instanceof Bottle) {
+        hitboxX = this.x + this.width * 0.3;
+        hitboxY = this.y + this.height * 0.2;
+        hitboxWidth = this.width * 0.6;
+        hitboxHeight = this.height * 0.7;
+      }
+
+      ctx.rect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+      ctx.stroke();
     }
-}
-
+  }
 
   loadImages(arr) {
     arr.forEach((path) => {
