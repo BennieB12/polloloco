@@ -7,6 +7,7 @@ class MovableObject extends DrawableObject {
   lastHit = 0;
   bottles = 1;
   isJumping = false;
+  animationSpeed = 5;
 
   applyGravity() {
     setInterval(() => {
@@ -74,11 +75,13 @@ class MovableObject extends DrawableObject {
 }
   
 
-  playAnimation(images) {
-    let i = this.currentImage % images.length;
+playAnimation(images, speed) {
+  if (this.currentImage % speed === 0) {
+    let i = (this.currentImage / speed) % images.length;
     let path = images[i];
     this.img = this.imageCache[path];
-    this.currentImage++;
   }
+  this.currentImage++;
+}
 
 }

@@ -8,6 +8,7 @@ class Character extends MovableObject {
   isPlayingSound = false;
   standingTimer = 0;
 
+
   IMAGES_WALKING = [
     "img/2_character_pepe/2_walk/W-21.png",
     "img/2_character_pepe/2_walk/W-22.png",
@@ -147,12 +148,15 @@ class Character extends MovableObject {
       return;
     }
     if (this.standingTimer >= 5000) {
-      this.playAnimation(this.IMAGES_STAND_LONG);
+      this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
     } else {
-      this.playAnimation(this.IMAGES_STAND);
+      this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
     }
     this.playMovementAnimation();
   }
+
+
+
 
   playDeadAnimation() {
     if (!this.deadAnimationPlayed) {
@@ -166,21 +170,22 @@ class Character extends MovableObject {
 
   playMovementAnimation() {
     if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-      this.playAnimation(this.IMAGES_WALKING);
+      this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
       this.playWalkingSound();
     } else if (this.isHurt()) {
-      this.playAnimation(this.IMAGES_HURT);
+      this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
       this.WALKING_SOUND.pause();
     } else if (this.aboveGround()) {
-      this.playAnimation(this.IMAGES_JUMPING);
+      this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
       this.WALKING_SOUND.pause();
     } else if (this.standingTimer <= 5000) {
-      this.playAnimation(this.IMAGES_STAND);
+      this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
       this.WALKING_SOUND.pause();
     } else if (this.standingTimer > 5000) {
-      this.playAnimation(this.IMAGES_STAND_LONG);
+      this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
       this.WALKING_SOUND.pause();
       this.isPlayingSound = false;
     }
   }
 }
+
