@@ -1,8 +1,9 @@
 class Chicken extends MovableObject {
-  y = 320;
+  y = 345;
   x = 900 + Math.random() * 2000;
-  height = 100;
-  width = 80;
+  speed = 7 + Math.random() * 1000;
+  height = 80;
+  width = 60;
   energy = 8;
   animationSpeed = 1; 
 
@@ -27,11 +28,11 @@ class Chicken extends MovableObject {
   animate() {
     setInterval(() => {
       this.moveLeft();
-    }, 1000 / 25);
+    }, 1000 / 60);
     setInterval(() => { 
       this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
       this.handleAnimation();
-    }, 200);
+    }, 100);
   }
 
   handleAnimation() {

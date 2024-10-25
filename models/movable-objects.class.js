@@ -1,5 +1,5 @@
 class MovableObject extends DrawableObject {
-  speed = 0.35;
+  speed;
   otherDirection = false;
   speedY = 0;
   accelaration = 4;
@@ -32,8 +32,22 @@ class MovableObject extends DrawableObject {
   }
 
   isColliding(mo) {
-    return this.x + this.width > mo.x && this.y + this.height > mo.y && this.x < mo.x && this.y < mo.y + mo.height;
+    let offsetX = 30;
+    let offsetY = 40;
+
+    if (mo instanceof Chicken || mo instanceof Minichicken) {
+        offsetX = 10;
+        offsetY = 0;
+    }
+
+    return (
+        this.x + this.width - offsetX > mo.x &&
+        this.y + this.height - offsetY > mo.y &&
+        this.x + offsetX < mo.x + mo.width &&
+        this.y + offsetY < mo.y + mo.height
+    );
   }
+
 
   hit() {
     this.energy -= 5;

@@ -1,5 +1,6 @@
 class Minichicken extends MovableObject {
     y = 360;
+    speed = 10 + Math.random() * 1000;
     x = 700 + Math.random() * 1000;
     height = 60;
     width = 30;
@@ -28,11 +29,11 @@ class Minichicken extends MovableObject {
     animate() {
       setInterval(() => {
         this.moveLeft();
-      }, 1000 / 25);
+      }, 1000 / 60);
       setInterval(() => { 
         this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
         this.handleAnimation();
-      }, 200);
+      }, 100);
     }
 
     handleAnimation() {

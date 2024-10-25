@@ -37,7 +37,7 @@ class DrawableObject {
       this instanceof Minichicken
     ) {
       ctx.beginPath();
-      ctx.lineWidth = "2";
+      ctx.lineWidth = "1";
       ctx.strokeStyle = "blue";
 
       let hitboxX = this.x + this.width * 0.1;

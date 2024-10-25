@@ -54,10 +54,12 @@ class World {
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {
-      this.character.isJumping && enemy instanceof Chicken ? this.damageEnemy(enemy) : this.character.hit();
+      this.character.isJumping && enemy instanceof Chicken ||  this.character.isJumping && enemy instanceof Minichicken ? this.damageEnemy(enemy) : this.character.hit();
       this.statusBarHealth.setpercentage(this.character.energy);
     }
   }
+
+
 
   damageEnemy(enemy) {
     enemy.energy -= 8;
@@ -68,9 +70,13 @@ class World {
 
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {
-      type === "coin" ? this.collectCoin(index) : this.collectBottle(index);
+        if (type === "coin") {
+            this.collectCoin(index);
+        } else if (type === "bottle") {
+            this.collectBottle(index);
+        }
     }
-  }
+}
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {
@@ -143,6 +149,24 @@ class World {
     this.ctx.restore();
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   showStartScreen() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -178,50 +202,9 @@ class World {
     this.ctx.fillStyle = "red";
     this.ctx.textAlign = "center";
     this.ctx.fillText("Game Over", this.canvas.width / 2, this.canvas.height / 2 - 50);
-
     this.ctx.font = "30px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
     this.ctx.fillStyle = "#00FF00";
-    this.ctx.fillRect(this.canvas.width / 2 - 100, this.canvas.height / 2 + 70, 200, 50);
-    this.ctx.fillStyle = "black";
-    this.ctx.font = "20px Arial";
-    this.ctx.fillText("Restart Game", this.canvas.width / 2, this.canvas.height / 2 + 95);
-    this.canvas.addEventListener("click", this.checkButtonClick.bind(this));
-    this.canvas.addEventListener("mousemove", this.checkMouseOverButton.bind(this));
-  }
-
-  checkButtonClick(event) {
-    const { x, y } = this.getMousePosition(event);
-    const buttonX = this.canvas.width / 2 - 100;
-    const buttonY = this.canvas.height / 2 + 70;
-    const buttonWidth = 200;
-    const buttonHeight = 50;
-
-    if (x >= buttonX && x <= buttonX + buttonWidth && y >= buttonY && y <= buttonY + buttonHeight) {
-      location.reload();
-    }
-  }
-
-  checkMouseOverButton(event) {
-    const { x, y } = this.getMousePosition(event);
-
-    const buttonX = this.canvas.width / 2 - 100;
-    const buttonY = this.canvas.height / 2 + 70;
-    const buttonWidth = 200;
-    const buttonHeight = 50;
-
-    if (x >= buttonX && x <= buttonX + buttonWidth && y >= buttonY && y <= buttonY + buttonHeight) {
-      this.canvas.style.cursor = "pointer";
-    } else {
-      this.canvas.style.cursor = "default";
-    }
-  }
-
-  getMousePosition(event) {
-    const rect = this.canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    return { x, y };
   }
 }
