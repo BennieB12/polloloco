@@ -3,7 +3,7 @@ class Character extends MovableObject {
   height = 100;
   width = 60;
   speed = 6;
-  energy = 100;
+  energy = 500;
   isPlayingSound = false;
 
 

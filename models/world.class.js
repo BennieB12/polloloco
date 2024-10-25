@@ -54,10 +54,15 @@ class World {
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {
-      this.character.isJumping && enemy instanceof Chicken ||  this.character.isJumping && enemy instanceof Minichicken ? this.damageEnemy(enemy) : this.character.hit();
-      this.statusBarHealth.setpercentage(this.character.energy);
+        if (this.character.isJumping && this.character.width + this.character.height < enemy.y + enemy.height) {
+            this.damageEnemy(enemy); 
+        } else {
+            this.character.hit();
+        }
+        this.statusBarHealth.setpercentage(this.character.energy);
     }
   }
+
 
 
 
