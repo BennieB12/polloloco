@@ -160,14 +160,20 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       }
     });
+    this.canvas.addEventListener("click", () => {
+      this.startGame();
+    });
+  }
+
+  startGame() {
+    this.gameStarted = true;
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   showEndScreen() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
     this.ctx.font = "bold 60px Arial";
     this.ctx.fillStyle = "red";
     this.ctx.textAlign = "center";
@@ -175,6 +181,47 @@ class World {
 
     this.ctx.font = "30px Arial";
     this.ctx.fillStyle = "white";
-    this.ctx.fillText("Press F5 to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
+    this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
+    this.ctx.fillStyle = "#00FF00";
+    this.ctx.fillRect(this.canvas.width / 2 - 100, this.canvas.height / 2 + 70, 200, 50);
+    this.ctx.fillStyle = "black";
+    this.ctx.font = "20px Arial";
+    this.ctx.fillText("Restart Game", this.canvas.width / 2, this.canvas.height / 2 + 95);
+    this.canvas.addEventListener("click", this.checkButtonClick.bind(this));
+    this.canvas.addEventListener("mousemove", this.checkMouseOverButton.bind(this));
+  }
+
+  checkButtonClick(event) {
+    const { x, y } = this.getMousePosition(event);
+    const buttonX = this.canvas.width / 2 - 100;
+    const buttonY = this.canvas.height / 2 + 70;
+    const buttonWidth = 200;
+    const buttonHeight = 50;
+
+    if (x >= buttonX && x <= buttonX + buttonWidth && y >= buttonY && y <= buttonY + buttonHeight) {
+      location.reload();
+    }
+  }
+
+  checkMouseOverButton(event) {
+    const { x, y } = this.getMousePosition(event);
+
+    const buttonX = this.canvas.width / 2 - 100;
+    const buttonY = this.canvas.height / 2 + 70;
+    const buttonWidth = 200;
+    const buttonHeight = 50;
+
+    if (x >= buttonX && x <= buttonX + buttonWidth && y >= buttonY && y <= buttonY + buttonHeight) {
+      this.canvas.style.cursor = "pointer";
+    } else {
+      this.canvas.style.cursor = "default";
+    }
+  }
+
+  getMousePosition(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    return { x, y };
   }
 }
