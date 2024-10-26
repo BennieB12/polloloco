@@ -2,7 +2,7 @@ class MovableObject extends DrawableObject {
   speed;
   otherDirection = false;
   speedY = 0;
-  accelaration = 4;
+  accelaration = 5;
   energy;
   lastHit = 0;
   bottles = 1;
@@ -65,17 +65,25 @@ class MovableObject extends DrawableObject {
 
 
   hit() {
-    this.energy -= 5;
-    if (this.energy < 0) {
-      this.energy = 0;
-    } else {
-      this.lastHit = new Date().getTime();
-    }
+    this.reduceEnergy(5);
+    this.updateLastHit();
     this.world.statusBarHealth.setpercentage(this.energy);
   }
 
+  reduceEnergy(amount) {
+    this.energy -= amount;
+    if (this.energy < 0) {
+      this.energy = 0;
+    }
+  }
 
-  isHurt() {
+  updateLastHit() {
+    this.lastHit = new Date().getTime();
+  }
+  
+
+
+isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
     timePassed = timePassed / 1000;
     return timePassed < 0.4;

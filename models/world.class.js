@@ -54,15 +54,17 @@ class World {
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {
-      const isAboveEnemy = this.character.y + this.character.height <= enemy.y + 10;
-      const isFalling = this.character.speedY < 0;
-
-      if (isAboveEnemy && isFalling) {
-        this.damageEnemy(enemy);
-        this.character.jump();
-      } else {
-        this.character.hit();
-      }
+        const bottomX = this.character.x + this.character.height;
+        const TopY = enemy.y + enemy.width;
+        const cross = bottomX >= TopY;
+        const isFalling = this.character.speedY <= 0;
+  
+        if (cross && isFalling) {
+            this.damageEnemy(enemy);
+            this.character.jump();
+        } else {
+            this.character.hit();
+        }
     }
   }
 
