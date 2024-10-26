@@ -14,7 +14,7 @@ class MovableObject extends DrawableObject {
   applyGravity() {
     setInterval(() => {
       if (this.aboveGround() || this.speedY > 0) {
-        this.setAccelation();
+        this.setAcceleration();
       } else if (this instanceof Minichicken) {
         this.y = 360;
       } else {
@@ -24,7 +24,7 @@ class MovableObject extends DrawableObject {
     }, 1000 / 25);
   }
 
-  setAccelation() {
+  setAcceleration() {
     this.y -= this.speedY;
     this.speedY -= this.accelaration;
     return;
