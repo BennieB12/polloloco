@@ -101,6 +101,14 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  checkLevelBegin() {
+    if (this.x <= 0) {
+      this.speed = -this.speed;
+      this.otherDirection = !this.otherDirection;
+      this.moveLeft();
+    }
+  }
+
   throwBottle() {
     if (this.bottles > 0) {
       this.bottles--;
