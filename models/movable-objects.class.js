@@ -42,7 +42,7 @@ class MovableObject extends DrawableObject {
 
   
   isColliding(mo) {
-    let offsetX = 30;
+    let offsetX = 40;
     let offsetY = 40;
 
     if (mo instanceof Chicken || mo instanceof Minichicken) {

@@ -1,8 +1,8 @@
 class Bottle extends DrawableObject {
-    y = 340;
+    y = 360;
     x = 300 + Math.random() * 2000;
-    height = 100;
-    width = 80;
+    height = 70;
+    width = 60;
   
     IMAGES_GROUND = [
       "img/6_salsa_bottle/1_salsa_bottle_on_ground.png",
