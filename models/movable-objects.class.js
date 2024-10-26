@@ -24,13 +24,11 @@ class MovableObject extends DrawableObject {
     }, 1000 / 25);
   }
 
-
   setAccelation() {
     this.y -= this.speedY;
     this.speedY -= this.accelaration;
     return;
   }
-
 
   aboveGround() {
     if (this instanceof ThrowableObject) {
@@ -40,7 +38,6 @@ class MovableObject extends DrawableObject {
     }
   }
 
-  
   isColliding(mo) {
     let offsetX = 40;
     let offsetY = 40;
@@ -53,18 +50,15 @@ class MovableObject extends DrawableObject {
     return this.checkCollision(mo, offsetX, offsetY);
   }
 
-
   checkCollision(mo, offsetX, offsetY) {
-    return (
-      this.x + this.width - offsetX > mo.x &&
-      this.y + this.height - offsetY > mo.y &&
-      this.x + offsetX < mo.x + mo.width &&
-      this.y + offsetY < mo.y + mo.height
-    );
+    const collidingHorizontally = this.x + this.width - offsetX > mo.x && this.x + offsetX < mo.x + mo.width;
+
+    const collidingVertically = this.y + this.height - offsetY > mo.y && this.y + offsetY < mo.y + mo.height;
+
+    return collidingHorizontally && collidingVertically;
   }
 
-
-  hit() {
+  getDamage() {
     this.reduceEnergy(5);
     this.updateLastHit();
     this.world.statusBarHealth.setpercentage(this.energy);
@@ -80,30 +74,24 @@ class MovableObject extends DrawableObject {
   updateLastHit() {
     this.lastHit = new Date().getTime();
   }
-  
 
-
-isHurt() {
+  isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
     timePassed = timePassed / 1000;
     return timePassed < 0.4;
   }
 
-
   isDead() {
     return this.energy == 0;
   }
-
 
   moveRight() {
     this.x += this.speed;
   }
 
-
   moveLeft() {
     this.x -= this.speed;
   }
-
 
   jump(speedY = 35) {
     this.speedY = speedY;
@@ -112,7 +100,6 @@ isHurt() {
       this.standingTimer = 0;
     }
   }
-
 
   throwBottle() {
     if (this.bottles > 0) {
@@ -123,7 +110,6 @@ isHurt() {
     }
   }
 
-
   playAnimation(images, speed) {
     if (this.currentImage % speed === 0) {
       let i = (this.currentImage / speed) % images.length;
@@ -132,5 +118,4 @@ isHurt() {
     }
     this.currentImage++;
   }
-  
 }

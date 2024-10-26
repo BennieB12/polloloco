@@ -53,22 +53,15 @@ class World {
   }
 
   handleEnemyCollision(enemy) {
-    if (this.character.isColliding(enemy)) {
-        const bottomX = this.character.x + this.character.height;
-        const TopY = enemy.y + enemy.width;
-        const cross = bottomX >= TopY;
-        const isFalling = this.character.speedY <= 0;
-  
-        if (cross && isFalling) {
-            this.damageEnemy(enemy);
-            this.character.jump();
-        } else {
-            this.character.hit();
-        }
-    }
+    if (this.character.aboveGround() && this.character.isColliding(enemy)) {
+      this.damage(enemy);
+      this.character.jump();
+    } else if (this.character.isColliding(enemy)){
+        this.character.getDamage();
+      }
   }
 
-  damageEnemy(enemy) {
+  damage(enemy) {
     enemy.energy -= 8;
     this.enemyDead(enemy);
   }
@@ -109,7 +102,7 @@ class World {
     this.level.coins.splice(index, 1);
     this.statusBarCoin.addCoin();
   }
-  
+
   draw() {
     if (this.gameOver) return;
     if (!this.gameStarted) {
