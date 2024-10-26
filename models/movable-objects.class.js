@@ -14,8 +14,7 @@ class MovableObject extends DrawableObject {
   applyGravity() {
     setInterval(() => {
       if (this.aboveGround() || this.speedY > 0) {
-        this.y -= this.speedY;
-        this.speedY -= this.accelaration;
+        this.setAccelation();
       } else if (this instanceof Minichicken) {
         this.y = 360;
       } else {
@@ -25,6 +24,14 @@ class MovableObject extends DrawableObject {
     }, 1000 / 25);
   }
 
+
+  setAccelation() {
+    this.y -= this.speedY;
+    this.speedY -= this.accelaration;
+    return;
+  }
+
+
   aboveGround() {
     if (this instanceof ThrowableObject) {
       return true;
@@ -33,15 +40,21 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  
   isColliding(mo) {
     let offsetX = 30;
     let offsetY = 40;
 
     if (mo instanceof Chicken || mo instanceof Minichicken) {
-      offsetX = 10;
-      offsetY = 0;
+      offsetX = 15;
+      offsetY = 5;
     }
 
+    return this.checkCollision(mo, offsetX, offsetY);
+  }
+
+
+  checkCollision(mo, offsetX, offsetY) {
     return (
       this.x + this.width - offsetX > mo.x &&
       this.y + this.height - offsetY > mo.y &&
@@ -50,6 +63,7 @@ class MovableObject extends DrawableObject {
     );
   }
 
+
   hit() {
     this.energy -= 5;
     if (this.energy < 0) {
@@ -57,7 +71,9 @@ class MovableObject extends DrawableObject {
     } else {
       this.lastHit = new Date().getTime();
     }
+    this.world.statusBarHealth.setpercentage(this.energy);
   }
+
 
   isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
@@ -65,17 +81,21 @@ class MovableObject extends DrawableObject {
     return timePassed < 0.4;
   }
 
+
   isDead() {
     return this.energy == 0;
   }
+
 
   moveRight() {
     this.x += this.speed;
   }
 
+
   moveLeft() {
     this.x -= this.speed;
   }
+
 
   jump(speedY = 35) {
     this.speedY = speedY;
@@ -84,6 +104,7 @@ class MovableObject extends DrawableObject {
       this.standingTimer = 0;
     }
   }
+
 
   throwBottle() {
     if (this.bottles > 0) {
@@ -94,6 +115,7 @@ class MovableObject extends DrawableObject {
     }
   }
 
+
   playAnimation(images, speed) {
     if (this.currentImage % speed === 0) {
       let i = (this.currentImage / speed) % images.length;
@@ -102,4 +124,5 @@ class MovableObject extends DrawableObject {
     }
     this.currentImage++;
   }
+  
 }

@@ -54,20 +54,24 @@ class World {
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {
-        if (this.character.isJumping && this.character.width + this.character.height < enemy.y) {
-            this.damageEnemy(enemy);
-        } else {
-            this.character.hit();
-        }
-        this.statusBarHealth.setpercentage(this.character.energy);
+      const isAboveEnemy = this.character.y + this.character.height <= enemy.y + 10;
+      const isFalling = this.character.speedY < 0;
+
+      if (isAboveEnemy && isFalling) {
+        this.damageEnemy(enemy);
+        this.character.jump();
+      } else {
+        this.character.hit();
+      }
     }
   }
 
-
-
-
   damageEnemy(enemy) {
     enemy.energy -= 8;
+    this.enemyDead(enemy);
+  }
+
+  enemyDead(enemy) {
     if (enemy.energy <= 0) {
       this.level.enemies.splice(this.level.enemies.indexOf(enemy), 1);
     }
@@ -75,18 +79,18 @@ class World {
 
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {
-        if (type === "coin") {
-            this.collectCoin(index);
-        } else if (type === "bottle") {
-            this.collectBottle(index);
-        }
+      if (type === "coin") {
+        this.collectCoin(index);
+      } else if (type === "bottle") {
+        this.collectBottle(index);
+      }
     }
-}
+  }
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {
       enemy.energy -= 10;
-      if (enemy.energy <= 0) {
+      if (this.enemyDead(enemy)) {
         this.level.enemies.splice(enemyIndex, 1);
       }
       this.throwableObjects.splice(bottleIndex, 1);
@@ -103,7 +107,7 @@ class World {
     this.level.coins.splice(index, 1);
     this.statusBarCoin.addCoin();
   }
-
+  
   draw() {
     if (this.gameOver) return;
     if (!this.gameStarted) {
@@ -153,24 +157,6 @@ class World {
     mo.x = mo.x * -1;
     this.ctx.restore();
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   showStartScreen() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

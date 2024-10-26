@@ -1,5 +1,4 @@
 class ThrowableObject extends MovableObject {
-
   throwDirection = 1;
   hasHit = false;
 
@@ -20,7 +19,8 @@ class ThrowableObject extends MovableObject {
   ];
 
   constructor(x, y, otherDirection, world) {
-    super().loadImage("img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png");
+    super();
+    this.loadImage("img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png");
     this.loadImages(this.ROTATE_IMAGES);
     this.loadImages(this.GROUND_IMAGES);
     this.otherDirection = otherDirection;
@@ -31,27 +31,32 @@ class ThrowableObject extends MovableObject {
     this.width = 50;
     this.throw(50, 100);
     this.animateRotation();
-  }
+}
 
   throw() {
     this.speedY = 30;
     this.applyGravity();
 
-    if (this.otherDirection) {
-      this.throwDirection = -1;
-    }
-    
-    let speedX = 20 * this.throwDirection;
-  
-    this.throwInterval = setInterval(() => {
-      this.x += speedX;
+    this.setThrowDirection();
 
-      if (this.hasHitGround() || this.hasHitTarget()) {
-        this.hasHit = true;
-        clearInterval(this.throwInterval);
-        this.playSplashAnimation(); 
-      }
+    let speedX = 20 * this.throwDirection;
+    this.throwInterval = setInterval(() => {
+      this.updatePosition(speedX);
     }, 30);
+  }
+
+  setThrowDirection() {
+    this.throwDirection = this.otherDirection ? -1 : 1;
+  }
+
+  updatePosition(speedX) {
+    this.x += speedX;
+
+    if (this.hasHitGround() || this.hasHitTarget()) {
+      this.hasHit = true;
+      clearInterval(this.throwInterval);
+      this.playSplashAnimation();
+    }
   }
 
   hasHitGround() {
@@ -63,7 +68,7 @@ class ThrowableObject extends MovableObject {
       let enemy = this.world.enemies[i];
       if (this.isColliding(enemy)) {
         enemy.hit();
-        return true; 
+        return true;
       }
     }
     return false;
@@ -72,7 +77,7 @@ class ThrowableObject extends MovableObject {
   playSplashAnimation() {
     this.clearRotation();
     setInterval(() => {
-      this.playAnimation(this.GROUND_IMAGES); 
+      this.playAnimation(this.GROUND_IMAGES);
     }, 75);
   }
 

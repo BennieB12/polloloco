@@ -18,14 +18,6 @@ class Statusbar_bottle extends DrawableObject {
     this.setpercentage(1);
   }
 
-  addBottle() {
-    if (this.bottles < 5) {
-      this.bottles++;
-      this.world.statusBarBottle.setpercentage(this.bottles);
-      this.bottles.push(this.world.throwableObjects);
-    }
-  }
-
   setpercentage(bottles) {
     this.bottles = bottles;
     let path = this.IMAGES[this.resolveImageIndex(bottles)];

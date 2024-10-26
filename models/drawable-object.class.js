@@ -16,15 +16,25 @@ class DrawableObject {
   draw(ctx) {
     ctx.save();
     ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+
+    this.applyCoinFlip(ctx);
+    this.applyColorFilter(ctx);
+
+    ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
+    ctx.restore();
+  }
+
+  applyCoinFlip(ctx) {
     if (this instanceof Coin) {
       let scaleFactor = Math.cos((this.rotationAngle * Math.PI) / 180);
       ctx.scale(scaleFactor, 1);
     }
+  }
+
+  applyColorFilter(ctx) {
     if (this instanceof Minichicken) {
       ctx.filter = this.randomColor;
     }
-    ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
-    ctx.restore();
   }
 
   drawFrame(ctx) {
