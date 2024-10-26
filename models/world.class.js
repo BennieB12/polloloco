@@ -54,8 +54,8 @@ class World {
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {
-        if (this.character.isJumping && this.character.width + this.character.height < enemy.y + enemy.height) {
-            this.damageEnemy(enemy); 
+        if (this.character.isJumping && this.character.width + this.character.height < enemy.y) {
+            this.damageEnemy(enemy);
         } else {
             this.character.hit();
         }

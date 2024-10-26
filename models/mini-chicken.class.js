@@ -1,7 +1,5 @@
 class Minichicken extends MovableObject {
     y = 360;
-    speed = 10 + Math.random() * 1000;
-    x = 700 + Math.random() * 1000;
     height = 60;
     width = 30;
     energy = 4;
@@ -18,11 +16,13 @@ class Minichicken extends MovableObject {
     ];
 
     randomColor = `hue-rotate(${Math.random() * 360}deg)`;
-    constructor(x) {
+
+    constructor(x, speed) {
       super().loadImage(this.IMAGES_WALKING[0]);
       this.loadImages(this.IMAGES_WALKING);
-      this.speed = 0.25 + Math.random() * 0.45;
       this.x = x;
+      this.speed = speed;
+      this.applyGravity();
       this.animate();
     }
 
@@ -30,11 +30,17 @@ class Minichicken extends MovableObject {
       setInterval(() => {
         this.moveLeft();
       }, 1000 / 60);
+
+      setInterval(() => {
+        this.jump( 18 + Math.random() * 10);
+      }, 750+ Math.random());
+
       setInterval(() => { 
         this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
         this.handleAnimation();
       }, 100);
     }
+
 
     handleAnimation() {
       if (this.isDead()) {

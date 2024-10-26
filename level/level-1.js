@@ -1,13 +1,14 @@
 const level1 = new Level(
   [
-    new Chicken(300 + Math.random() * 2000),
-    new Chicken(800 + Math.random() * 2000),
-    new Chicken(600 + Math.random() * 2000),
-    new Chicken(900 + Math.random() * 2000),
-    new Chicken(1100 + Math.random() * 2000),
-    new Minichicken(450 + Math.random() * 2000),
-    new Minichicken(450 + Math.random() * 2000),
-    new Minichicken(450 + Math.random() * 2000),
+    new Chicken(300 + Math.random() * 2000, 0.25 + Math.random() * 0.45),
+    new Chicken(800 + Math.random() * 2000, 0.25 + Math.random() * 0.45),
+    new Chicken(600 + Math.random() * 2000, 0.25 + Math.random() * 0.45),
+    new Chicken(900 + Math.random() * 2000, 0.25 + Math.random() * 0.45),
+    new Chicken(1100 + Math.random() * 2000, 0.25 + Math.random() * 0.45),
+    new Minichicken(450 + Math.random() * 2000,  0.7 + Math.random() * 0.45),
+    new Minichicken(450 + Math.random() * 2000,  0.7 + Math.random() * 0.45),
+    new Minichicken(450 + Math.random() * 2000,  0.7 + Math.random() * 0.45),
+    new Endboss(),
   ],
   [
     new Cloud("img/5_background/layers/4_clouds/2.png", 0, 0),
@@ -24,7 +25,6 @@ const level1 = new Level(
     new Cloud("img/5_background/layers/4_clouds/1.png", 1910, 0),
     new Cloud("img/5_background/layers/4_clouds/1.png", 2040, 0),
     new Cloud("img/5_background/layers/4_clouds/1.png", 2200, 0),
-    new Endboss(),
   ],
   [
     new BackgroundObject("img/5_background/layers/air.png", -719),
@@ -60,9 +60,9 @@ const level1 = new Level(
     new Coin(1700 + Math.random() * 2000),
   ],
   [
-    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 1000),
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 300 + Math.random() * 176),
     new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 300),
-    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 900),
-    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 1200),
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 900 + Math.random() * 900),
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1200 + Math.random() * 1000),
   ]
 );

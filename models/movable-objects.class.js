@@ -16,6 +16,8 @@ class MovableObject extends DrawableObject {
       if (this.aboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.accelaration;
+      } else if (this instanceof Minichicken) {
+        this.y = 360;
       } else {
         this.isJumping = false;
         this.y = 320;
@@ -36,18 +38,17 @@ class MovableObject extends DrawableObject {
     let offsetY = 40;
 
     if (mo instanceof Chicken || mo instanceof Minichicken) {
-        offsetX = 10;
-        offsetY = 0;
+      offsetX = 10;
+      offsetY = 0;
     }
 
     return (
-        this.x + this.width - offsetX > mo.x &&
-        this.y + this.height - offsetY > mo.y &&
-        this.x + offsetX < mo.x + mo.width &&
-        this.y + offsetY < mo.y + mo.height
+      this.x + this.width - offsetX > mo.x &&
+      this.y + this.height - offsetY > mo.y &&
+      this.x + offsetX < mo.x + mo.width &&
+      this.y + offsetY < mo.y + mo.height
     );
   }
-
 
   hit() {
     this.energy -= 5;
@@ -76,10 +77,10 @@ class MovableObject extends DrawableObject {
     this.x -= this.speed;
   }
 
-  jump() {
-    this.speedY = 35;
+  jump(speedY = 35) {
+    this.speedY = speedY;
     this.isJumping = true;
-    if (this.isJumping === true) {
+    if (this.isJumping) {
       this.standingTimer = 0;
     }
   }
