@@ -1,10 +1,10 @@
 class Minichicken extends MovableObject {
-  y = 360;
+  y;
   height = 60;
   width = 30;
   energy = 4;
   animationSpeed = 1;
-  jumpHeight = 20 + Math.random() * 10;
+  groundLevel = 360;
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_small/1_walk/1_w.png",

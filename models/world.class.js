@@ -30,15 +30,9 @@ class World {
     setInterval(() => {
       if (this.gameStarted) {
         this.checkCollision();
-        this.checkThrowObjects();
+        this.character.handleThrow();
       }
     }, 200);
-  }
-
-  checkThrowObjects() {
-    if (this.keyboard.D && this.character.bottles > 0) {
-      this.character.throwBottle();
-    }
   }
 
   checkCollision() {

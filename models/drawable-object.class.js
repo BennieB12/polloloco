@@ -8,18 +8,27 @@ class DrawableObject {
   currentImage = 0;
   rotationAngle = 0;
 
+
+
   loadImage(path) {
     this.img = new Image();
     this.img.src = path;
   }
 
+  
+  loadImages(arr) {
+    arr.forEach((path) => {
+      let img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+    });
+  }
+
   draw(ctx) {
     ctx.save();
     ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-
     this.CoinFlip(ctx);
     this.ColorFilter(ctx);
-
     ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
     ctx.restore();
   }
@@ -42,7 +51,8 @@ class DrawableObject {
       this instanceof Character ||
       this instanceof Chicken ||
       this instanceof ThrowableObject ||
-      this instanceof Minichicken
+      this instanceof Minichicken ||
+      this instanceof Endboss 
     ) {
       ctx.beginPath();
       ctx.lineWidth = "1";
@@ -76,13 +86,5 @@ class DrawableObject {
       ctx.rect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
       ctx.stroke();
     }
-  }
-
-  loadImages(arr) {
-    arr.forEach((path) => {
-      let img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
   }
 }

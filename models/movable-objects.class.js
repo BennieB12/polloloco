@@ -4,22 +4,20 @@ class MovableObject extends DrawableObject {
   speedY = 0;
   accelaration = 5;
   energy;
-  lastHit = 0;
-  bottles = 1;
+  bottles;
   isJumping = false;
   animationSpeed = 5;
   standingTimer = 0;
-  deadAnimationPlayed = false;
+  groundLevel = 320;
+  jumpHeight = 20 + Math.random() * 10;
+
 
   applyGravity() {
     setInterval(() => {
       if (this.aboveGround() || this.speedY > 0) {
         this.setAcceleration();
-      } else if (this instanceof Minichicken) {
-        this.y = 360;
       } else {
-        this.isJumping = false;
-        this.y = 320;
+        this.onGround();
       }
     }, 1000 / 25);
   }
@@ -34,15 +32,21 @@ class MovableObject extends DrawableObject {
     if (this instanceof ThrowableObject) {
       return true;
     } else {
-      return this.y < 300;
+      return this.y < this.groundLevel;
     }
+  }
+
+  onGround() {
+    this.isJumping = false;
+    this.y = this.groundLevel;
+    this.speedY = 0;
   }
 
   isColliding(mo) {
     let offsetX = 40;
     let offsetY = 40;
 
-    if (mo instanceof Chicken || mo instanceof Minichicken) {
+    if (mo instanceof Chicken || mo instanceof Minichicken || this instanceof Endboss) {
       offsetX = 15;
       offsetY = 5;
     }
@@ -56,12 +60,6 @@ class MovableObject extends DrawableObject {
     return collidingHorizontally && collidingVertically;
   }
 
-  getDamage() {
-    this.reduceEnergy(5);
-    this.updateLastHit();
-    this.world.statusBarHealth.setpercentage(this.energy);
-  }
-
   reduceEnergy(amount) {
     this.energy -= amount;
     if (this.energy < 0) {
@@ -71,6 +69,12 @@ class MovableObject extends DrawableObject {
 
   updateLastHit() {
     this.lastHit = new Date().getTime();
+  }
+  
+  getDamage() {
+    this.reduceEnergy(5);
+    this.updateLastHit();
+    this.world.statusBarHealth.setpercentage(this.energy);
   }
 
   isHurt() {
@@ -104,15 +108,6 @@ class MovableObject extends DrawableObject {
       this.speed = -this.speed;
       this.otherDirection = !this.otherDirection;
       this.moveLeft();
-    }
-  }
-
-  throwBottle() {
-    if (this.bottles > 0) {
-      this.bottles--;
-      let bottle = new ThrowableObject(this.x, this.y, this.otherDirection);
-      this.world.throwableObjects.push(bottle);
-      this.world.statusBarBottle.setpercentage(this.bottles);
     }
   }
 

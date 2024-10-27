@@ -1,6 +1,7 @@
 class ThrowableObject extends MovableObject {
   throwDirection = 1;
-  hasHit = false;
+  splashPlayed = false;
+  currentImage = 0;
 
   ROTATE_IMAGES = [
     "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
@@ -9,7 +10,7 @@ class ThrowableObject extends MovableObject {
     "img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png",
   ];
 
-  GROUND_IMAGES = [
+  SPLASH_IMAGES = [
     "img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png",
     "img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png",
     "img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png",
@@ -20,29 +21,48 @@ class ThrowableObject extends MovableObject {
 
   constructor(x, y, otherDirection, world) {
     super();
-    this.loadImage("img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png");
+    this.loadImage(this.ROTATE_IMAGES[0]);
     this.loadImages(this.ROTATE_IMAGES);
-    this.loadImages(this.GROUND_IMAGES);
+    this.loadImages(this.SPLASH_IMAGES);
     this.otherDirection = otherDirection;
     this.world = world;
     this.x = x;
     this.y = y;
     this.height = 60;
     this.width = 50;
-    this.throw(50, 100);
-    this.animateRotation();
-}
+    this.throw(15, 20);
+  }
 
-  throw() {
-    this.speedY = 30;
+  throw(speedY, speedX) {
+    this.speedY = speedY;
+    this.speedX = speedX;
     this.applyGravity();
-
     this.setThrowDirection();
-
-    let speedX = 20 * this.throwDirection;
-    this.throwInterval = setInterval(() => {
+    speedX = speedX * this.throwDirection;
+    
+    this.throwInterval = setInterval(() => { 
       this.updatePosition(speedX);
-    }, 30);
+      if (this.aboveGround()) {
+        this.animateRotation();
+      } else if (!this.splashPlayed && this.onGround()) { 
+        clearInterval(this.throwInterval);
+        this.playSplashAnimation();
+        this.splashPlayed = true;
+      }
+    }, 25);
+  }
+
+  animateRotation() {
+    this.rotationInterval = setInterval(() => {
+      this.playAnimation(this.ROTATE_IMAGES, this.animationSpeed);
+    }, 1000 / 60);
+  }
+
+  playSplashAnimation() {
+    clearInterval(this.rotationInterval);
+    this.splashInterval = setInterval(() => {
+      this.playAnimation(this.SPLASH_IMAGES, this.animationSpeed);
+    }, 1000 / 60);
   }
 
   setThrowDirection() {
@@ -51,45 +71,6 @@ class ThrowableObject extends MovableObject {
 
   updatePosition(speedX) {
     this.x += speedX;
-
-    if (this.hasHitGround() || this.hasHitTarget()) {
-      this.hasHit = true;
-      clearInterval(this.throwInterval);
-      this.playSplashAnimation();
-    }
   }
 
-  hasHitGround() {
-    return this.y >= 300;
-  }
-
-  hasHitTarget() {
-    for (let i = 0; i < this.world.enemies.length; i++) {
-      let enemy = this.world.enemies[i];
-      if (this.isColliding(enemy)) {
-        enemy.hit();
-        return true;
-      }
-    }
-    return false;
-  }
-
-  playSplashAnimation() {
-    this.clearRotation();
-    setInterval(() => {
-      this.playAnimation(this.GROUND_IMAGES);
-    }, 75);
-  }
-
-  animateRotation() {
-    this.rotationInterval = setInterval(() => {
-      if (!this.hasHit) {
-        this.playAnimation(this.ROTATE_IMAGES);
-      }
-    }, 75);
-  }
-
-  clearRotation() {
-    clearInterval(this.rotationInterval);
-  }
 }

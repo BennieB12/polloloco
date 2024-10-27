@@ -4,7 +4,10 @@ class Character extends MovableObject {
   width = 60;
   speed = 6;
   energy = 500;
+  lastHit = 0;
+  bottles = 1;
   isPlayingSound = false;
+  isThrowing = false;
 
   IMAGES_WALKING = [
     "img/2_character_pepe/2_walk/W-21.png",
@@ -102,13 +105,32 @@ class Character extends MovableObject {
     this.handleJump();
     this.startPoint();
 
+
     if (this.notMoving()) {
       this.countIdle();
     } else {
       this.standingTimer = 0;
     }
+    this.handleThrow();
   }
 
+  handleThrow() {
+    if (this.world.keyboard.D && this.ableToThrow() && !this.isThrowing) {
+      this.throwBottle();
+      this.isThrowing = true;
+    } else if (!this.world.keyboard.D) {
+      this.isThrowing = false;
+    }
+  }
+
+  throwBottle() {
+    if (this.ableToThrow()) {
+      this.bottles--;
+      let bottle = new ThrowableObject(this.x, this.y, this.otherDirection);
+      this.world.throwableObjects.push(bottle);
+      this.world.statusBarBottle.setpercentage(this.bottles);
+    }
+  }
   handleDirection() {
     this.WALKING_SOUND.pause();
     if (this.canMoveRight()) {
@@ -148,6 +170,7 @@ class Character extends MovableObject {
     }
     this.WALKING_SOUND.pause();
   }
+  
   playWalkingSound() {
     if (this.noSound()) {
       this.WALKING_SOUND.play();
@@ -173,6 +196,10 @@ class Character extends MovableObject {
       this.WALKING_SOUND.pause();
       this.isPlayingSound = false;
     }
+  }
+
+  ableToThrow() {
+    return this.bottles > 0;
   }
 
   countIdle() {
