@@ -52,9 +52,7 @@ class MovableObject extends DrawableObject {
 
   checkCollision(mo, offsetX, offsetY) {
     const collidingHorizontally = this.x + this.width - offsetX > mo.x && this.x + offsetX < mo.x + mo.width;
-
     const collidingVertically = this.y + this.height - offsetY > mo.y && this.y + offsetY < mo.y + mo.height;
-
     return collidingHorizontally && collidingVertically;
   }
 
