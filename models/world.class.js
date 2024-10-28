@@ -8,6 +8,7 @@ class World {
   statusBarHealth = new Statusbar_health();
   statusBarCoin = new Statusbar_coin();
   statusBarBottle = new Statusbar_bottle();
+  statusBarEnemy = new Statusbar_Enemy();
   throwableObjects = [];
   gameOver = false;
   gameStarted = false;
@@ -110,6 +111,7 @@ class World {
 
       this.ctx.translate(-this.camera_x, 0);
       this.addToMap(this.statusBarHealth);
+      this.addToMap(this.statusBarEnemy);
       this.addToMap(this.statusBarCoin);
       this.addToMap(this.statusBarBottle);
       this.ctx.translate(this.camera_x, 0);
