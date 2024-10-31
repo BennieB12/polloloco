@@ -1,7 +1,8 @@
 class ThrowableObject extends MovableObject {
   throwDirection = 1;
-  splashPlayed = false;
-  currentImage = 0;
+  splashAnimation = false;
+  animationSpeed = 1;
+  y;
 
   ROTATE_IMAGES = [
     "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
@@ -24,45 +25,49 @@ class ThrowableObject extends MovableObject {
     this.loadImage(this.ROTATE_IMAGES[0]);
     this.loadImages(this.ROTATE_IMAGES);
     this.loadImages(this.SPLASH_IMAGES);
+    this.applyGravity();
+    this.throw(15, 10);
     this.otherDirection = otherDirection;
     this.world = world;
     this.x = x;
     this.y = y;
     this.height = 60;
-    this.width = 50;
-    this.throw(15, 20);
+    this.width = 40;
   }
 
-  throw(speedY, speedX) {
-    this.speedY = speedY;
+  throw(speedX, speedY) {
     this.speedX = speedX;
-    this.applyGravity();
-    this.setThrowDirection();
-    speedX = speedX * this.throwDirection;
-    
-    this.throwInterval = setInterval(() => { 
+    this.speedY = speedY;
+    this.animateRotation();
+    setInterval(() => {
+      this.setThrowDirection();
       this.updatePosition(speedX);
-      if (this.aboveGround()) {
-        this.animateRotation();
-      } else if (!this.splashPlayed && this.onGround()) { 
-        clearInterval(this.throwInterval);
-        this.playSplashAnimation();
-        this.splashPlayed = true;
-      }
-    }, 25);
+      this.checkGround();
+    }, 30);
+  }
+
+  checkGround() {
+    if (this.y >= this.groundLevel) {
+      this.splashAnimation = true;
+      this.playSplashAnimation();
+      this.speedY = 0;
+      this.y = this.groundLevel + 40; 
+    } else {
+      this.splashAnimation = false;
+      this.animateRotation();
+    }
   }
 
   animateRotation() {
-    this.rotationInterval = setInterval(() => {
-      this.playAnimation(this.ROTATE_IMAGES, this.animationSpeed);
-    }, 1000 / 60);
+    setInterval(() => {
+      this.playAnimation(this.ROTATE_IMAGES, 1);
+    }, 1000 / 80);
   }
 
   playSplashAnimation() {
-    clearInterval(this.rotationInterval);
-    this.splashInterval = setInterval(() => {
-      this.playAnimation(this.SPLASH_IMAGES, this.animationSpeed);
-    }, 1000 / 60);
+    setInterval(() => {
+      this.playAnimation(this.SPLASH_IMAGES, 1);
+    }, 1000 / 80);
   }
 
   setThrowDirection() {
@@ -70,7 +75,7 @@ class ThrowableObject extends MovableObject {
   }
 
   updatePosition(speedX) {
+    speedX = speedX * this.throwDirection;
     this.x += speedX;
   }
-
 }

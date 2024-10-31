@@ -1,7 +1,7 @@
 class MovableObject extends DrawableObject {
   speed;
   otherDirection = false;
-  speedY = 0;
+  speedY = 2;
   currentImage = 0;
   accelaration = 5;
   energy;
@@ -39,7 +39,7 @@ class MovableObject extends DrawableObject {
   onGround() {
     this.isJumping = false;
     this.y = this.groundLevel;
-    this.speedY = 0;
+     this.speedY = 0;
   }
 
   isColliding(mo) {
@@ -55,11 +55,10 @@ class MovableObject extends DrawableObject {
   }
 
   calculateDistance(mo) {
-    const dx = (this.x + this.width / 2) - (mo.x + mo.width / 2);
-    const dy = (this.y + this.height / 2) - (mo.y + mo.height / 2);
+    const dx = this.x + this.width / 2 - (mo.x + mo.width / 2);
+    const dy = this.y + this.height / 2 - (mo.y + mo.height / 2);
     return Math.sqrt(dx * dx + dy * dy);
-}
-
+  }
 
   checkCollision(mo, offsetX, offsetY) {
     const collidingHorizontally = this.x + this.width - offsetX > mo.x && this.x + offsetX < mo.x + mo.width;
@@ -67,22 +66,6 @@ class MovableObject extends DrawableObject {
     return collidingHorizontally && collidingVertically;
   }
 
-  checkEnemyCollison(enemies, offsetX, offsetY) {
-    const collidingEnemies = enemies.filter(enemy => this.checkCollision(enemy, offsetX, offsetY));
-
-    if (collidingEnemies.length > 1) {
-        let nearestEnemy = collidingEnemies.reduce((nearest, current) => {
-            const distanceToCurrent = this.calculateDistance(current);
-            const distanceToNearest = this.calculateDistance(nearest);
-            return distanceToCurrent < distanceToNearest ? current : nearest;
-        });
-
-        this.handleEnemyCollision(nearestEnemy);
-    } else if (collidingEnemies.length === 1) {
-        // Kollision mit dem einzelnen Feind verarbeiten
-        this.handleEnemyCollision(collidingEnemies[0]);
-    }
-}
 
   getDamage() {
     if (this instanceof Character) {
@@ -92,6 +75,8 @@ class MovableObject extends DrawableObject {
       this.world.statusBarHealth.setpercentage(this.energy);
     } else if (this instanceof Chicken || Minichicken) {
       this.reduceEnergy(10);
+    } else if (this instanceof Endboss) {
+      this.reduceEnergy(6);
     }
   }
 

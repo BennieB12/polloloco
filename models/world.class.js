@@ -105,7 +105,7 @@ class World {
   }
 
   checkCollision() {
-    this.level.enemies.forEach((enemy, enemyIndex) => this.handleEnemyCollision(enemy));
+    this.level.enemies.forEach((enemy) => this.handleEnemyCollision(enemy));
     this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
     this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
     this.throwableObjects.forEach((bottle, bottleIndex) =>
@@ -114,6 +114,7 @@ class World {
       )
     );
   }
+
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {

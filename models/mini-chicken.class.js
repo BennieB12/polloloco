@@ -52,7 +52,7 @@ class Minichicken extends MovableObject {
 
   jump() {
     setInterval(() => {
-      if (!this.remove) {
+      if (!this.deadAnimationPlayed) {
         super.jump(this.jumpHeight);
       }
     }, 1800 + Math.random() * 100);
@@ -63,8 +63,9 @@ class Minichicken extends MovableObject {
     this.playAnimation(this.IMAGES_DEAD);
     this.deadAnimationPlayed = true;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
+    this.speed = 0;
     setInterval(() => {
       this.remove = true;
-    }, 1000);
+    }, 700);
   }
 }
