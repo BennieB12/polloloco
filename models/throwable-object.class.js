@@ -2,7 +2,10 @@ class ThrowableObject extends MovableObject {
   throwDirection = 1;
   splashAnimation = false;
   animationSpeed = 1;
+  remove = false;
   y;
+  groundLevel = 375;
+  rotationInterval = null;
 
   ROTATE_IMAGES = [
     "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
@@ -22,7 +25,7 @@ class ThrowableObject extends MovableObject {
 
   constructor(x, y, otherDirection, world) {
     super();
-    this.loadImage(this.ROTATE_IMAGES[0]);
+    this.loadImage(this.ROTATE_IMAGES[1]);
     this.loadImages(this.ROTATE_IMAGES);
     this.loadImages(this.SPLASH_IMAGES);
     this.applyGravity();
@@ -48,34 +51,56 @@ class ThrowableObject extends MovableObject {
 
   checkGround() {
     if (this.y >= this.groundLevel) {
-      this.splashAnimation = true;
-      this.playSplashAnimation();
+      this.y = this.groundLevel;
       this.speedY = 0;
-      this.y = this.groundLevel + 40; 
-    } else {
-      this.splashAnimation = false;
-      this.animateRotation();
+      this.speedX = 0;
+
+      if (!this.splashAnimation) {
+        this.splashAnimation = true;
+        this.playSplashAnimation();
+
+        if (this.rotationInterval) {
+          clearInterval(this.rotationInterval);
+          this.rotationInterval = null;
+        }
+      }
     }
   }
 
   animateRotation() {
-    setInterval(() => {
-      this.playAnimation(this.ROTATE_IMAGES, 1);
-    }, 1000 / 80);
+    if (!this.rotationInterval) {
+      this.rotationInterval = setInterval(() => {
+        if (!this.splashAnimation) {
+          this.playAnimation(this.ROTATE_IMAGES, 1);
+        }
+      }, 1000 / 80);
+    }
   }
 
   playSplashAnimation() {
-    setInterval(() => {
-      this.playAnimation(this.SPLASH_IMAGES, 1);
+    let frameIndex = 0;
+    const splashInterval = setInterval(() => {
+        if (frameIndex < this.SPLASH_IMAGES.length) {
+            this.loadImage(this.SPLASH_IMAGES[frameIndex]);
+            frameIndex++;
+        } else {
+          setInterval(() => {
+            clearInterval(splashInterval);
+            this.remove = true;
+          }, 50);
+            
+        }
     }, 1000 / 80);
-  }
+}
 
   setThrowDirection() {
     this.throwDirection = this.otherDirection ? -1 : 1;
   }
 
   updatePosition(speedX) {
-    speedX = speedX * this.throwDirection;
-    this.x += speedX;
+    if (!this.splashAnimation) {
+      speedX = speedX * this.throwDirection;
+      this.x += speedX;
+    }
   }
 }
