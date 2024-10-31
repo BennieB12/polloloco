@@ -5,6 +5,7 @@ class Chicken extends MovableObject {
   energy = 8;
   animationSpeed = 1;
   deadAnimationPlayed = false;
+  remove = false;
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",
@@ -19,6 +20,7 @@ class Chicken extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.speed = speed;
+    this.speed = 2 + Math.random() * 6;
     this.x = x;
     this.animate();
   }
@@ -42,6 +44,8 @@ class Chicken extends MovableObject {
     this.playAnimation(this.IMAGES_DEAD);
     this.deadAnimationPlayed = true;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
-    this.remove();
+    setInterval(() => {
+      this.remove = true; 
+    }, 1000);
   }
 }

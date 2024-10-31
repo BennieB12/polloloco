@@ -64,6 +64,7 @@ class World {
   }
 
   drawObjects() {
+    this.level.enemies = this.level.enemies.filter(enemy => !enemy.remove);
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.coins);

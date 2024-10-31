@@ -6,6 +6,7 @@ class Minichicken extends MovableObject {
   animationSpeed = 1;
   groundLevel = 360;
   deadAnimationPlayed = false;
+  remove = false;
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_small/1_walk/1_w.png",
@@ -51,13 +52,19 @@ class Minichicken extends MovableObject {
 
   jump() {
     setInterval(() => {
-      super.jump(this.jumpHeight);
+      if (!this.remove) {
+        super.jump(this.jumpHeight);
+      }
     }, 1800 + Math.random() * 100);
+    return;
   }
 
   playDeadAnimation() {
     this.playAnimation(this.IMAGES_DEAD);
     this.deadAnimationPlayed = true;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
+    setInterval(() => {
+      this.remove = true;
+    }, 1000);
   }
 }
