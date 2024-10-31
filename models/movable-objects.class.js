@@ -54,11 +54,35 @@ class MovableObject extends DrawableObject {
     return this.checkCollision(mo, offsetX, offsetY);
   }
 
+  calculateDistance(mo) {
+    const dx = (this.x + this.width / 2) - (mo.x + mo.width / 2);
+    const dy = (this.y + this.height / 2) - (mo.y + mo.height / 2);
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+
   checkCollision(mo, offsetX, offsetY) {
     const collidingHorizontally = this.x + this.width - offsetX > mo.x && this.x + offsetX < mo.x + mo.width;
     const collidingVertically = this.y + this.height - offsetY > mo.y && this.y + offsetY < mo.y + mo.height;
     return collidingHorizontally && collidingVertically;
   }
+
+  checkEnemyCollison(enemies, offsetX, offsetY) {
+    const collidingEnemies = enemies.filter(enemy => this.checkCollision(enemy, offsetX, offsetY));
+
+    if (collidingEnemies.length > 1) {
+        let nearestEnemy = collidingEnemies.reduce((nearest, current) => {
+            const distanceToCurrent = this.calculateDistance(current);
+            const distanceToNearest = this.calculateDistance(nearest);
+            return distanceToCurrent < distanceToNearest ? current : nearest;
+        });
+
+        this.handleEnemyCollision(nearestEnemy);
+    } else if (collidingEnemies.length === 1) {
+        // Kollision mit dem einzelnen Feind verarbeiten
+        this.handleEnemyCollision(collidingEnemies[0]);
+    }
+}
 
   getDamage() {
     if (this instanceof Character) {
