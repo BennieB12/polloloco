@@ -2,7 +2,8 @@ class Endboss extends MovableObject {
   height = 300;
   width = 100;
   energy = 40;
-  animationSpeed = 2;
+  animationSpeed = 0.7;
+  groundLevel = 140;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -50,8 +51,8 @@ class Endboss extends MovableObject {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImages(this.IMAGES_WALKING);
     this.x = 2850;
-    this.y = 140;
-    this.speed = 9;
+    this.speed = 4;
+    this.applyGravity();
     this.animate();
   }
 
@@ -60,8 +61,15 @@ class Endboss extends MovableObject {
       this.moveLeft();
       this.checkLevelBegin();
       this.checkLevelEnd();
-      this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
+      this.playAnimation(this.IMAGES_WALKING, 3);
     }, 1000 / 60);
+    this.playAnimation(this.IMAGES_ATTACK, 3);
+    setInterval(() => {
+      this.jump(this.jumpHeight);
+      if(this.jump()){
+
+      }
+    }, 3000);
   }
 
   checkLevelBegin() {

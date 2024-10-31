@@ -27,75 +27,10 @@ class World {
     this.character.world = this;
   }
 
-  run() {
-    setInterval(() => {
-      if (this.gameStarted) {
-        this.checkCollision();
-        this.character.handleThrow();
-      }
-    }, 200);
-  }
-
-  checkCollision() {
-    this.level.enemies.forEach((enemy) => this.handleEnemyCollision(enemy));
-    this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
-    this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
-    this.throwableObjects.forEach((bottle, bottleIndex) =>
-      this.level.enemies.forEach((enemy, enemyIndex) =>
-        this.handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex)
-      )
-    );
-  }
-
-  handleEnemyCollision(enemy) {
-    if (this.character.aboveGround() && this.character.isColliding(enemy)) {
-      this.damage(enemy);
-      this.character.jump();
-    } else if (this.character.isColliding(enemy)){
-        this.character.getDamage();
-      }
-  }
-
-  damage(enemy) {
-    enemy.energy -= 8;
-    this.enemyDead(enemy);
-  }
-
-  enemyDead(enemy) {
-    if (enemy.energy <= 0) {
-      this.level.enemies.splice(this.level.enemies.indexOf(enemy), 1);
+  clearAllIntervals() {
+    for (let i = 0; i < array.length; i++) {
+      window.clearInterval(i);
     }
-  }
-
-  checkCollect(index, item, type) {
-    if (this.character.isColliding(item)) {
-      if (type === "coin") {
-        this.collectCoin(index);
-      } else if (type === "bottle") {
-        this.collectBottle(index);
-      }
-    }
-  }
-
-  handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
-    if (bottle.isColliding(enemy)) {
-      enemy.energy -= 10;
-      if (this.enemyDead(enemy)) {
-        this.level.enemies.splice(enemyIndex, 1);
-      }
-      this.throwableObjects.splice(bottleIndex, 1);
-    }
-  }
-
-  collectBottle(index) {
-    this.level.bottles.splice(index, 1);
-    this.character.bottles++;
-    this.statusBarBottle.setpercentage(this.character.bottles);
-  }
-
-  collectCoin(index) {
-    this.level.coins.splice(index, 1);
-    this.statusBarCoin.addCoin();
   }
 
   draw() {
@@ -103,27 +38,37 @@ class World {
     if (!this.gameStarted) {
       this.showStartScreen();
     } else {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.clearBoard();
       this.ctx.translate(this.camera_x, 0);
       this.addObjectsToMap(this.level.backgroundObjects);
       this.addToMap(this.character);
-      this.addObjectsToMap(this.level.clouds);
-
-      this.ctx.translate(-this.camera_x, 0);
-      this.addToMap(this.statusBarHealth);
-      this.addToMap(this.statusBarEnemy);
-      this.addToMap(this.statusBarCoin);
-      this.addToMap(this.statusBarBottle);
-      this.ctx.translate(this.camera_x, 0);
-
-      this.addObjectsToMap(this.level.enemies);
-      this.addObjectsToMap(this.level.coins);
-      this.addObjectsToMap(this.level.bottles);
-      this.addObjectsToMap(this.throwableObjects);
+      this.drawBars();
+      this.drawObjects();
       this.ctx.translate(-this.camera_x, 0);
     }
 
     requestAnimationFrame(() => this.draw());
+  }
+
+  clearBoard() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  drawBars() {
+    this.ctx.translate(-this.camera_x, 0);
+    this.addToMap(this.statusBarHealth);
+    this.addToMap(this.statusBarEnemy);
+    this.addToMap(this.statusBarCoin);
+    this.addToMap(this.statusBarBottle);
+    this.ctx.translate(this.camera_x, 0);
+  }
+
+  drawObjects() {
+    this.addObjectsToMap(this.level.clouds);
+    this.addObjectsToMap(this.level.enemies);
+    this.addObjectsToMap(this.level.coins);
+    this.addObjectsToMap(this.level.bottles);
+    this.addObjectsToMap(this.throwableObjects);
   }
 
   addObjectsToMap(objects) {
@@ -149,23 +94,75 @@ class World {
     this.ctx.restore();
   }
 
+  run() {
+    setInterval(() => {
+      if (this.gameStarted) {
+        this.checkCollision();
+        this.character.handleThrow();
+      }
+    }, 200);
+  }
+
+  checkCollision() {
+    this.level.enemies.forEach((enemy, enemyIndex) => this.handleEnemyCollision(enemy));
+    this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
+    this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
+    this.throwableObjects.forEach((bottle, bottleIndex) =>
+      this.level.enemies.forEach((enemy, enemyIndex) =>
+        this.handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex)
+      )
+    );
+  }
+
+  handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
+    if (bottle.isColliding(enemy)) {
+      enemy.getDamage();
+      if (enemy.energy <= 0) {
+        this.level.enemies.splice(enemyIndex, enemy);
+      }
+      this.throwableObjects.splice(bottleIndex, enemy);
+    }
+  }
+
+  handleEnemyCollision(enemy) {
+    if (this.character.aboveGround() && this.character.isColliding(enemy)) {
+      enemy.getDamage();
+      this.character.jump();
+    } else if (this.character.isColliding(enemy)) {
+      this.character.getDamage();
+    }
+  }
+
+  checkCollect(index, item, type) {
+    if (this.character.isColliding(item)) {
+      if (type === "coin") {
+        this.character.collectCoin(index);
+      } else if (type === "bottle") {
+        this.character.collectBottle(index);
+      }
+    }
+  }
+
   showStartScreen() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const startImage = new Image();
+    startImage.src = "img/9_intro_outro_screens/start/startscreen_1.png";
 
-    this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    startImage.onload = () => {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.drawImage(startImage, 0, 0, this.canvas.width, this.canvas.height);
 
-    this.ctx.font = "bold 60px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.fillText("Press SPACE to Start", this.canvas.width / 2, this.canvas.height / 2);
+      this.ctx.font = "bold 60px Arial";
+      this.ctx.fillStyle = "white";
+      this.ctx.textAlign = "center";
+      this.ctx.fillText("Press SPACE to Start", this.canvas.width / 2, this.canvas.height - 200);
+    };
 
     window.addEventListener("keydown", (event) => {
       if (event.code === "Space") {
-        this.gameStarted = true;
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.startGame();
       }
     });
+
     this.canvas.addEventListener("click", () => {
       this.startGame();
     });

@@ -26,14 +26,8 @@ class Minichicken extends MovableObject {
   }
 
   animate() {
-    setInterval(() => {
-      this.moveLeft();
-      this.checkLevelBegin();
-    }, 1000 / 60);
-
-    setInterval(() => {
-      this.jump(this.jumpHeight);
-    }, 800 + Math.random());
+    this.walk();
+    this.jump();
 
     setInterval(() => {
       this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
@@ -48,12 +42,25 @@ class Minichicken extends MovableObject {
     }
   }
 
+  walk(){
+        setInterval(() => {
+      this.moveLeft();
+      this.checkLevelBegin();
+    }, 1000 / 60);
+  }
+
+  jump() {
+    setInterval(() => {
+      super.jump(this.jumpHeight);
+    }, 1800 + Math.random() * 100);
+  }
+
   playDeadAnimation() {
     if (!this.deadAnimationPlayed) {
       this.playAnimation(this.IMAGES_DEAD, this.animationSpeed);
       this.deadAnimationPlayed = true;
     } else {
-      this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length]];
+      this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length -1 ]];
     }
   }
 }

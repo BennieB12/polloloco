@@ -2,15 +2,15 @@ class MovableObject extends DrawableObject {
   speed;
   otherDirection = false;
   speedY = 0;
+  currentImage = 0;
   accelaration = 5;
   energy;
-  bottles;
+  bottles = 1;
   isJumping = false;
   animationSpeed = 5;
   standingTimer = 0;
   groundLevel = 320;
   jumpHeight = 20 + Math.random() * 10;
-
 
   applyGravity() {
     setInterval(() => {
@@ -60,21 +60,19 @@ class MovableObject extends DrawableObject {
     return collidingHorizontally && collidingVertically;
   }
 
-  reduceEnergy(amount) {
-    this.energy -= amount;
-    if (this.energy < 0) {
-      this.energy = 0;
+  getDamage() {
+    if (this instanceof Character) {
+      this.reduceEnergy(5);
+      this.updateLastHit();
+      this.isHurt();
+      this.world.statusBarHealth.setpercentage(this.energy);
+    } else if (this instanceof Chicken) {
+      this.reduceEnergy(10);
     }
   }
 
-  updateLastHit() {
-    this.lastHit = new Date().getTime();
-  }
-  
-  getDamage() {
-    this.reduceEnergy(5);
-    this.updateLastHit();
-    this.world.statusBarHealth.setpercentage(this.energy);
+  reduceEnergy(amount) {
+    this.energy -= amount;
   }
 
   isHurt() {
@@ -83,8 +81,12 @@ class MovableObject extends DrawableObject {
     return timePassed < 0.4;
   }
 
+  updateLastHit() {
+    this.lastHit = new Date().getTime();
+  }
+
   isDead() {
-    return this.energy == 0;
+    return this.energy <= 0;
   }
 
   moveRight() {

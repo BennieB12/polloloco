@@ -5,17 +5,13 @@ class DrawableObject {
   y = 288;
   height = 150;
   width = 50;
-  currentImage = 0;
   rotationAngle = 0;
-
-
 
   loadImage(path) {
     this.img = new Image();
     this.img.src = path;
   }
 
-  
   loadImages(arr) {
     arr.forEach((path) => {
       let img = new Image();
@@ -52,7 +48,7 @@ class DrawableObject {
       this instanceof Chicken ||
       this instanceof ThrowableObject ||
       this instanceof Minichicken ||
-      this instanceof Endboss 
+      this instanceof Endboss
     ) {
       ctx.beginPath();
       ctx.lineWidth = "1";

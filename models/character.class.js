@@ -5,7 +5,6 @@ class Character extends MovableObject {
   speed = 6;
   energy = 100;
   lastHit = 0;
-  bottles = 1;
   isPlayingSound = false;
   isThrowing = false;
 
@@ -105,7 +104,6 @@ class Character extends MovableObject {
     this.handleJump();
     this.startPoint();
 
-
     if (this.notMoving()) {
       this.countIdle();
     } else {
@@ -115,7 +113,7 @@ class Character extends MovableObject {
   }
 
   handleThrow() {
-    if (this.world.keyboard.D && this.ableToThrow() && !this.isThrowing) {
+    if (this.world.keyboard.D && this.enoughBottles() && !this.isThrowing) {
       this.throwBottle();
       this.isThrowing = true;
     } else if (!this.world.keyboard.D) {
@@ -123,14 +121,6 @@ class Character extends MovableObject {
     }
   }
 
-  throwBottle() {
-    if (this.ableToThrow()) {
-      this.bottles--;
-      let bottle = new ThrowableObject(this.x, this.y, this.otherDirection);
-      this.world.throwableObjects.push(bottle);
-      this.world.statusBarBottle.setpercentage(this.bottles);
-    }
-  }
   handleDirection() {
     this.WALKING_SOUND.pause();
     if (this.canMoveRight()) {
@@ -159,6 +149,26 @@ class Character extends MovableObject {
     this.playMovementAnimation();
   }
 
+  throwBottle() {
+    if (this.enoughBottles()) {
+      this.bottles--;
+      let bottle = new ThrowableObject(this.x, this.y, this.otherDirection);
+      this.world.throwableObjects.push(bottle);
+      this.world.statusBarBottle.setpercentage(this.bottles);
+    }
+  }
+
+  collectBottle(index) {
+    this.world.level.bottles.splice(index, 1);
+    this.bottles++;
+    this.world.statusBarBottle.setpercentage(this.bottles);
+  }
+  
+  collectCoin(index) {
+    this.world.level.coins.splice(index, 1);
+    this.world.statusBarCoin.addCoin();
+  }
+
   playDeadAnimation() {
     if (!this.deadAnimationPlayed) {
       this.playAnimation(this.IMAGES_DEAD);
@@ -170,7 +180,7 @@ class Character extends MovableObject {
     }
     this.WALKING_SOUND.pause();
   }
-  
+
   playWalkingSound() {
     if (this.noSound()) {
       this.WALKING_SOUND.play();
@@ -198,7 +208,7 @@ class Character extends MovableObject {
     }
   }
 
-  ableToThrow() {
+  enoughBottles() {
     return this.bottles > 0;
   }
 
