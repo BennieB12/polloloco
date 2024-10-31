@@ -5,6 +5,7 @@ class Minichicken extends MovableObject {
   energy = 4;
   animationSpeed = 1;
   groundLevel = 360;
+  deadAnimationPlayed = false;
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_small/1_walk/1_w.png",
@@ -12,13 +13,13 @@ class Minichicken extends MovableObject {
     "img/3_enemies_chicken/chicken_small/1_walk/3_w.png",
   ];
 
-  IMAGES_DEAD = ["img/3_enemies_chicken/chicken_normal/2_dead/dead.png"];
-
+  IMAGES_DEAD = ["img/3_enemies_chicken/chicken_small/2_dead/dead.png"];
   randomColor = `hue-rotate(${Math.random() * 360}deg)`;
 
   constructor(x, speed) {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImages(this.IMAGES_WALKING);
+    this.loadImages(this.IMAGES_DEAD);
     this.x = x;
     this.speed = speed;
     this.applyGravity();
@@ -26,24 +27,23 @@ class Minichicken extends MovableObject {
   }
 
   animate() {
-    this.walk();
     this.jump();
-
+    this.walk();
     setInterval(() => {
-      this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
-      this.handleAnimation();
+      if (!this.isDead()) {
+        this.handleAnimation();
+      } else if (!this.deadAnimationPlayed) {
+        this.playDeadAnimation();
+      }
     }, 100);
   }
 
   handleAnimation() {
-    if (this.isDead()) {
-      this.playDeadAnimation();
-      return;
-    }
+    this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
   }
 
-  walk(){
-        setInterval(() => {
+  walk() {
+    setInterval(() => {
       this.moveLeft();
       this.checkLevelBegin();
     }, 1000 / 60);
@@ -56,11 +56,8 @@ class Minichicken extends MovableObject {
   }
 
   playDeadAnimation() {
-    if (!this.deadAnimationPlayed) {
-      this.playAnimation(this.IMAGES_DEAD, this.animationSpeed);
-      this.deadAnimationPlayed = true;
-    } else {
-      this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length -1 ]];
-    }
+    this.playAnimation(this.IMAGES_DEAD);
+    this.deadAnimationPlayed = true;
+    this.img = this.imageCache[this.IMAGES_DEAD[0]];
   }
 }

@@ -44,5 +44,4 @@ class Chicken extends MovableObject {
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
     this.remove();
   }
-
 }
