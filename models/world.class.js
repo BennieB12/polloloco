@@ -137,6 +137,7 @@ class World {
     }
   }
 
+
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {
       if (type === "coin") {

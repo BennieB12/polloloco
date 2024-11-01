@@ -46,6 +46,6 @@ class Chicken extends MovableObject {
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
     setInterval(() => {
       this.remove = true; 
-    }, 1000);
+    }, 100);
   }
 }

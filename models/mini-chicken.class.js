@@ -66,6 +66,6 @@ class Minichicken extends MovableObject {
     this.speed = 0;
     setInterval(() => {
       this.remove = true;
-    }, 700);
+    }, 100);
   }
 }

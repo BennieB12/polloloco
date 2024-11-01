@@ -68,12 +68,11 @@ class MovableObject extends DrawableObject {
 
 
   getDamage() {
-    if (this instanceof Character) {
+    if (this instanceof Character && !this.isHurt()) {
       this.reduceEnergy(5);
       this.updateLastHit();
-      this.isHurt();
       this.world.statusBarHealth.setpercentage(this.energy);
-    } else if (this instanceof Chicken || Minichicken) {
+    } else if (this instanceof Chicken || this instanceof Minichicken) {
       this.reduceEnergy(10);
     } else if (this instanceof Endboss) {
       this.reduceEnergy(6);
