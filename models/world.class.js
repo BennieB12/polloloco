@@ -12,6 +12,7 @@ class World {
   throwableObjects = [];
   gameOver = false;
   gameStarted = false;
+  intervals = [];
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -28,9 +29,7 @@ class World {
   }
 
   clearAllIntervals() {
-    for (let i = 0; i < array.length; i++) {
-      window.clearInterval(i);
-    }
+    this.intervals.forEach((interval) => clearInterval(interval));
   }
 
   draw() {
@@ -64,8 +63,8 @@ class World {
   }
 
   drawObjects() {
-    this.level.enemies = this.level.enemies.filter(enemy => !enemy.remove);
-    this.throwableObjects = this.throwableObjects.filter(object => !object.remove);
+    this.level.enemies = this.level.enemies.filter((enemy) => !enemy.remove);
+    this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
 
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
@@ -98,12 +97,13 @@ class World {
   }
 
   run() {
-    setInterval(() => {
+    const interval = setInterval(() => {
       if (this.gameStarted) {
         this.checkCollision();
         this.character.handleThrow();
       }
     }, 200);
+    this.intervals.push(interval);
   }
 
   checkCollision() {
@@ -117,7 +117,6 @@ class World {
     );
   }
 
-
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {
       enemy.getDamage();
@@ -129,14 +128,15 @@ class World {
   }
 
   handleEnemyCollision(enemy) {
-    if (this.character.aboveGround() && this.character.isColliding(enemy)) {
-      enemy.getDamage();
-      this.character.jump();
-    } else if (this.character.isColliding(enemy)) {
-      this.character.getDamage();
+    if (this.character.isColliding(enemy)) {
+      if ( this.character.isJumping === true && this.character.y + this.character.height - this.character.offset.bottom > enemy.y + enemy.offset.top) {
+        enemy.getDamage();
+        this.character.jump();
+      } else {
+        this.character.getDamage();
+      }
     }
   }
-
 
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {
@@ -175,9 +175,10 @@ class World {
 
   startGame() {
     this.gameStarted = true;
+    this.clearAllIntervals();
+    this.run();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
-
   showEndScreen() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";

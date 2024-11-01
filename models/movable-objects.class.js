@@ -39,33 +39,17 @@ class MovableObject extends DrawableObject {
   onGround() {
     this.isJumping = false;
     this.y = this.groundLevel;
-     this.speedY = 0;
+    this.speedY = 0;
   }
 
   isColliding(mo) {
-    let offsetX = 40;
-    let offsetY = 40;
-
-    if (mo instanceof Chicken || mo instanceof Minichicken || this instanceof Endboss) {
-      offsetX = 15;
-      offsetY = 5;
-    }
-
-    return this.checkCollision(mo, offsetX, offsetY);
+    return (
+      this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+      this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+      this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+      this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom
+    );
   }
-
-  calculateDistance(mo) {
-    const dx = this.x + this.width / 2 - (mo.x + mo.width / 2);
-    const dy = this.y + this.height / 2 - (mo.y + mo.height / 2);
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  checkCollision(mo, offsetX, offsetY) {
-    const collidingHorizontally = this.x + this.width - offsetX > mo.x && this.x + offsetX < mo.x + mo.width;
-    const collidingVertically = this.y + this.height - offsetY > mo.y && this.y + offsetY < mo.y + mo.height;
-    return collidingHorizontally && collidingVertically;
-  }
-
 
   getDamage() {
     if (this instanceof Character && !this.isHurt()) {

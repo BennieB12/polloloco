@@ -1,8 +1,8 @@
 class Coin extends DrawableObject {
   y = 100 + Math.random() * 200;
   x = 300 + Math.random() * 2000;
-  height = 100;
-  width = 80;
+  height = 80;
+  width = 60;
 
   constructor(angle) {
     super().loadImage("img/8_coin/coin_1.png");
