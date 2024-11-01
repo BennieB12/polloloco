@@ -8,6 +8,7 @@ class Coin extends DrawableObject {
     super().loadImage("img/8_coin/coin_1.png");
     this.rotationAngle = angle;
     this.animateRotation();
+    
   }
 
   rotateCoin() {

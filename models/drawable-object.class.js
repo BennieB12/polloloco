@@ -7,10 +7,10 @@ class DrawableObject {
   width = 50;
   rotationAngle = 0;
   offset = {
-    left: 5,
-    right: 5,
-    top: 5,
-    bottom: 5
+    left: 1,
+    right: 1,
+    top: 1,
+    bottom: 1,
   };
 
   loadImage(path) {
@@ -47,24 +47,39 @@ class DrawableObject {
       ctx.filter = this.randomColor;
     }
   }
+
+  setOffset(left, right, top, bottom) {
+    this.offset = {
+      left: left || this.offset.left,
+      right: right || this.offset.right,
+      top: top || this.offset.top,
+      bottom: bottom || this.offset.bottom,
+    };
+  }
+
   drawFrame(ctx) {
     if (
-      this instanceof Character ||
-      this instanceof Chicken ||
-      this instanceof ThrowableObject ||
-      this instanceof Minichicken ||
-      this instanceof Endboss ||
-      this instanceof Coin 
-    ) {
 
+      this instanceof Endboss
+    ) {
       ctx.beginPath();
       ctx.lineWidth = "1";
       ctx.strokeStyle = "blue";
 
-      let hitboxX = this.x + this.offset.left;
-      let hitboxY = this.y + this.offset.top;
-      let hitboxWidth = this.width - (this.offset.left + this.offset.right);
-      let hitboxHeight = this.height - (this.offset.top + this.offset.bottom);
+      let hitboxWidth;
+      let hitboxHeight;
+
+      hitboxWidth = this.width * 0.5;
+      hitboxHeight = this.height * 1.0;
+
+
+      hitboxWidth = Math.max(hitboxWidth, 1);
+      hitboxHeight = Math.max(hitboxHeight, 1);
+      
+      let hitboxX = this.x + (this.width - hitboxWidth) / 2 + this.offset.left / 2;
+      let hitboxY = this.y + (this.height - hitboxHeight) / 2 + this.offset.top / 2;
+
+      
 
       ctx.rect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
       ctx.stroke();
@@ -72,9 +87,15 @@ class DrawableObject {
       ctx.beginPath();
       ctx.lineWidth = "1";
       ctx.strokeStyle = "red";
-      ctx.rect(this.x, this.y, this.width, this.height);
+
+      let smallerBoundingBoxWidth = this.width / 2;
+      let smallerBoundingBoxHeight = this.height / 2;
+
+      let smallerBoundingBoxX = this.x + (this.width - smallerBoundingBoxWidth) / 2;
+      let smallerBoundingBoxY = this.y + (this.height - smallerBoundingBoxHeight) / 2;
+
+      ctx.rect(smallerBoundingBoxX, smallerBoundingBoxY, smallerBoundingBoxWidth, smallerBoundingBoxHeight);
       ctx.stroke();
     }
-}
-
+  }
 }
