@@ -78,9 +78,10 @@ class MovableObject extends DrawableObject {
       this.updateLastHit();
       this.world.statusBarHealth.setpercentage(this.energy);
     } else if (this instanceof Chicken || this instanceof Minichicken) {
-      this.reduceEnergy(10);
+      this.reduceEnergy(5);
     } else if (this instanceof Endboss) {
-      this.reduceEnergy(6);
+      this.reduceEnergy(20);
+      this.statusBar.setpercentage(this.energy);
     }
   }
 

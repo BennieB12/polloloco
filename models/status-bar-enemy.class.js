@@ -1,4 +1,4 @@
-class Statusbar_Enemy extends DrawableObject {
+class Statusbar_enemy extends DrawableObject {
   IMAGES = [
     "img/7_statusbars/2_statusbar_endboss/green/green0.png",
     "img/7_statusbars/2_statusbar_endboss/green/green20.png",

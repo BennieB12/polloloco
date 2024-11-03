@@ -1,9 +1,12 @@
 class Endboss extends MovableObject {
-  height = 300;
+  height = 200;
   width = 100;
-  energy = 40;
-  animationSpeed = 0.7;
-  groundLevel = 140;
+  energy = 100;
+  animationSpeed = 1;
+  groundLevel = 240;
+  deadAnimationPlayed = false;
+  remove = false;
+  statusBar;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -15,13 +18,13 @@ class Endboss extends MovableObject {
   IMAGES_HURT = [
     "img/4_enemie_boss_chicken/4_hurt/G21.png",
     "img/4_enemie_boss_chicken/4_hurt/G22.png",
-    "img/4_enemie_boss_chicken/4_hurt/G23.png"
+    "img/4_enemie_boss_chicken/4_hurt/G23.png",
   ];
 
   IMAGES_DEAD = [
     "img/4_enemie_boss_chicken/5_dead/G24.png",
     "img/4_enemie_boss_chicken/5_dead/G25.png",
-    "img/4_enemie_boss_chicken/5_dead/G26.png"
+    "img/4_enemie_boss_chicken/5_dead/G26.png",
   ];
 
   IMAGES_ATTACK = [
@@ -46,30 +49,74 @@ class Endboss extends MovableObject {
     "img/4_enemie_boss_chicken/2_alert/G12.png",
   ];
 
-
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
-    this.loadImages(this.IMAGES_WALKING);
+    this.loadImages([
+      ...this.IMAGES_WALKING,
+      ...this.IMAGES_DEAD,
+      ...this.IMAGES_ALERT,
+      ...this.IMAGES_ATTACK,
+      ...this.IMAGES_WALKING,
+      ...this.IMAGES_HURT,
+    ]);
     this.x = 2850;
-    this.speed = 4;
+    this.speed = 2;
     this.applyGravity();
     this.animate();
+    this.statusBar = null; // Standardwert, bis `World` ihn zuweist
+  }
+
+  updateStatusBar() {
+    if (this.statusBar) {
+      this.statusBar.setPercentage(this.energy);
+    }
   }
 
   animate() {
+    this.jump();
+    this.walk();
+    setInterval(() => {
+      if (!this.isDead()) {
+        this.handleAnimation();
+      } else if (!this.deadAnimationPlayed) {
+        this.playDeadAnimation();
+      }
+    }, 100);
+  }
+
+  walk() {
     setInterval(() => {
       this.moveLeft();
       this.checkLevelBegin();
       this.checkLevelEnd();
-      this.playAnimation(this.IMAGES_WALKING, 3);
     }, 1000 / 60);
-    this.playAnimation(this.IMAGES_ATTACK, 3);
-    setInterval(() => {
-      this.jump(this.jumpHeight);
-      if(this.jump()){
+  }
 
+  jump() {
+    setInterval(() => {
+      if (!this.deadAnimationPlayed) {
+        super.jump(this.jumpHeight);
       }
-    }, 3000);
+    }, 2000 + Math.random() * 100);
+    return;
+  }
+
+  handleAnimation() {
+    this.playAnimation(this.IMAGES_WALKING, 3);
+  }
+
+  handleJumpAnimation() {
+    this.playAnimation(this.IMAGES_ATTACK, 3);
+  }
+
+  playDeadAnimation() {
+    this.playAnimation(this.IMAGES_DEAD);
+    this.deadAnimationPlayed = true;
+    this.img = this.imageCache[this.IMAGES_DEAD];
+    this.speed = 0;
+    setInterval(() => {
+      this.remove = true;
+    }, 1000);
   }
 
   checkLevelBegin() {

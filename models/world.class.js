@@ -8,7 +8,7 @@ class World {
   statusBarHealth = new Statusbar_health();
   statusBarCoin = new Statusbar_coin();
   statusBarBottle = new Statusbar_bottle();
-  statusBarEnemy = new Statusbar_Enemy();
+  statusBarEnemy = new Statusbar_enemy();
   throwableObjects = [];
   gameOver = false;
   gameStarted = false;
@@ -108,6 +108,11 @@ class World {
 
   checkCollision() {
     this.level.enemies.forEach((enemy) => this.handleEnemyCollision(enemy));
+    this.level.enemies.forEach((enemy) => {
+      if (enemy instanceof Endboss) {
+        enemy.statusBar = this.statusBarEnemy;
+      }
+    });
     this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
     this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
     this.throwableObjects.forEach((bottle, bottleIndex) =>

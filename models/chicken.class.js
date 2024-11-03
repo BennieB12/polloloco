@@ -2,7 +2,7 @@ class Chicken extends MovableObject {
   y = 340;
   height = 80;
   width = 60;
-  energy = 8;
+  energy = 10;
   animationSpeed = 1;
   deadAnimationPlayed = false;
   remove = false;
