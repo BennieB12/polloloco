@@ -12,6 +12,7 @@ class World {
   throwableObjects = [];
   gameOver = false;
   gameStarted = false;
+  startScreenDrawn = false;
   isPlayingSound = false;
   intervals = [];
   GAMESTART_SOUND = new Audio ('audio/start.mp3');
@@ -38,7 +39,10 @@ class World {
   draw() {
     if (this.gameOver) return;
     if (!this.gameStarted) {
-      this.showStartScreen();
+      if (!this.startScreenDrawn) {
+        this.showStartScreen();
+        this.startScreenDrawn = true;
+      }
     } else {
       this.clearBoard();
       this.ctx.translate(this.camera_x, 0);
@@ -166,33 +170,60 @@ class World {
 
   showStartScreen() {
     const startImage = new Image();
-  
     startImage.src = "img/9_intro_outro_screens/start/startscreen_1.png";
     this.playStartSound();
-
+  
     startImage.onload = () => {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.drawImage(startImage, 0, 0, this.canvas.width, this.canvas.height);
-
+  
       this.ctx.font = "bold 60px Arial";
-      this.ctx.fillStyle = "white";
       this.ctx.textAlign = "center";
-      this.ctx.fillText("Press SPACE to Start", this.canvas.width / 2, this.canvas.height - 200);
-    };
+      const textY = 100;
+  
+      let colorValue = 255;
+      let decreasing = true;
 
-    window.addEventListener("keydown", (event) => {
-      if (event.code === "Space") {
+      const animationInterval = setInterval(() => {
+
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(startImage, 0, 0, this.canvas.width, this.canvas.height);
+  
+        if (decreasing) {
+          colorValue -= 2;
+          if (colorValue <= 0) {
+            colorValue = 0;
+            decreasing = false;
+          }
+        } else {
+          colorValue += 2;
+          if (colorValue >= 255) {
+            colorValue = 255;
+            decreasing = true;
+          }
+        }
+
+        this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+        this.ctx.fillText("TAP to Start", this.canvas.width / 2, textY);
+      }, 50);
+  
+      const startGameHandler = () => {
+        clearInterval(animationInterval);
         this.startGame();
-        this.startMusic.pause()
-      }
-    });
-
-    this.canvas.addEventListener("click", () => {
-      this.startGame();
-      this.startMusic.pause()
-    });
+        this.GAMESTART_SOUND.pause();
+      };
+  
+      window.addEventListener("keydown", (event) => {
+        if (event.code === "Space") {
+          startGameHandler();
+        }
+      });
+  
+      this.canvas.addEventListener("click", () => {
+        startGameHandler();
+      });
+    };
   }
-
   playStartSound() {
     if (!this.isPlayingSound) {
       this.GAMESTART_SOUND.play();
@@ -203,11 +234,13 @@ class World {
 
   startGame() {
     this.gameStarted = true;
+    this.startScreenDrawn = false;
     this.clearAllIntervals();
     this.run();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.GAMESTART_SOUND.pause();
   }
+  
   showEndScreen() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
