@@ -63,7 +63,7 @@ class Endboss extends MovableObject {
     this.speed = 2;
     this.applyGravity();
     this.animate();
-    this.statusBar = null; // Standardwert, bis `World` ihn zuweist
+    this.statusBar = null;
   }
 
   updateStatusBar() {
@@ -102,7 +102,11 @@ class Endboss extends MovableObject {
   }
 
   handleAnimation() {
-    this.playAnimation(this.IMAGES_WALKING, 3);
+    if (!this.isJumping) {
+      this.playAnimation(this.IMAGES_WALKING, 3);
+    } else if (this.isJumping) {
+      this.handleJumpAnimation();
+    }
   }
 
   handleJumpAnimation() {
@@ -110,13 +114,25 @@ class Endboss extends MovableObject {
   }
 
   playDeadAnimation() {
-    this.playAnimation(this.IMAGES_DEAD);
-    this.deadAnimationPlayed = true;
-    this.img = this.imageCache[this.IMAGES_DEAD];
-    this.speed = 0;
-    setInterval(() => {
-      this.remove = true;
-    }, 1000);
+    if (!this.deadAnimationPlayed) {
+      this.deadAnimationPlayed = true;
+      this.speed = 0;
+      let animationIndex = 0;
+
+      const animationInterval = setInterval(() => {
+        if (animationIndex < this.IMAGES_DEAD.length) {
+          this.img = this.imageCache[this.IMAGES_DEAD[animationIndex]];
+          animationIndex++;
+        } else {
+          clearInterval(animationInterval);
+          this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
+
+          setTimeout(() => {
+            this.remove = true;
+          }, 1000);
+        }
+      }, 1000 / 60); 
+    }
   }
 
   checkLevelBegin() {
