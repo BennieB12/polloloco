@@ -106,6 +106,8 @@ class Endboss extends MovableObject {
       this.playAnimation(this.IMAGES_WALKING, 3);
     } else if (this.isJumping) {
       this.handleJumpAnimation();
+    } else if (this.isHurt()) { // Überprüfen, ob der Endboss verletzt wurde
+      this.playAnimation(this.IMAGES_HURT, 3);
     }
   }
 
@@ -131,7 +133,7 @@ class Endboss extends MovableObject {
             this.remove = true;
           }, 1000);
         }
-      }, 1000 / 60); 
+      }, 1000 / 60);
     }
   }
 

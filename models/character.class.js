@@ -136,18 +136,43 @@ class Character extends MovableObject {
     }
   }
 
-  handleAnimation() {
+  handleJump() {
+    if ((this.world.keyboard.SPACE || this.world.keyboard.UP) && !this.aboveGround() && !this.isJumping) {
+        this.isJumping = true; // Set jumping state
+        this.jump(); // Execute jump logic
+        this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed); // Trigger jump animation
+    }
+}
+
+handleAnimation() {
     if (this.isDead()) {
-      this.playDeadAnimation();
-      return;
+        this.playDeadAnimation();
+        return;
     }
-    if (this.standingTimer >= 5000) {
-      this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
+
+    if (this.isHurt()) {
+        this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
+        return;
+    }
+
+    if (this.aboveGround()) {
+        this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
     } else {
-      this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
+        // Reset jumping state when on the ground
+        this.isJumping = false;
+
+        if (this.move()) {
+            this.playMovementAnimation();
+        } else {
+            if (this.standingTimer >= 5000) {
+                this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
+            } else {
+                this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
+            }
+        }
     }
-    this.playMovementAnimation();
-  }
+}
+
 
   throwBottle() {
     if (this.enoughBottles()) {
@@ -163,21 +188,18 @@ class Character extends MovableObject {
     this.bottles++;
     this.world.statusBarBottle.setpercentage(this.bottles);
   }
-  
+
   collectCoin(index) {
     this.world.level.coins.splice(index, 1);
     this.world.statusBarCoin.addCoin();
   }
 
   playDeadAnimation() {
-    if (!this.deadAnimationPlayed) {
-      this.playAnimation(this.IMAGES_DEAD);
-      this.deadAnimationPlayed = true;
-    } else {
-      this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 2]];
-      this.world.showEndScreen();
-      this.world.gameOver = true;
-    }
+    this.playAnimation(this.IMAGES_DEAD, this.animationSpeed);
+    this.deadAnimationPlayed = true;
+    this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 2]];
+    // this.world.showEndScreen();
+    // this.world.gameOver = true;
     this.WALKING_SOUND.pause();
   }
 
@@ -192,10 +214,10 @@ class Character extends MovableObject {
     if (this.move()) {
       this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
       this.playWalkingSound();
-    } else if (this.isHurt()) {
+    } else if (this.isHurt() || (this.move() && this.isHurt())) {
       this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
       this.WALKING_SOUND.pause();
-    } else if (this.aboveGround()) {
+    } else if (this.aboveGround() || (this.aboveGround() && this.move())) {
       this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
       this.WALKING_SOUND.pause();
     } else if (this.longIdle()) {
@@ -230,12 +252,6 @@ class Character extends MovableObject {
 
   canMoveLeft() {
     return this.world.keyboard.LEFT && this.x > 0;
-  }
-
-  handleJump() {
-    if ((this.world.keyboard.SPACE && !this.aboveGround()) || (this.world.keyboard.UP && !this.aboveGround())) {
-      this.jump();
-    }
   }
 
   noSound() {
