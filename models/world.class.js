@@ -12,7 +12,10 @@ class World {
   throwableObjects = [];
   gameOver = false;
   gameStarted = false;
+  isPlayingSound = false;
   intervals = [];
+  GAMESTART_SOUND = new Audio ('audio/start.mp3');
+
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -163,7 +166,9 @@ class World {
 
   showStartScreen() {
     const startImage = new Image();
+  
     startImage.src = "img/9_intro_outro_screens/start/startscreen_1.png";
+    this.playStartSound();
 
     startImage.onload = () => {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -178,19 +183,30 @@ class World {
     window.addEventListener("keydown", (event) => {
       if (event.code === "Space") {
         this.startGame();
+        this.startMusic.pause()
       }
     });
 
     this.canvas.addEventListener("click", () => {
       this.startGame();
+      this.startMusic.pause()
     });
   }
+
+  playStartSound() {
+    if (!this.isPlayingSound) {
+      this.GAMESTART_SOUND.play();
+      this.isPlayingSound = true;
+    }
+  }
+
 
   startGame() {
     this.gameStarted = true;
     this.clearAllIntervals();
     this.run();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.GAMESTART_SOUND.pause();
   }
   showEndScreen() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
