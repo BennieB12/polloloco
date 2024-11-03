@@ -41,12 +41,20 @@ class World {
       this.ctx.translate(this.camera_x, 0);
       this.addObjectsToMap(this.level.backgroundObjects);
       this.addToMap(this.character);
+      this.checkVisibility();
       this.drawBars();
       this.drawObjects();
       this.ctx.translate(-this.camera_x, 0);
     }
 
     requestAnimationFrame(() => this.draw());
+  }
+
+  checkVisibility() {    
+    if (this.character.x >= 1700){
+      this.statusBarEnemy.visible = true;
+    }
+    return
   }
 
   clearBoard() {

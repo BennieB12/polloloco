@@ -95,6 +95,7 @@ class Character extends MovableObject {
     }, 1000 / 20);
   }
 
+
   handleMovement() {
     if (this.isDead()) {
       this.WALKING_SOUND.pause();
