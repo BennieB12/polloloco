@@ -183,13 +183,21 @@ class Character extends MovableObject {
 
   collectBottle(index) {
     this.world.level.bottles.splice(index, 1);
+    if (this.bottles < 5)
     this.bottles++;
     this.world.statusBarBottle.setpercentage(this.bottles);
   }
 
   collectCoin(index) {
     this.world.level.coins.splice(index, 1);
-    this.world.statusBarCoin.addCoin();
+    if (this.collectedCoins < 5)
+    this.collectedCoins++;
+    this.world.statusBarCoin.setpercentage(this.collectedCoins * 20);
+
+  }
+
+  resetCoins() {
+    this.collectedCoins = 0;
   }
 
   playDeadAnimation() {
@@ -254,4 +262,5 @@ class Character extends MovableObject {
   longIdle() {
     return this.standingTimer > 5000;
   }
+
 }

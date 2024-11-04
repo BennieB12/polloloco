@@ -23,4 +23,5 @@ class Coin extends DrawableObject {
       this.rotateCoin();
     }, 1000 / 60);
   }
+
 }

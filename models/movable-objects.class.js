@@ -5,8 +5,8 @@ class MovableObject extends DrawableObject {
   currentImage = 0;
   accelaration = 5;
   energy;
-  bottles = 1;
   isJumping = false;
+  intervals = [];
   animationSpeed = 5;
   standingTimer = 0;
   groundLevel = 320;
@@ -71,6 +71,9 @@ class MovableObject extends DrawableObject {
     );
   }
   
+  clearAllIntervals() {
+    this.intervals.forEach((interval) => clearInterval(interval));
+  }
 
   getDamage() {
     if (this instanceof Character && !this.isHurt()) {
@@ -121,11 +124,10 @@ class MovableObject extends DrawableObject {
   }
 
   checkLevelBegin() {
-    if (this.x <= 0) {
-      this.speed = -this.speed;
-      this.otherDirection = !this.otherDirection;
-      this.moveLeft();
-    }
+    if (this.x > 0) return;
+    this.speed = -this.speed;
+    this.otherDirection = !this.otherDirection;
+    this.moveLeft();
   }
 
   playAnimation(images, speed) {

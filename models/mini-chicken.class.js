@@ -2,7 +2,7 @@ class Minichicken extends MovableObject {
   y;
   height = 60;
   width = 30;
-  energy = 4;
+  energy = 8;
   animationSpeed = 1;
   groundLevel = 360;
   deadAnimationPlayed = false;
@@ -30,13 +30,15 @@ class Minichicken extends MovableObject {
   animate() {
     this.jump();
     this.walk();
-    setInterval(() => {
+    const animateLoop = () => {
       if (!this.isDead()) {
         this.handleAnimation();
       } else if (!this.deadAnimationPlayed) {
         this.playDeadAnimation();
       }
-    }, 100);
+      requestAnimationFrame(animateLoop);
+    };
+    animateLoop();
   }
 
   handleAnimation() {
@@ -67,5 +69,10 @@ class Minichicken extends MovableObject {
     setInterval(() => {
       this.remove = true;
     }, 100);
+  }
+
+  
+  reset() {
+    this.energy = 8;
   }
 }

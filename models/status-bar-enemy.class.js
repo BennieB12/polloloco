@@ -14,7 +14,7 @@ class Statusbar_enemy extends DrawableObject {
   constructor() {
     super();
     this.loadImages(this.IMAGES);
-    this.x = 440;
+    this.x = 500;
     this.y = 10;
     this.width = 180;
     this.height = 50;
@@ -46,6 +46,10 @@ class Statusbar_enemy extends DrawableObject {
     if (this.visible) {
       super.draw(ctx);
     }
+  }
+
+  reset() {
+    this.setpercentage(100);
   }
 
 }

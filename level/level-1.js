@@ -24,7 +24,7 @@ const level1 = new Level(
     new Cloud("img/5_background/layers/4_clouds/1.png", 1690, 0),
     new Cloud("img/5_background/layers/4_clouds/1.png", 1910, 0),
     new Cloud("img/5_background/layers/4_clouds/1.png", 2040, 0),
-    new Cloud("img/5_background/layers/4_clouds/1.png", 2200, 0),
+    new Cloud("img/5_background/layers/4_clouds/1.png", 2200, 0)
   ],
   [
     new BackgroundObject("img/5_background/layers/air.png", -719),
@@ -64,5 +64,9 @@ const level1 = new Level(
     new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 600 + Math.random() * 300),
     new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 900 + Math.random() * 900),
     new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1200 + Math.random() * 1000),
+    new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1200 + Math.random() * 1200),
+
   ]
 );
+
+

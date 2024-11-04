@@ -9,7 +9,6 @@ class Statusbar_coin extends DrawableObject {
   ];
 
   percentage = 100;
-  collectedCoins = 0; 
 
   constructor() {
     super();
@@ -19,13 +18,6 @@ class Statusbar_coin extends DrawableObject {
     this.width = 220;
     this.height = 50;
     this.setpercentage(0);
-  }
-
-  addCoin() {
-    if (this.collectedCoins <= 5) { 
-      this.collectedCoins++;
-      this.setpercentage(this.collectedCoins * 20);
-    }
   }
 
   setpercentage(percentage) {
@@ -48,5 +40,8 @@ class Statusbar_coin extends DrawableObject {
     } else {
       return 0;
     }
+  }
+  reset() {
+    this.setpercentage(0);
   }
 }

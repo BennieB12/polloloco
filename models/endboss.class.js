@@ -152,4 +152,8 @@ class Endboss extends MovableObject {
       this.moveLeft();
     }
   }
+
+  reset() {
+    this.energy = 100;
+  }
 }

@@ -2,7 +2,7 @@ class Chicken extends MovableObject {
   y = 340;
   height = 80;
   width = 60;
-  energy = 10;
+  energy = 5;
   animationSpeed = 1;
   deadAnimationPlayed = false;
   remove = false;
@@ -20,7 +20,7 @@ class Chicken extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.speed = speed;
-    this.speed = 2 + Math.random() * 6;
+    this.speed = 2 + Math.random() * 1;
     this.x = x;
     this.animate();
   }
@@ -47,5 +47,10 @@ class Chicken extends MovableObject {
     setInterval(() => {
       this.remove = true; 
     }, 100);
+  }
+
+  reset() {
+    this.energy = 5;
+
   }
 }

@@ -15,7 +15,7 @@ class Statusbar_bottle extends DrawableObject {
     this.y = 75;
     this.width = 220;
     this.height = 50;
-    this.setpercentage(1);
+    this.setpercentage(0);
   }
 
   setpercentage(bottles) {
@@ -38,5 +38,8 @@ class Statusbar_bottle extends DrawableObject {
     } else {
       return 0;
     }
+  }
+  reset() {
+    this.setpercentage(0);
   }
 }

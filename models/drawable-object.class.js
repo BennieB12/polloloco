@@ -5,6 +5,8 @@ class DrawableObject {
   y = 288;
   height = 150;
   width = 50;
+  collectedCoins = 0;
+  bottles = 0;
   rotationAngle = 0;
   offset = {
     left: 1,

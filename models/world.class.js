@@ -14,9 +14,7 @@ class World {
   gameStarted = false;
   startScreenDrawn = false;
   isPlayingSound = false;
-  intervals = [];
-  GAMESTART_SOUND = new Audio ('audio/start.mp3');
-
+  GAMESTART_SOUND = new Audio("audio/start.mp3");
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -30,10 +28,6 @@ class World {
 
   setWorld() {
     this.character.world = this;
-  }
-
-  clearAllIntervals() {
-    this.intervals.forEach((interval) => clearInterval(interval));
   }
 
   draw() {
@@ -57,11 +51,11 @@ class World {
     requestAnimationFrame(() => this.draw());
   }
 
-  checkVisibility() {    
-    if (this.character.x >= 1700){
+  checkVisibility() {
+    if (this.character.x >= 1800) {
       this.statusBarEnemy.visible = true;
     }
-    return
+    return;
   }
 
   clearBoard() {
@@ -111,14 +105,24 @@ class World {
     this.ctx.restore();
   }
 
+  startGame() {
+    this.gameOver = false;
+    this.gameStarted = true;
+    this.startScreenDrawn = false;
+    this.clearBoard();
+    this.run();
+    this.draw();
+    this.GAMESTART_SOUND.pause();
+  }
+
   run() {
-    const interval = setInterval(() => {
-      if (this.gameStarted) {
+    setInterval(() => {
+      if (this.gameStarted && !this.gameOver) {
         this.checkCollision();
         this.character.handleThrow();
+        this.checkGameOver();
       }
     }, 200);
-    this.intervals.push(interval);
   }
 
   checkCollision() {
@@ -141,7 +145,7 @@ class World {
     if (bottle.isColliding(enemy)) {
       enemy.getDamage();
       if (enemy.energy <= 0) {
-        this.level.enemies.splice(enemyIndex, enemy);
+        this.level.enemies.splice(enemyIndex, 1);
       }
       this.throwableObjects.splice(bottleIndex, enemy);
     }
@@ -149,7 +153,10 @@ class World {
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {
-      if ( this.character.isJumping === true && this.character.y + this.character.height - this.character.offset.bottom > enemy.y + enemy.offset.top) {
+      if (
+        this.character.isJumping === true &&
+        this.character.y + this.character.height - this.character.offset.bottom > enemy.y + enemy.offset.top
+      ) {
         enemy.getDamage();
         this.character.jump();
       } else {
@@ -169,26 +176,27 @@ class World {
   }
 
   showStartScreen() {
+    if (this.gameStarted) return;
+
     const startImage = new Image();
     startImage.src = "img/9_intro_outro_screens/start/startscreen_1.png";
     this.playStartSound();
-  
+
     startImage.onload = () => {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.drawImage(startImage, 0, 0, this.canvas.width, this.canvas.height);
-  
+
       this.ctx.font = "bold 60px Arial";
       this.ctx.textAlign = "center";
       const textY = 100;
-  
+
       let colorValue = 255;
       let decreasing = true;
 
       const animationInterval = setInterval(() => {
-
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.drawImage(startImage, 0, 0, this.canvas.width, this.canvas.height);
-  
+
         if (decreasing) {
           colorValue -= 2;
           if (colorValue <= 0) {
@@ -206,19 +214,19 @@ class World {
         this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
         this.ctx.fillText("TAP to Start", this.canvas.width / 2, textY);
       }, 50);
-  
+
       const startGameHandler = () => {
         clearInterval(animationInterval);
         this.startGame();
         this.GAMESTART_SOUND.pause();
       };
-  
+
       window.addEventListener("keydown", (event) => {
         if (event.code === "Space") {
           startGameHandler();
         }
       });
-  
+
       this.canvas.addEventListener("click", () => {
         startGameHandler();
       });
@@ -231,16 +239,6 @@ class World {
     }
   }
 
-
-  startGame() {
-    this.gameStarted = true;
-    this.startScreenDrawn = false;
-    this.clearAllIntervals();
-    this.run();
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.GAMESTART_SOUND.pause();
-  }
-  
   showEndScreen() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
@@ -252,6 +250,31 @@ class World {
     this.ctx.font = "30px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
-    this.ctx.fillStyle = "#00FF00";
+    
+    this.canvas.removeEventListener("click", this.restartGame.bind(this)); 
+    this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
+}
+restartGame() {
+
+  this.character.otherDirection = false;
+
+  this.throwableObjects = [];
+  this.startScreenDrawn = true;
+  this.character.x = 80;
+  this.character.energy = 100;
+  this.character.resetCoins();
+  this.statusBarHealth.reset();
+  this.statusBarBottle.reset();
+  this.statusBarCoin.reset();
+  this.statusBarEnemy.reset();
+  this.level.resetLevel();
+  this.startGame();
+}
+
+checkGameOver() {
+  if (this.character.energy <= 0 && !this.gameOver) {
+      this.gameOver = true;
+      this.showEndScreen();
   }
+}
 }

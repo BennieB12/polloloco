@@ -41,4 +41,8 @@ class Statusbar_health extends DrawableObject {
       return 0;
     }
   }
+
+  reset() {
+    this.setpercentage(100);
+  }
 }
