@@ -200,6 +200,9 @@ class Character extends MovableObject {
     this.collectedCoins = 0;
   }
 
+  resetBottles() {
+    this.bottles = 0;
+  }
   playDeadAnimation() {
     if (!this.deadAnimationPlayed) {
       this.deadAnimationPlayed = true;

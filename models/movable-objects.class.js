@@ -6,7 +6,6 @@ class MovableObject extends DrawableObject {
   accelaration = 5;
   energy;
   isJumping = false;
-  intervals = [];
   animationSpeed = 5;
   standingTimer = 0;
   groundLevel = 320;
@@ -71,8 +70,13 @@ class MovableObject extends DrawableObject {
     );
   }
   
+  addInterval(interval) {
+    this.world.intervals.push(interval);
+  }
+
   clearAllIntervals() {
-    this.intervals.forEach((interval) => clearInterval(interval));
+    this.world.intervals.forEach(clearInterval);
+    this.world.intervals = [];
   }
 
   getDamage() {

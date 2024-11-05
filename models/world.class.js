@@ -15,6 +15,7 @@ class World {
   startScreenDrawn = false;
   isPlayingSound = false;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
+  intervals = [];
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -50,6 +51,7 @@ class World {
 
     requestAnimationFrame(() => this.draw());
   }
+
 
   checkVisibility() {
     if (this.character.x >= 1800) {
@@ -106,6 +108,7 @@ class World {
   }
 
   startGame() {
+    this.character.clearAllIntervals();
     this.gameOver = false;
     this.gameStarted = true;
     this.startScreenDrawn = false;
@@ -113,6 +116,7 @@ class World {
     this.run();
     this.draw();
     this.GAMESTART_SOUND.pause();
+    document.getElementById("startButton").classList.add("d-none");
   }
 
   run() {
@@ -215,6 +219,10 @@ class World {
         this.ctx.fillText("TAP to Start", this.canvas.width / 2, textY);
       }, 50);
 
+
+      const startButton = document.getElementById("startButton");
+      startButton.classList.remove("d-none");
+
       const startGameHandler = () => {
         clearInterval(animationInterval);
         this.startGame();
@@ -230,8 +238,11 @@ class World {
       this.canvas.addEventListener("click", () => {
         startGameHandler();
       });
+
+      startButton.onclick = startGameHandler;
     };
   }
+
   playStartSound() {
     if (!this.isPlayingSound) {
       this.GAMESTART_SOUND.play();
@@ -263,6 +274,7 @@ restartGame() {
   this.character.x = 80;
   this.character.energy = 100;
   this.character.resetCoins();
+  this.character.resetBottles();
   this.statusBarHealth.reset();
   this.statusBarBottle.reset();
   this.statusBarCoin.reset();

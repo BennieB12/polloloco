@@ -46,6 +46,21 @@ canvas {
   z-index: 1;
 }
 
+.d-none {
+  display: none;
+}
+
+#startButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 15px 30px;
+  font-size: 24px;
+  z-index: 10;
+  cursor: pointer;
+}
+
 #explanation {
   display: flex;
   flex-direction: column;
