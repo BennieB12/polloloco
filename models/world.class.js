@@ -94,13 +94,16 @@ class World {
   }
 
   flipImage(mo) {
+    if (!mo.otherDirection) return;
+  
     this.ctx.save();
     this.ctx.translate(mo.width, 0);
     this.ctx.scale(-1, 1);
     mo.x = mo.x * -1;
   }
-
+  
   flipImageBack(mo) {
+    if (!mo.otherDirection) return;
     mo.x = mo.x * -1;
     this.ctx.restore();
   }
@@ -130,13 +133,12 @@ class World {
   }
 
   run() {
-    setInterval(() => {
-      if (this.gameStarted && !this.gameOver) {
-        this.checkCollision();
-        this.character.handleThrow();
-        this.checkGameOver();
-      }
-    }, 200);
+    if (this.gameStarted && !this.gameOver) {
+      this.checkCollision();
+      this.character.handleThrow();
+      this.checkGameOver();
+      requestAnimationFrame(this.run.bind(this));
+    }
   }
 
   checkCollision() {
@@ -157,24 +159,13 @@ class World {
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {
-      enemy.getDamage();
       bottle.splashAnimation = true;
       bottle.groundLevel = bottle.y;
       bottle.playSplashAnimation();
-
-      if (enemy.energy <= 0) {
-        bottle.playSplashAnimation();
-
-        const splashDuration = bottle.SPLASH_IMAGES.length * (1000 / 60) * bottle.animationSpeed;
-        setTimeout(() => {
-          enemy.playDeadAnimation();
-          this.level.enemies.splice(enemyIndex, 1);
-        }, splashDuration);
-      }
-
-      this.throwableObjects.splice(bottleIndex, 1);
+      enemy.reduceEnergy(10);
     }
   }
+  
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {

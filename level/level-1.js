@@ -1,14 +1,14 @@
 const level1 = new Level(
   [
-    new Chicken(600 + Math.random() * 2000, 8 + Math.random() * 1),
-    new Chicken(800 + Math.random() * 2000, 8 + Math.random() * 1),
-    new Chicken(1000 + Math.random() * 2000, 8 + Math.random() * 1),
-    new Chicken(1400 + Math.random() * 2000, 8 + Math.random() * 1),
-    new Chicken(1200 + Math.random() * 2000, 8 + Math.random() * 1),
+    new Chicken(600 + Math.random() * 2000),
+    new Chicken(600 + Math.random() * 2000),
+    new Chicken(600 + Math.random() * 2000),
+    new Chicken(600 + Math.random() * 2000),
+    new Chicken(600 + Math.random() * 2000),
     new Minichicken(1200 + Math.random() * 2000,  4 + Math.random() * 1),
     new Minichicken(1400 + Math.random() * 2000,  4 + Math.random() * 1),
     new Minichicken(1800 + Math.random() * 2000,  4 + Math.random() * 1),
-    new Endboss(),
+    new Endboss()
   ],
   [
     new Cloud("img/5_background/layers/4_clouds/2.png", 0, 0),

@@ -60,9 +60,9 @@ class Endboss extends MovableObject {
       ...this.IMAGES_HURT,
     ]);
     this.x = 2850;
-    this.speed = 2;
+    this.speed = 3;
     this.applyGravity();
-    this.animate();
+    // this.animate();
     this.statusBar = null;
   }
 
@@ -72,10 +72,13 @@ class Endboss extends MovableObject {
     }
   }
 
-  animate() {
-    this.jump();
-    this.walk();
-    setInterval(() => {
+ 
+   animate() {
+    this.clearAllIntervals();
+      this.jump();
+      this.walk();
+
+    this.startInterval(() => {
       if (!this.isDead()) {
         this.handleAnimation();
       } else if (!this.deadAnimationPlayed) {
@@ -84,8 +87,12 @@ class Endboss extends MovableObject {
     }, 100);
   }
 
+  handleAnimation() {
+    this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
+  }
+
   walk() {
-    setInterval(() => {
+    this.startInterval(() => {
       this.moveLeft();
       this.checkLevelBegin();
       this.checkLevelEnd();
@@ -93,13 +100,13 @@ class Endboss extends MovableObject {
   }
 
   jump() {
-    setInterval(() => {
+    this.startInterval(() => {
       if (!this.deadAnimationPlayed) {
         super.jump(this.jumpHeight);
       }
-    }, 2000 + Math.random() * 100);
-    return;
+    }, 2000 + Math.random() * 500);
   }
+
 
   handleAnimation() {
     if (!this.isJumping) {
@@ -134,22 +141,6 @@ class Endboss extends MovableObject {
           }, 1000);
         }
       }, 1000 / 60);
-    }
-  }
-
-  checkLevelBegin() {
-    if (this.x <= 1800) {
-      this.speed = -this.speed;
-      this.otherDirection = !this.otherDirection;
-      this.moveLeft();
-    }
-  }
-
-  checkLevelEnd() {
-    if (this.x >= 2850) {
-      this.speed = -this.speed;
-      this.otherDirection = !this.otherDirection;
-      this.moveLeft();
     }
   }
 

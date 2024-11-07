@@ -1,9 +1,9 @@
 class MovableObject extends DrawableObject {
   speed;
   otherDirection = false;
-  speedY = 2;
+  speedY = 3;
   currentImage = 0;
-  accelaration = 5;
+  accelaration = 1;
   energy;
   isJumping = false;
   animationSpeed = 5;
@@ -25,14 +25,13 @@ class MovableObject extends DrawableObject {
   }
 
   applyGravity() {
-    setInterval(() => {
-      if (this.aboveGround() || this.speedY > 0) {
-        this.setAcceleration();
-      } else {
-        this.onGround();
-      }
-    }, 50);
-  }
+    if (this.aboveGround() || this.speedY > 0) {
+      this.setAcceleration();
+    } else {
+      this.onGround();
+    }
+    requestAnimationFrame(this.applyGravity.bind(this));
+ }
 
   setAcceleration() {
     this.y -= this.speedY;
@@ -85,7 +84,7 @@ class MovableObject extends DrawableObject {
       this.updateLastHit();
       this.world.statusBarHealth.setpercentage(this.energy);
     } else if (this instanceof Chicken || this instanceof Minichicken) {
-      this.reduceEnergy(5);
+      this.reduceEnergy(10);
     } else if (this instanceof Endboss && !this.isHurt()) {
       this.reduceEnergy(20);
       this.updateLastHit();
@@ -119,7 +118,7 @@ class MovableObject extends DrawableObject {
     this.x -= this.speed;
   }
 
-  jump(speedY = 35) {
+  jump(speedY = 20) {
     this.speedY = speedY;
     this.isJumping = true;
     if (this.isJumping) {
@@ -142,4 +141,27 @@ class MovableObject extends DrawableObject {
     }
     this.currentImage++;
 }
+
+checkLevelBegin() {
+  if (this instanceof Endboss) {
+    if (this.x <= 1800) {
+      this.speed = -this.speed;
+      this.otherDirection = !this.otherDirection;
+      this.moveLeft();
+    }
+  } else if (this.x <= 0) {
+    this.speed = -this.speed;
+    this.otherDirection = !this.otherDirection;
+    this.moveLeft();
+  }
+}
+
+checkLevelEnd() {
+  if (this.x >= 2850) {
+    this.speed = -this.speed;
+    this.otherDirection = !this.otherDirection;
+    this.moveLeft();
+  } 
+}
+
 }
