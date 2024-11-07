@@ -9,7 +9,7 @@ class MovableObject extends DrawableObject {
   animationSpeed = 5;
   standingTimer = 0;
   groundLevel = 320;
-  jumpHeight = 20 + Math.random() * 10;
+  jumpHeight = 12 + Math.random() * 10;
   intervals = [];
 
 
@@ -53,30 +53,28 @@ class MovableObject extends DrawableObject {
     this.speedY = 0;
   }
 
-  isColliding(mo) {
- 
-    const thisCenterX = this.x + this.width / 2;
-    const thisCenterY = this.y + this.height / 2;
-    const otherCenterX = mo.x + mo.width / 2;
-    const otherCenterY = mo.y + mo.height / 2;
+isColliding(mo) {
+  const thisCenterX = this.x + this.width / 2;
+  const thisCenterY = this.y + this.height / 2;
+  const otherCenterX = mo.x + mo.width / 2;
+  const otherCenterY = mo.y + mo.height / 2;
 
+  const deltaX = thisCenterX - otherCenterX;
+  const deltaY = thisCenterY - otherCenterY;
+  const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    const deltaX = thisCenterX - otherCenterX;
-    const deltaY = thisCenterY - otherCenterY;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+  let minDistance = (this.width / 2 + mo.width / 2) * 0.5;
 
+  if (distance >= minDistance) {
+    return false;
+  }
 
-    const minDistance = (this.width / 2 + mo.width / 2) * 0.8;
+  let characterBottom = this.y + this.height - this.offset.bottom;
+  let enemyTop = mo.y + mo.offset.top;
 
-    if (distance >= minDistance) {
-        return false;
-    }
-
-    let characterBottom = this.y + this.height - this.offset.bottom;
-    let enemyTop = mo.y + mo.offset.top;
-    
-    return characterBottom >= enemyTop && this.y < mo.y;
+  return characterBottom >= enemyTop && this.y < mo.y;
 }
+
 
   getDamage() {
     if (this instanceof Character && !this.isHurt()) {

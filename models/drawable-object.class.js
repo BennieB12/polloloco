@@ -6,14 +6,24 @@ class DrawableObject {
   height = 150;
   width = 50;
   collectedCoins = 0;
-  bottles = 2;
+  bottles = 0;
   rotationAngle = 0;
-  offset = {
-    left: 1,
-    right: 1,
-    top: 1,
-    bottom: 1,
-  };
+
+
+  constructor() {
+    this.offset = {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    };
+  }
+
+  adjustCollectibleOffsets() {
+    if (this instanceof Coin || this instanceof Bottle) {
+      this.setOffset(10, 10, 10, 10);
+    }
+  }
 
   loadImage(path) {
     this.img = new Image();
@@ -65,8 +75,8 @@ class DrawableObject {
       this instanceof Chicken ||
       this instanceof Endboss ||
       this instanceof Minichicken ||
-      this instanceof Coin ||
-      this instanceof Bottle
+      this instanceof Bottle ||
+      this instanceof Coin
     ) {
 
       ctx.beginPath();
@@ -83,19 +93,7 @@ class DrawableObject {
       ctx.stroke();
   
 
-      ctx.beginPath();
-      ctx.lineWidth = "1";
-      ctx.strokeStyle = "red";
   
-      let smallerBoundingBoxWidth = this.width / 2;
-      let smallerBoundingBoxHeight = this.height / 2;
-      
-
-      let smallerBoundingBoxX = this.x + (this.width - smallerBoundingBoxWidth) / 2;
-      let smallerBoundingBoxY = this.y + (this.height - smallerBoundingBoxHeight) / 2 + 10;
-  
-      ctx.rect(smallerBoundingBoxX, smallerBoundingBoxY, smallerBoundingBoxWidth, smallerBoundingBoxHeight);
-      ctx.stroke();
     }
   }
 }

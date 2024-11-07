@@ -62,7 +62,6 @@ class Endboss extends MovableObject {
     this.x = 2850;
     this.speed = 3;
     this.applyGravity();
-    // this.animate();
     this.statusBar = null;
   }
 

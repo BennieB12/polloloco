@@ -1,8 +1,8 @@
 class Bottle extends DrawableObject {
-  y = 370;
+  y = 350;
   x = 300 + Math.random() * 2000;
-  height = 50;
-  width = 36;
+  height = 60;
+  width = 40;
 
   IMAGES_GROUND = [
       "img/6_salsa_bottle/1_salsa_bottle_on_ground.png",
@@ -11,7 +11,6 @@ class Bottle extends DrawableObject {
   constructor(imagePath, x) {
       super().loadImage(imagePath);
       this.x = x;
-      this.setOffset(0, 0, 0, 0);
   }
 
   reset() {

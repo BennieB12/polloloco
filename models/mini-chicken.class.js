@@ -24,7 +24,6 @@ class Minichicken extends MovableObject {
     this.x = x;
     this.speed = speed;
     this.applyGravity();
-    // this.animate();
   }
 
    animate() {

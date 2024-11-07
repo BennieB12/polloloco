@@ -87,7 +87,7 @@ class Character extends MovableObject {
     ]);
     this.applyGravity();
     this.animate();
-    this.setOffset(0, 0, 30, 0);
+    this.setOffset(0, 0, 0, 0);
   }
 
   animate() {
