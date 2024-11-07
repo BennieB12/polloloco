@@ -3,7 +3,7 @@ class Minichicken extends MovableObject {
   height = 60;
   width = 30;
   energy = 8;
-  animationSpeed = 1;
+  animationSpeed = 2;
   groundLevel = 360;
   deadAnimationPlayed = false;
   remove = false;
@@ -24,21 +24,21 @@ class Minichicken extends MovableObject {
     this.x = x;
     this.speed = speed;
     this.applyGravity();
-    this.animate();
+    // this.animate();
   }
 
-  animate() {
-    this.jump();
-    this.walk();
-    const animateLoop = () => {
+   animate() {
+    this.clearAllIntervals();
+      this.jump();
+      this.walk();
+
+    this.startInterval(() => {
       if (!this.isDead()) {
         this.handleAnimation();
       } else if (!this.deadAnimationPlayed) {
         this.playDeadAnimation();
       }
-      requestAnimationFrame(animateLoop);
-    };
-    animateLoop();
+    }, 100);
   }
 
   handleAnimation() {
@@ -46,19 +46,18 @@ class Minichicken extends MovableObject {
   }
 
   walk() {
-    setInterval(() => {
+    this.startInterval(() => {
       this.moveLeft();
       this.checkLevelBegin();
     }, 1000 / 60);
   }
 
   jump() {
-    setInterval(() => {
+    this.startInterval(() => {
       if (!this.deadAnimationPlayed) {
         super.jump(this.jumpHeight);
       }
-    }, 1800 + Math.random() * 100);
-    return;
+    }, 2000 + Math.random() * 500);
   }
 
   playDeadAnimation() {
@@ -66,13 +65,13 @@ class Minichicken extends MovableObject {
     this.deadAnimationPlayed = true;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
     this.speed = 0;
-    setInterval(() => {
+    this.startInterval(() => {
       this.remove = true;
     }, 100);
   }
 
-  
   reset() {
+    this.clearAllIntervals();
     this.energy = 8;
   }
 }

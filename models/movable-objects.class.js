@@ -10,6 +10,19 @@ class MovableObject extends DrawableObject {
   standingTimer = 0;
   groundLevel = 320;
   jumpHeight = 20 + Math.random() * 10;
+  intervals = [];
+
+
+  startInterval(intervalFunc, intervalTime) {
+    const intervalId = setInterval(intervalFunc, intervalTime);
+    this.intervals.push(intervalId);
+    return intervalId;
+  }
+
+  clearAllIntervals() {
+    this.intervals.forEach((intervalId) => clearInterval(intervalId));
+    this.intervals = [];
+  }
 
   applyGravity() {
     setInterval(() => {
@@ -18,7 +31,7 @@ class MovableObject extends DrawableObject {
       } else {
         this.onGround();
       }
-    }, 1000 / 25);
+    }, 50);
   }
 
   setAcceleration() {
@@ -42,42 +55,29 @@ class MovableObject extends DrawableObject {
   }
 
   isColliding(mo) {
+ 
     const thisCenterX = this.x + this.width / 2;
     const thisCenterY = this.y + this.height / 2;
     const otherCenterX = mo.x + mo.width / 2;
     const otherCenterY = mo.y + mo.height / 2;
-  
+
+
     const deltaX = thisCenterX - otherCenterX;
     const deltaY = thisCenterY - otherCenterY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    const minDistance = (this.width / 2 + mo.width / 2) * 0.8;
-  
-    if (distance >= minDistance) {
-      return false;
-    }
-  
-    let leftOffset = this.offset.left;
-    let rightOffset = this.offset.right;
-    let topOffset = this.offset.top;
-    let bottomOffset = this.offset.bottom;
-   
-    return (
-      this.x + this.width - rightOffset > mo.x + mo.offset.left &&
-      this.y + this.height - bottomOffset > mo.y + mo.offset.top &&
-      this.x + leftOffset < mo.x + mo.width - mo.offset.right &&
-      this.y + topOffset < mo.y + mo.height - mo.offset.bottom
-    );
-  }
-  
-  addInterval(interval) {
-    this.world.intervals.push(interval);
-  }
 
-  clearAllIntervals() {
-    this.world.intervals.forEach(clearInterval);
-    this.world.intervals = [];
-  }
+    const minDistance = (this.width / 2 + mo.width / 2) * 0.8;
+
+    if (distance >= minDistance) {
+        return false;
+    }
+
+    let characterBottom = this.y + this.height - this.offset.bottom;
+    let enemyTop = mo.y + mo.offset.top;
+    
+    return characterBottom >= enemyTop && this.y < mo.y;
+}
 
   getDamage() {
     if (this instanceof Character && !this.isHurt()) {

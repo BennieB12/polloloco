@@ -1,5 +1,5 @@
 class Coin extends DrawableObject {
-  y = 100 + Math.random() * 200;
+  y = 200 + Math.random() * 20;
   x = 300 + Math.random() * 2000;
   height = 80;
   width = 60;
@@ -8,7 +8,7 @@ class Coin extends DrawableObject {
     super().loadImage("img/8_coin/coin_1.png");
     this.rotationAngle = angle;
     this.animateRotation();
-    
+    this.setOffset(0, 0, 0, 0);
   }
 
   rotateCoin() {

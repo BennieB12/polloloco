@@ -61,41 +61,39 @@ class DrawableObject {
 
   drawFrame(ctx) {
     if (
-
-      this instanceof Endboss
+      this instanceof Character ||
+      this instanceof Chicken ||
+      this instanceof Endboss ||
+      this instanceof Minichicken ||
+      this instanceof Coin ||
+      this instanceof Bottle
     ) {
+
       ctx.beginPath();
       ctx.lineWidth = "1";
       ctx.strokeStyle = "blue";
-
-      let hitboxWidth;
-      let hitboxHeight;
-
-      hitboxWidth = this.width * 0.5;
-      hitboxHeight = this.height * 1.0;
-
-
-      hitboxWidth = Math.max(hitboxWidth, 1);
-      hitboxHeight = Math.max(hitboxHeight, 1);
-      
+  
+      let hitboxWidth = this.width * 0.5;
+      let hitboxHeight = this.height * 1.0;
+  
       let hitboxX = this.x + (this.width - hitboxWidth) / 2 + this.offset.left / 2;
       let hitboxY = this.y + (this.height - hitboxHeight) / 2 + this.offset.top / 2;
-
-      
-
+  
       ctx.rect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
       ctx.stroke();
+  
 
       ctx.beginPath();
       ctx.lineWidth = "1";
       ctx.strokeStyle = "red";
-
+  
       let smallerBoundingBoxWidth = this.width / 2;
       let smallerBoundingBoxHeight = this.height / 2;
+      
 
       let smallerBoundingBoxX = this.x + (this.width - smallerBoundingBoxWidth) / 2;
-      let smallerBoundingBoxY = this.y + (this.height - smallerBoundingBoxHeight) / 2;
-
+      let smallerBoundingBoxY = this.y + (this.height - smallerBoundingBoxHeight) / 2 + 10;
+  
       ctx.rect(smallerBoundingBoxX, smallerBoundingBoxY, smallerBoundingBoxWidth, smallerBoundingBoxHeight);
       ctx.stroke();
     }

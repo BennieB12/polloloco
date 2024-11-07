@@ -3,7 +3,7 @@ class Chicken extends MovableObject {
   height = 80;
   width = 60;
   energy = 5;
-  animationSpeed = 1;
+  animationSpeed = 2;
   deadAnimationPlayed = false;
   remove = false;
 
@@ -20,13 +20,13 @@ class Chicken extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.speed = speed;
-    this.speed = 2 + Math.random() * 1;
     this.x = x;
-    this.animate();
+    // this.animate();
   }
 
   animate() {
-    setInterval(() => {
+    this.clearAllIntervals();
+    this.startInterval(() => {
       if (!this.isDead()) {
         this.handleAnimation();
       } else if (!this.deadAnimationPlayed) {
@@ -44,13 +44,13 @@ class Chicken extends MovableObject {
     this.playAnimation(this.IMAGES_DEAD);
     this.deadAnimationPlayed = true;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
-    setInterval(() => {
-      this.remove = true; 
+    this.startInterval(() => {
+      this.remove = true;
     }, 100);
   }
 
   reset() {
+    this.clearAllIntervals();
     this.energy = 5;
-
   }
 }

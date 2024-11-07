@@ -1,7 +1,7 @@
 class ThrowableObject extends MovableObject {
   throwDirection = 1;
   splashAnimation = false;
-  animationSpeed = 1;
+  animationSpeed = 3;
   remove = false;
   y;
   groundLevel = 375;
@@ -73,25 +73,21 @@ class ThrowableObject extends MovableObject {
         if (!this.splashAnimation) {
           this.playAnimation(this.ROTATE_IMAGES, 1);
         }
-      }, 1000 / 80);
+      }, 1000 / 60);
     }
   }
 
   playSplashAnimation() {
-    let frameIndex = 0;
+    this.currentImage = 0;
     const splashInterval = setInterval(() => {
-        if (frameIndex < this.SPLASH_IMAGES.length) {
-            this.loadImage(this.SPLASH_IMAGES[frameIndex]);
-            frameIndex++;
-        } else {
-          setInterval(() => {
-            clearInterval(splashInterval);
-            this.remove = true;
-          }, 50);
-            
-        }
-    }, 1000 / 80);
-}
+      if (this.currentImage < this.SPLASH_IMAGES.length * this.animationSpeed) {
+        this.playAnimation(this.SPLASH_IMAGES, this.animationSpeed);
+      } else {
+        clearInterval(splashInterval);
+        this.remove = true;
+      }
+    }, 1000 / 60);
+  }
 
   setThrowDirection() {
     this.throwDirection = this.otherDirection ? -1 : 1;

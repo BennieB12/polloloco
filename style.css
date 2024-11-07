@@ -51,6 +51,7 @@ canvas {
 }
 
 #startButton {
+  width: 40px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -58,7 +59,14 @@ canvas {
   padding: 15px 30px;
   font-size: 24px;
   z-index: 10;
+  background-color: orange;
+  border-radius: 30px;
+  border: unset;
+  font-size: 12px;
+}
+#startButton:hover {
   cursor: pointer;
+  opacity: 80%;
 }
 
 #explanation {

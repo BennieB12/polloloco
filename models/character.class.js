@@ -4,6 +4,7 @@ class Character extends MovableObject {
   width = 60;
   speed = 6;
   energy = 100;
+  animationSpeed = 3;
   lastHit = 0;
   isPlayingSound = false;
   isThrowing = false;
@@ -86,6 +87,7 @@ class Character extends MovableObject {
     ]);
     this.applyGravity();
     this.animate();
+    this.setOffset(0, 0, 30, 0);
   }
 
   animate() {

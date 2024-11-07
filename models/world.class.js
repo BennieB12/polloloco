@@ -15,7 +15,6 @@ class World {
   startScreenDrawn = false;
   isPlayingSound = false;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
-  intervals = [];
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -51,7 +50,6 @@ class World {
 
     requestAnimationFrame(() => this.draw());
   }
-
 
   checkVisibility() {
     if (this.character.x >= 1800) {
@@ -108,15 +106,27 @@ class World {
   }
 
   startGame() {
-    this.character.clearAllIntervals();
     this.gameOver = false;
     this.gameStarted = true;
     this.startScreenDrawn = false;
     this.clearBoard();
+    this.clearAllIntervalsForObjects();
     this.run();
     this.draw();
     this.GAMESTART_SOUND.pause();
     document.getElementById("startButton").classList.add("d-none");
+
+    if (this.gameStarted) {
+      this.level.enemies.forEach((enemy) => {
+        enemy.animate();
+      });
+    }
+  }
+
+  clearAllIntervalsForObjects() {
+    this.character.clearAllIntervals();
+    this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
+    this.throwableObjects.forEach((throwable) => throwable.clearAllIntervals());
   }
 
   run() {
@@ -148,10 +158,21 @@ class World {
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {
       enemy.getDamage();
+      bottle.splashAnimation = true;
+      bottle.groundLevel = bottle.y;
+      bottle.playSplashAnimation();
+
       if (enemy.energy <= 0) {
-        this.level.enemies.splice(enemyIndex, 1);
+        bottle.playSplashAnimation();
+
+        const splashDuration = bottle.SPLASH_IMAGES.length * (1000 / 60) * bottle.animationSpeed;
+        setTimeout(() => {
+          enemy.playDeadAnimation();
+          this.level.enemies.splice(enemyIndex, 1);
+        }, splashDuration);
       }
-      this.throwableObjects.splice(bottleIndex, enemy);
+
+      this.throwableObjects.splice(bottleIndex, 1);
     }
   }
 
@@ -197,8 +218,8 @@ class World {
       let colorValue = 255;
       let decreasing = true;
 
-      const animationInterval = setInterval(() => {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      const animateText = () => {
+        this.ctx.clearRect(0, textY - 60, this.canvas.width, 80);
         this.ctx.drawImage(startImage, 0, 0, this.canvas.width, this.canvas.height);
 
         if (decreasing) {
@@ -217,16 +238,19 @@ class World {
 
         this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
         this.ctx.fillText("TAP to Start", this.canvas.width / 2, textY);
-      }, 50);
 
+        if (!this.gameStarted) {
+          requestAnimationFrame(animateText);
+        }
+      };
+
+      animateText();
 
       const startButton = document.getElementById("startButton");
       startButton.classList.remove("d-none");
 
       const startGameHandler = () => {
-        clearInterval(animationInterval);
         this.startGame();
-        this.GAMESTART_SOUND.pause();
       };
 
       window.addEventListener("keydown", (event) => {
@@ -261,32 +285,33 @@ class World {
     this.ctx.font = "30px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
-    
-    this.canvas.removeEventListener("click", this.restartGame.bind(this)); 
+
+    this.canvas.removeEventListener("click", this.restartGame.bind(this));
     this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
-}
-restartGame() {
-
-  this.character.otherDirection = false;
-
-  this.throwableObjects = [];
-  this.startScreenDrawn = true;
-  this.character.x = 80;
-  this.character.energy = 100;
-  this.character.resetCoins();
-  this.character.resetBottles();
-  this.statusBarHealth.reset();
-  this.statusBarBottle.reset();
-  this.statusBarCoin.reset();
-  this.statusBarEnemy.reset();
-  this.level.resetLevel();
-  this.startGame();
-}
-
-checkGameOver() {
-  if (this.character.energy <= 0 && !this.gameOver) {
-      this.gameOver = true;
-      this.showEndScreen();
   }
-}
+  restartGame() {
+    this.gameOver = true;
+    this.gameStarted = false;
+    this.character.otherDirection = false;
+    this.throwableObjects = [];
+    this.startScreenDrawn = true;
+    this.character.x = 80;
+    this.character.energy = 100;
+    this.character.resetCoins();
+    this.character.resetBottles();
+    this.statusBarHealth.reset();
+    this.statusBarBottle.reset();
+    this.statusBarCoin.reset();
+    this.statusBarEnemy.reset();
+    this.level.resetLevel();
+    this.startGame();
+  }
+
+  checkGameOver() {
+    if (this.character.energy <= 0 && !this.gameOver) {
+      this.gameOver = true;
+      this.gameStarted = false;
+      this.showEndScreen();
+    }
+  }
 }
