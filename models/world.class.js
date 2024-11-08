@@ -15,6 +15,8 @@ class World {
   startScreenDrawn = false;
   isPlayingSound = false;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
+  enemyHit = false;
+
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -175,6 +177,7 @@ class World {
       ) {
         enemy.getDamage();
         this.character.jump();
+        
       } else {
         this.character.getDamage();
       }
@@ -296,7 +299,7 @@ class World {
     this.statusBarCoin.reset();
     this.statusBarEnemy.reset();
     this.level.resetLevel();
-    this.level.clouds.forEach((cloud) => cloud.stopMoving());
+    // this.level.clouds.forEach((cloud) => cloud.stopMoving());
     this.startGame();
   }
 

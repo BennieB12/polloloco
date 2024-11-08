@@ -13,6 +13,7 @@ class MovableObject extends DrawableObject {
   remove = false;
   deadAnimationPlayed = false;
   standingTimer = 0;
+  damage;
 
   startInterval(intervalFunc, intervalTime) {
     const intervalId = setInterval(intervalFunc, intervalTime);
@@ -54,27 +55,17 @@ class MovableObject extends DrawableObject {
     this.speedY = 0;
   }
 
-isColliding(mo) {
-  const thisCenterX = this.x + this.width / 2;
-  const thisCenterY = this.y + this.height / 2;
-  const otherCenterX = mo.x + mo.width / 2;
-  const otherCenterY = mo.y + mo.height / 2;
-
-  const deltaX = thisCenterX - otherCenterX;
-  const deltaY = thisCenterY - otherCenterY;
-  const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-  let minDistance = (this.width / 2 + mo.width / 2) * 0.5;
-
-  if (distance >= minDistance) {
-    return false;
+  isColliding(mo) {
+    return (
+      Math.sqrt(
+        Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
+        Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
+      ) <
+      (this.width / 2 + mo.width / 2) * 0.5 &&
+      this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
+      this.y < mo.y
+    );
   }
-
-  let characterBottom = this.y + this.height - this.offset.bottom;
-  let enemyTop = mo.y + mo.offset.top;
-
-  return characterBottom >= enemyTop && this.y < mo.y;
-}
 
 
   getDamage() {
@@ -87,6 +78,7 @@ isColliding(mo) {
     } else if (this instanceof Endboss && !this.isHurt()) {
       this.reduceEnergy(20);
       this.updateLastHit();
+      this.isHurt();
       this.statusBar.setpercentage(this.energy);
     }
   }

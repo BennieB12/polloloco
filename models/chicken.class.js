@@ -3,7 +3,7 @@ class Chicken extends MovableObject {
   height = 80;
   width = 60;
   energy = 5;
-  animationSpeed = 4;
+  animationSpeed = 6;
 
 
   IMAGES_WALKING = [
@@ -19,7 +19,7 @@ class Chicken extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.x = x;
-    this.speed = 4 + Math.random() * 2;
+    this.speed = 9 + Math.random() * 2;
   }
 
   animate() {
@@ -40,6 +40,11 @@ class Chicken extends MovableObject {
       this.checkLevelBegin();
       this.checkLevelEnd();
     }, 100);
+  }
+
+  run() {
+    this.speed = 18 + Math.random() * 2; 
+    this.animationSpeed = 3;
   }
 
   handleAnimation() {

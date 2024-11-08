@@ -1,9 +1,9 @@
 class Endboss extends MovableObject {
-  height = 200;
+  height = 160;
   width = 100;
   energy = 100;
   animationSpeed = 1;
-  groundLevel = 240;
+  groundLevel = 270;
   deadAnimationPlayed = false;
   remove = false;
   statusBar;
@@ -83,7 +83,7 @@ class Endboss extends MovableObject {
       } else if (!this.deadAnimationPlayed) {
         this.playDeadAnimation();
       }
-    }, 100);
+    }, 1000 / 60);
   }
 
   handleAnimation() {
@@ -95,15 +95,16 @@ class Endboss extends MovableObject {
       this.moveLeft();
       this.checkLevelBegin();
       this.checkLevelEnd();
-    }, 1000 / 60);
+    }, 100);
   }
 
   jump() {
     this.startInterval(() => {
       if (!this.deadAnimationPlayed) {
+        this.jumpHeight = 20;
         super.jump(this.jumpHeight);
       }
-    }, 2000 + Math.random() * 500);
+    }, 1500 + Math.random() * 500);
   }
 
 
@@ -139,7 +140,7 @@ class Endboss extends MovableObject {
             this.remove = true;
           }, 1000);
         }
-      }, 1000 / 60);
+      }, 100);
     }
   }
 

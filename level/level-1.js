@@ -5,9 +5,10 @@ const level1 = new Level(
     new Chicken(600 + Math.random() * 2000),
     new Chicken(600 + Math.random() * 2000),
     new Chicken(600 + Math.random() * 2000),
-    new Minichicken(1200 + Math.random() * 2000,  4 + Math.random() * 1),
-    new Minichicken(1400 + Math.random() * 2000,  4 + Math.random() * 1),
-    new Minichicken(1800 + Math.random() * 2000,  4 + Math.random() * 1),
+    new Minichicken(800 + Math.random() * 2000,  4 + Math.random() * 2),
+    new Minichicken(1100 + Math.random() * 2000,  4 + Math.random() * 2),
+    new Minichicken(1400 + Math.random() * 1000,  4 + Math.random() * 2),
+    new Minichicken(1500,  4 + Math.random() * 2),
     new Endboss()
   ],
   [

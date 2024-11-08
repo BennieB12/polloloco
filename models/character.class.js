@@ -215,7 +215,7 @@ class Character extends MovableObject {
       setTimeout(() => {
         this.world.showEndScreen();
         this.world.gameOver = true;
-      }, 3000);
+      }, 5000);
 
       this.WALKING_SOUND.pause();
     }

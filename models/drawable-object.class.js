@@ -82,6 +82,21 @@ class DrawableObject {
 
       ctx.rect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
       ctx.stroke();
+
+      // ctx.beginPath();
+      // ctx.lineWidth = "1";
+      // ctx.strokeStyle = "red";
+  
+      // let smallerBoundingBoxWidth = this.width / 2;
+      // let smallerBoundingBoxHeight = this.height / 2;
+      
+  
+      // let smallerBoundingBoxX = this.x + (this.width - smallerBoundingBoxWidth) / 2;
+      // let smallerBoundingBoxY = this.y + (this.height - smallerBoundingBoxHeight) / 2 + 10;
+  
+      // ctx.rect(smallerBoundingBoxX, smallerBoundingBoxY, smallerBoundingBoxWidth, smallerBoundingBoxHeight);
+      // ctx.stroke();
     }
-  }
+    }
+
 }
