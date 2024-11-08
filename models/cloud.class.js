@@ -2,6 +2,7 @@ class Cloud extends MovableObject {
   height = 250;
   width = 500;
   speed = 0.10;
+  accelaration = 0;
   interval;
 
   constructor(imagePath, x, y) {
@@ -10,13 +11,13 @@ class Cloud extends MovableObject {
       this.y = y + Math.random() * 50;
   }
 
-  startMoving() {
-      this.interval = setInterval(() => {
-          this.moveLeft();
-      }, 1000 / 60);
-  }
+//   startMoving() {
+//       this.interval = setInterval(() => {
+//           this.moveLeft();
+//       }, 100);
+//   }
 
-  stopMoving() {
-      clearInterval(this.interval);
-  }
+//   stopMoving() {
+//       clearInterval(this.interval);
+//   }
 }

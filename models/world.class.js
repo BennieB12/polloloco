@@ -43,8 +43,8 @@ class World {
       this.addObjectsToMap(this.level.backgroundObjects);
       this.addToMap(this.character);
       this.checkVisibility();
-      this.drawBars();
       this.drawObjects();
+      this.drawBars();
       this.ctx.translate(-this.camera_x, 0);
     }
 
@@ -115,7 +115,7 @@ class World {
     this.startScreenDrawn = false;
     this.clearBoard();
     this.clearAllIntervalsForObjects();
-    this.level.clouds.forEach(cloud => cloud.startMoving());
+    // this.level.clouds.forEach(cloud => cloud.startMoving());
     this.run();
     this.draw();
     this.GAMESTART_SOUND.pause();
