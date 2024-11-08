@@ -71,10 +71,8 @@ class World {
     this.ctx.translate(this.camera_x, 0);
   }
 
+  
   drawObjects() {
-    this.level.enemies = this.level.enemies.filter((enemy) => !enemy.remove);
-    this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
-
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.coins);
@@ -114,6 +112,7 @@ class World {
     this.startScreenDrawn = false;
     this.clearBoard();
     this.clearAllIntervalsForObjects();
+    this.level.clouds.forEach(cloud => cloud.startMoving());
     this.run();
     this.draw();
     this.GAMESTART_SOUND.pause();
@@ -295,6 +294,7 @@ class World {
     this.statusBarCoin.reset();
     this.statusBarEnemy.reset();
     this.level.resetLevel();
+    this.level.clouds.forEach(cloud => cloud.stopMoving());
     this.startGame();
   }
 

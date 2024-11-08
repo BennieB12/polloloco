@@ -4,8 +4,7 @@ class Chicken extends MovableObject {
   width = 60;
   energy = 5;
   animationSpeed = 4;
-  deadAnimationPlayed = false;
-  remove = false;
+
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",

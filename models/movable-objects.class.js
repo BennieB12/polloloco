@@ -11,6 +11,8 @@ class MovableObject extends DrawableObject {
   groundLevel = 320;
   jumpHeight = 12 + Math.random() * 10;
   intervals = [];
+  remove = false;
+  deadAnimationPlayed = false;
 
 
   startInterval(intervalFunc, intervalTime) {

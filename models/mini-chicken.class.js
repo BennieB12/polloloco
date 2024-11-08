@@ -6,7 +6,6 @@ class Minichicken extends MovableObject {
   animationSpeed = 4;
   groundLevel = 360;
   deadAnimationPlayed = false;
-  remove = false;
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_small/1_walk/1_w.png",
