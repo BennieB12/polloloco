@@ -1,5 +1,5 @@
 class Bottle extends DrawableObject {
-  y = 350;
+  y = 360;
   x = 300 + Math.random() * 2000;
   height = 60;
   width = 40;

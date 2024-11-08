@@ -296,6 +296,7 @@ class World {
     this.character.otherDirection = false;
     this.throwableObjects = [];
     this.startScreenDrawn = true;
+    this.character.standingTimer = 0;
     this.character.x = 80;
     this.character.energy = 100;
     this.character.resetCoins();

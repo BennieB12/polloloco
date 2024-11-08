@@ -7,12 +7,12 @@ class MovableObject extends DrawableObject {
   energy;
   isJumping = false;
   animationSpeed = 5;
-  standingTimer = 0;
   groundLevel = 320;
   jumpHeight = 12 + Math.random() * 10;
   intervals = [];
   remove = false;
   deadAnimationPlayed = false;
+  standingTimer = 0;
 
   startInterval(intervalFunc, intervalTime) {
     const intervalId = setInterval(intervalFunc, intervalTime);

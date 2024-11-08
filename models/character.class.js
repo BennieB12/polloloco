@@ -9,7 +9,7 @@ class Character extends MovableObject {
   isPlayingSound = false;
   isThrowing = false;
   deadAnimationPlayed = false;
-
+  standingTimer = 0;
   world;
   WALKING_SOUND = new Audio("audio/walk_right.mp3");
 
