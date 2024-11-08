@@ -73,6 +73,9 @@ class World {
 
   
   drawObjects() {
+    
+    this.level.enemies = this.level.enemies.filter((enemy) => !enemy.remove);
+    this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.coins);
@@ -164,6 +167,14 @@ class World {
       enemy.reduceEnergy(10);
     }
   }
+
+  // removeObjects() {
+  //   this.throwableObjects.forEach((bottle, bottleIndex) => {
+  //     if (bottle.remove) {
+  //         this.throwableObjects.splice(bottleIndex, 1);
+  //     }
+  // });
+  // }
   
 
   handleEnemyCollision(enemy) {

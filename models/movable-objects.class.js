@@ -14,7 +14,6 @@ class MovableObject extends DrawableObject {
   remove = false;
   deadAnimationPlayed = false;
 
-
   startInterval(intervalFunc, intervalTime) {
     const intervalId = setInterval(intervalFunc, intervalTime);
     this.intervals.push(intervalId);

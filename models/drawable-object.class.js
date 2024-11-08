@@ -9,7 +9,6 @@ class DrawableObject {
   bottles = 0;
   rotationAngle = 0;
 
-
   constructor() {
     this.offset = {
       left: 0,
@@ -70,30 +69,19 @@ class DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (
-      this instanceof Character ||
-      this instanceof Chicken ||
-      this instanceof Endboss ||
-      this instanceof Minichicken ||
-      this instanceof Bottle ||
-      this instanceof Coin
-    ) {
-
+    if (this instanceof Endboss) {
       ctx.beginPath();
       ctx.lineWidth = "1";
       ctx.strokeStyle = "blue";
-  
+
       let hitboxWidth = this.width * 0.5;
       let hitboxHeight = this.height * 1.0;
-  
+
       let hitboxX = this.x + (this.width - hitboxWidth) / 2 + this.offset.left / 2;
       let hitboxY = this.y + (this.height - hitboxHeight) / 2 + this.offset.top / 2;
-  
+
       ctx.rect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
       ctx.stroke();
-  
-
-  
     }
   }
 }
