@@ -14,6 +14,7 @@ class MovableObject extends DrawableObject {
   deadAnimationPlayed = false;
   standingTimer = 0;
   damage;
+  splashAnimation = false;
 
   startInterval(intervalFunc, intervalTime) {
     const intervalId = setInterval(intervalFunc, intervalTime);
@@ -56,16 +57,29 @@ class MovableObject extends DrawableObject {
   }
 
   isColliding(mo) {
-    return (
-      Math.sqrt(
-        Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
-        Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
-      ) <
-      (this.width / 2 + mo.width / 2) * 0.5 &&
-      this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
-      this.y < mo.y
-    );
-  }
+    if (this instanceof ThrowableObject) {
+        if (this.splashAnimation) return false;
+        
+        return (
+            this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+            this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+            this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+            this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom
+        );
+    } else {
+        return (
+            Math.sqrt(
+                Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
+                Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
+            ) <
+            (this.width / 2 + mo.width / 2) * 0.5 &&
+            this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
+            this.y < mo.y
+        );
+    }
+}
+
+
 
 
   getDamage() {

@@ -75,7 +75,7 @@ class DrawableObject {
       ctx.strokeStyle = "blue";
 
       let hitboxWidth = this.width * 0.5;
-      let hitboxHeight = this.height * 1.0;
+      let hitboxHeight = this.height * 0.6;
 
       let hitboxX = this.x + (this.width - hitboxWidth) / 2 + this.offset.left / 2;
       let hitboxY = this.y + (this.height - hitboxHeight) / 2 + this.offset.top / 2;

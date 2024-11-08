@@ -53,6 +53,7 @@ class Minichicken extends MovableObject {
   jump() {
     this.startInterval(() => {
       if (!this.deadAnimationPlayed) {
+        this.jumpHeight = 12 + Math.random() * 3;
         super.jump(this.jumpHeight);
       }
     }, 1000 + Math.random() * 500);

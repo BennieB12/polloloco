@@ -1,6 +1,5 @@
 class ThrowableObject extends MovableObject {
   throwDirection = 1;
-  splashAnimation = false;
   animationSpeed = 3;
   remove = false;
   y;
@@ -36,6 +35,7 @@ class ThrowableObject extends MovableObject {
     this.y = y;
     this.height = 60;
     this.width = 40;
+    this.setOffset(20, 20, 20, 20);
   }
 
   throw(speedX, speedY) {
@@ -86,7 +86,7 @@ class ThrowableObject extends MovableObject {
         clearInterval(splashInterval);
         this.remove = true;
       }
-    }, 1000 / 30);
+    }, 10);
   }
 
   setThrowDirection() {
