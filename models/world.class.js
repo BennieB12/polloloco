@@ -71,9 +71,7 @@ class World {
     this.ctx.translate(this.camera_x, 0);
   }
 
-  
   drawObjects() {
-    
     this.level.enemies = this.level.enemies.filter((enemy) => !enemy.remove);
     this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
     this.addObjectsToMap(this.level.clouds);
@@ -96,13 +94,13 @@ class World {
 
   flipImage(mo) {
     if (!mo.otherDirection) return;
-  
+
     this.ctx.save();
     this.ctx.translate(mo.width, 0);
     this.ctx.scale(-1, 1);
     mo.x = mo.x * -1;
   }
-  
+
   flipImageBack(mo) {
     if (!mo.otherDirection) return;
     mo.x = mo.x * -1;
@@ -124,6 +122,7 @@ class World {
     if (this.gameStarted) {
       this.level.enemies.forEach((enemy) => {
         enemy.animate();
+        this.character.standingTimer = 0;
       });
     }
   }
@@ -167,15 +166,6 @@ class World {
       enemy.reduceEnergy(10);
     }
   }
-
-  // removeObjects() {
-  //   this.throwableObjects.forEach((bottle, bottleIndex) => {
-  //     if (bottle.remove) {
-  //         this.throwableObjects.splice(bottleIndex, 1);
-  //     }
-  // });
-  // }
-  
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {
@@ -306,7 +296,7 @@ class World {
     this.statusBarCoin.reset();
     this.statusBarEnemy.reset();
     this.level.resetLevel();
-    this.level.clouds.forEach(cloud => cloud.stopMoving());
+    this.level.clouds.forEach((cloud) => cloud.stopMoving());
     this.startGame();
   }
 
