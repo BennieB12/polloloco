@@ -10,11 +10,9 @@ function init() {
 function toggleFullScreen() {
   if (!document.fullscreenElement) {
     canvas.requestFullscreen().catch(err => {
-      console.error("Fehler beim Aktivieren des Vollbildmodus:", err);
     });
   } else {
     document.exitFullscreen().catch(err => {
-      console.error("Fehler beim Verlassen des Vollbildmodus:", err);
     });
   }
 }

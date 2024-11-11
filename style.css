@@ -46,6 +46,24 @@ canvas {
   z-index: 1;
 }
 
+.canvas-con {
+  position: relative;
+  display: inline-block;
+}
+
+#fullscreenButton {
+  position: absolute;
+  top: 600px;
+  left: 30%;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 30px;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
 .d-none {
   display: none;
 }

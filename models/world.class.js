@@ -17,6 +17,16 @@ class World {
   GAMESTART_SOUND = new Audio("audio/start.mp3");
   enemyHit = false;
 
+  button = {
+    x: 150,
+    y: 400,
+    width: 100,
+    height: 50,
+    text: 'Start',
+    color: '#3498db',
+    textColor: '#fff',
+  };
+
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -26,32 +36,61 @@ class World {
     this.showStartScreen();
     this.run();
     this.draw();
+    this.addButtonListener();
   }
 
   setWorld() {
     this.character.world = this;
   }
 
-  draw() {
-    if (this.gameOver) return;
-    if (!this.gameStarted) {
-      if (!this.startScreenDrawn) {
-        this.showStartScreen();
-        this.startScreenDrawn = true;
-      }
-    } else {
-      this.clearBoard();
-      this.ctx.translate(this.camera_x, 0);
-      this.addObjectsToMap(this.level.backgroundObjects);
-      this.addToMap(this.character);
-      this.checkVisibility();
-      this.drawObjects();
-      this.drawBars();
-      this.ctx.translate(-this.camera_x, 0);
+    drawButton() {
+      this.ctx.fillStyle = this.button.color;
+      this.ctx.fillRect(this.button.x, this.button.y, this.button.width, this.button.height);
+      this.ctx.fillStyle = this.button.textColor;
+      this.ctx.font = '20px Arial';
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText(this.button.text, this.button.x + this.button.width / 2, this.button.y + this.button.height / 2);
+    }
+  
+    addButtonListener() {
+      this.canvas.addEventListener('click', (event) => {
+        const mouseX = event.offsetX;
+        const mouseY = event.offsetY;
+  
+        if (
+          mouseX >= this.button.x &&
+          mouseX <= this.button.x + this.button.width &&
+          mouseY >= this.button.y &&
+          mouseY <= this.button.y + this.button.height
+        ) {
+          this.startGame();
+        }
+      });
     }
 
-    requestAnimationFrame(() => this.draw());
-  }
+    draw() {
+      if (this.gameOver) return;
+      if (!this.gameStarted) {
+        if (!this.startScreenDrawn) {
+          this.showStartScreen();
+          this.startScreenDrawn = true;
+        }
+      } else {
+        this.clearBoard();
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.backgroundObjects);
+        this.addToMap(this.character);
+        this.checkVisibility();
+        this.drawObjects();
+        this.drawBars();
+        this.ctx.translate(-this.camera_x, 0);
+      }
+  
+      this.drawButton();
+  
+      requestAnimationFrame(() => this.draw());
+    }
 
   checkVisibility() {
     if (this.character.x >= 1800) {
