@@ -68,12 +68,35 @@ class DrawableObject {
     };
   }
 
-    drawFrame(ctx) {
-      this.hitboxWidth = this.width * 0.5;
-      this.hitboxHeight = this.height * 0.6;
-    
-      this.hitboxX = this.x + (this.width - this.hitboxWidth) / 2 + this.offset.left / 2;
-      this.hitboxY = this.y + (this.height - this.hitboxHeight) / 2 + this.offset.top / 2;
+  drawFrame(ctx) {
+    if (this instanceof Endboss || this instanceof Character) {
+      ctx.beginPath();
+      ctx.lineWidth = "1";
+      ctx.strokeStyle = "blue";
+
+      let hitboxWidth = this.width * 0.5;
+      let hitboxHeight = this.height * 0.6;
+
+      let hitboxX = this.x + (this.width - hitboxWidth) / 2 + this.offset.left / 2;
+      let hitboxY = this.y + (this.height - hitboxHeight) / 2 + this.offset.top / 2;
+
+      ctx.rect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.lineWidth = "1";
+      ctx.strokeStyle = "red";
+  
+      let smallerBoundingBoxWidth = this.width / 2;
+      let smallerBoundingBoxHeight = this.height / 2;
+      
+  
+      let smallerBoundingBoxX = this.x + (this.width - smallerBoundingBoxWidth) / 2;
+      let smallerBoundingBoxY = this.y + (this.height - smallerBoundingBoxHeight) / 2 + 10;
+  
+      ctx.rect(smallerBoundingBoxX, smallerBoundingBoxY, smallerBoundingBoxWidth, smallerBoundingBoxHeight);
+      ctx.stroke();
     }
+  }
 
 }

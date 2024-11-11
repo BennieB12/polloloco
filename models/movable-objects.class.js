@@ -34,7 +34,7 @@ class MovableObject extends DrawableObject {
       this.onGround();
     }
     requestAnimationFrame(this.applyGravity.bind(this));
- }
+  }
 
   setAcceleration() {
     this.y -= this.speedY;
@@ -58,29 +58,34 @@ class MovableObject extends DrawableObject {
 
   isColliding(mo) {
     if (this instanceof ThrowableObject) {
-        if (this.splashAnimation) return false;
-        
-        return (
-            this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
-            this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
-            this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
-            this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom
-        );
-    } else {
-        return (
-            Math.sqrt(
-                Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
-                Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
-            ) <
-            (this.width / 2 + mo.width / 2) * 0.5 &&
-            this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
-            this.y < mo.y
-        );
+      if (this.splashAnimation) return false;
+
+      return (
+        this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+        this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+        this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+        this.y > mo.y
+      );
+    } else if (this instanceof Endboss) {
+      return (
+        this.x < mo.x + mo.width &&
+        this.x + this.width > mo.x &&
+        this.y < mo.y + mo.height &&
+        this.y + this.height > mo.y
+      );
     }
-}
-
-
-
+    else {
+      return (
+        Math.sqrt(
+          Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
+            Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
+        ) <
+          (this.width / 2 + mo.width / 2) * 0.5 &&
+        this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
+        this.y < mo.y
+      );
+    }
+  }
 
   getDamage() {
     if (this instanceof Character && !this.isHurt()) {
@@ -140,33 +145,32 @@ class MovableObject extends DrawableObject {
 
   playAnimation(images, speed) {
     if (this.currentImage % speed === 0) {
-        let i = Math.floor(this.currentImage / speed) % images.length;
-        let path = images[i];
-        this.img = this.imageCache[path];
+      let i = Math.floor(this.currentImage / speed) % images.length;
+      let path = images[i];
+      this.img = this.imageCache[path];
     }
     this.currentImage++;
-}
+  }
 
-checkLevelBegin() {
-  if (this instanceof Endboss) {
-    if (this.x <= 1800) {
+  checkLevelBegin() {
+    if (this instanceof Endboss) {
+      if (this.x <= 1800) {
+        this.speed = -this.speed;
+        this.otherDirection = !this.otherDirection;
+        this.moveLeft();
+      }
+    } else if (this.x <= 0) {
       this.speed = -this.speed;
       this.otherDirection = !this.otherDirection;
       this.moveLeft();
     }
-  } else if (this.x <= 0) {
-    this.speed = -this.speed;
-    this.otherDirection = !this.otherDirection;
-    this.moveLeft();
   }
-}
 
-checkLevelEnd() {
-  if (this.x >= 2850) {
-    this.speed = -this.speed;
-    this.otherDirection = !this.otherDirection;
-    this.moveLeft();
-  } 
-}
-
+  checkLevelEnd() {
+    if (this.x >= 2850) {
+      this.speed = -this.speed;
+      this.otherDirection = !this.otherDirection;
+      this.moveLeft();
+    }
+  }
 }

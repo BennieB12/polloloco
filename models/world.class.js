@@ -165,8 +165,12 @@ class World {
       bottle.splashAnimation = true;
       bottle.groundLevel = bottle.y;
       bottle.playSplashAnimation();
-      enemy.reduceEnergy(10);
+      if (enemy instanceof Endboss) {
+        enemy.statusBar = this.statusBarEnemy;
+      }
+      enemy.getDamage();
     }
+
   }
 
   handleEnemyCollision(enemy) {

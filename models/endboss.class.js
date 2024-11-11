@@ -1,9 +1,9 @@
 class Endboss extends MovableObject {
-  height = 160;
-  width = 100;
+  height = 105;
+  width = 80;
   energy = 100;
-  animationSpeed = 1;
-  groundLevel = 270;
+  animationSpeed = 3;
+  groundLevel = 325;
   deadAnimationPlayed = false;
   remove = false;
   statusBar;
@@ -60,9 +60,10 @@ class Endboss extends MovableObject {
       ...this.IMAGES_HURT,
     ]);
     this.x = 2850;
-    this.speed = 3;
+    this.speed = 11;
     this.applyGravity();
     this.statusBar = null;
+    // this.setOffset(10, 15, 5, 10);
   }
 
   updateStatusBar() {
@@ -113,7 +114,7 @@ class Endboss extends MovableObject {
       this.playAnimation(this.IMAGES_WALKING, 3);
     } else if (this.isJumping) {
       this.handleJumpAnimation();
-    } else if (this.isHurt()) {
+    } else if (this.getDamage()) {
       this.playAnimation(this.IMAGES_HURT, 3);
     }
   }
@@ -140,7 +141,7 @@ class Endboss extends MovableObject {
             this.remove = true;
           }, 1000);
         }
-      }, 100);
+      }, 1000 / 60);
     }
   }
 
