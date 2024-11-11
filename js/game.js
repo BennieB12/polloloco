@@ -2,11 +2,21 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
-
-
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas);
+}
+
+function toggleFullScreen() {
+  if (!document.fullscreenElement) {
+    canvas.requestFullscreen().catch(err => {
+      console.error("Fehler beim Aktivieren des Vollbildmodus:", err);
+    });
+  } else {
+    document.exitFullscreen().catch(err => {
+      console.error("Fehler beim Verlassen des Vollbildmodus:", err);
+    });
+  }
 }
 
 document.addEventListener("keydown", (e) => {
@@ -33,11 +43,24 @@ document.addEventListener("keydown", (e) => {
   if (e.keyCode === 68) {
     keyboard.D = true;
   }
+
+  if (e.keyCode === 27) {
+    keyboard.ESC = true;
+  }
 });
 
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'F5') {
-    location.reload();
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  }
+});
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    toggleFullScreen();
   }
 });
 
@@ -64,5 +87,9 @@ document.addEventListener("keyup", (e) => {
 
   if (e.keyCode === 68) {
     keyboard.D = false;
+  }
+
+  if (e.keyCode === 27) {
+    keyboard.ESC = false;
   }
 });

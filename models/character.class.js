@@ -94,9 +94,8 @@ class Character extends MovableObject {
     setInterval(() => {
       this.handleMovement();
       this.handleAnimation();
-    }, 1000 / 20);
+    }, 1000 / 30);
   }
-
 
   handleMovement() {
     if (this.isDead()) {
@@ -125,9 +124,8 @@ class Character extends MovableObject {
       this.WALKING_SOUND.pause();
       return;
     }
-    if (this.aboveGround()) {
-      const jumpAnimationSpeed = 3;
-      this.playAnimation(this.IMAGES_JUMPING, jumpAnimationSpeed);
+    if (this.isJumping) {
+      this.playAnimation(this.IMAGES_JUMPING, 6);
       this.WALKING_SOUND.pause();
       return;
     }
@@ -170,9 +168,14 @@ class Character extends MovableObject {
     if ((this.world.keyboard.SPACE || this.world.keyboard.UP) && !this.aboveGround() && !this.isJumping) {
       this.isJumping = true;
       this.jump();
-      this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
+      this.startInterval(() => {
+        if (this.isJumping) {
+          this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
+        }
+      }, 1000 / 60);
     }
-  }
+    }
+  
 
   throwBottle() {
     if (this.enoughBottles()) {
@@ -185,17 +188,14 @@ class Character extends MovableObject {
 
   collectBottle(index) {
     this.world.level.bottles.splice(index, 1);
-    if (this.bottles < 5)
-    this.bottles++;
+    if (this.bottles < 5) this.bottles++;
     this.world.statusBarBottle.setpercentage(this.bottles);
   }
 
   collectCoin(index) {
     this.world.level.coins.splice(index, 1);
-    if (this.collectedCoins < 5)
-    this.collectedCoins++;
+    if (this.collectedCoins < 5) this.collectedCoins++;
     this.world.statusBarCoin.setpercentage(this.collectedCoins * 20);
-
   }
 
   resetCoins() {
@@ -268,4 +268,9 @@ class Character extends MovableObject {
     return this.standingTimer > 5000;
   }
 
+  onGround() {
+    super.onGround();
+    this.isJumping = false;
+    this.clearAllIntervals();
+  }
 }
