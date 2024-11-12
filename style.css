@@ -124,6 +124,46 @@ canvas {
   width: 80px;
 }
 
+#btnLeft {
+  border-radius: 30px;
+  border: unset;
+  background-color: orangered;
+  position: absolute;
+  top: 500px;
+  left: 200px;
+  cursor: pointer;
+}
+
+#btnRight {
+  border-radius: 30px;
+  border: unset;
+  background-color: orangered;
+  position: absolute;
+  top: 500px;
+  left: 250px;
+  cursor: pointer;
+}
+
+#btnJump {
+  border-radius: 30px;
+  border: unset;
+  background-color: orangered;
+  position: absolute;
+  top: 500px;
+  left: 550px;
+  cursor: pointer;
+}
+
+#btnThrow {
+  border-radius: 30px;
+  border: unset;
+  background-color: orangered;
+  position: absolute;
+  top: 500px;
+  left: 700px;
+  cursor: pointer;
+}
+
 h2 {
   position: absolute;
   font-size: 60;

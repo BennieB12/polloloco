@@ -18,11 +18,12 @@ class World {
   enemyHit = false;
 
   button = {
-    x: 150,
-    y: 400,
-    width: 100,
-    height: 50,
-    text: 'Start',
+    x: 650,
+    y: 30,
+    width: 30,
+    height: 30,
+    text: '⟵',
+    border: "none",
     color: '#3498db',
     textColor: '#fff',
   };

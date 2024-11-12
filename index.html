@@ -42,6 +42,14 @@
     <button id="startButton" class="btn pointer d-none" onclick="world.startGame()">Start Game</button>
     <button id="fullscreenButton" onclick="toggleFullScreen()">V</button>
 
+    <div class="wrapper-move">
+      <button id="btnLeft" onclick="keyboard.LEFT = true" onmouseup="keyboard.LEFT = false" onmouseleave="keyboard.LEFT = false">Left</button>
+      <button id="btnRight" onclick="keyboard.RIGHT = true" onmouseup="keyboard.RIGHT = false" onmouseleave="keyboard.RIGHT = false">Right</button>
+    </div>
+    <div class="wrapper-action">
+      <button id="btnJump" onclick="keyboard.UP = true" onmouseup="keyboard.UP = false" onmouseleave="keyboard.UP = false">Jump</button>
+      <button id="btnThrow" onclick="keyboard.D = true" onmouseup="keyboard.D = false" onmouseleave="keyboard.D = false">Throw</button>
+    </div>
     <canvas id="canvas" width="720" height="480">
     </canvas>
 
