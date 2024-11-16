@@ -25,8 +25,8 @@ class Level {
       new Minichicken(1100 + Math.random() * 2000,  6 + Math.random() * 2),
       new Minichicken(1400 + Math.random() * 1000,  6 + Math.random() * 2),
       new Minichicken(1500,  6 + Math.random() * 2),
-      // new Endboss()
-    ];
+      new Endboss()
+    ],
     
     this.clouds = [
       new Cloud("img/5_background/layers/4_clouds/2.png", 100, 0),
@@ -47,7 +47,7 @@ class Level {
       new Cloud("img/5_background/layers/4_clouds/1.png", 2400, 0),
       new Cloud("img/5_background/layers/4_clouds/1.png", 2600, 0),
       new Cloud("img/5_background/layers/4_clouds/2.png", 2700, 0)
-    ];
+    ],
     
     this.backgroundObjects = [
       new BackgroundObject("img/5_background/layers/air.png", -719),
@@ -74,7 +74,7 @@ class Level {
       new BackgroundObject("img/5_background/layers/3_third_layer/1.png", 719 * 4),
       new BackgroundObject("img/5_background/layers/2_second_layer/1.png", 719 * 4),
       new BackgroundObject("img/5_background/layers/1_first_layer/1.png", 719 * 4),
-    ];
+    ],
     
     this.coins = [
       new Coin(200 + Math.random() * 2000),
@@ -82,7 +82,7 @@ class Level {
       new Coin(1100 + Math.random() * 2000),
       new Coin(1300 + Math.random() * 2000),
       new Coin(1700 + Math.random() * 2000),
-    ];
+    ],
     
     this.bottles = [
       new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 300 + Math.random() * 176),
@@ -91,6 +91,6 @@ class Level {
       new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1200 + Math.random() * 1000),
       new Bottle("img/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1200 + Math.random() * 1200),
 
-    ];
+    ]
   }
 }

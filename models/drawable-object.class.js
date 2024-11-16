@@ -8,6 +8,12 @@ class DrawableObject {
   collectedCoins = 0;
   bottles = 0;
   rotationAngle = 0;
+  visible = false;
+
+  LOSE_IMAGES =[
+    'img/9_intro_outro_screens/game_over/game over.png',
+    'img/9_intro_outro_screens/game_over/you lost.png'
+  ];
 
   constructor() {
     this.offset = {
@@ -17,6 +23,7 @@ class DrawableObject {
       bottom: 0,
     };
   }
+
 
   adjustCollectibleOffsets() {
     if (this instanceof Coin || this instanceof Bottle) {

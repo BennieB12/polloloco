@@ -7,9 +7,7 @@ body {
   align-items: center;
   position: relative;
   overflow: hidden;
-  font-family: 'Poppins';
-  font-style: normal;
-  font-weight: 400;
+  font-family: "Poppins";
 }
 
 .background {
@@ -27,12 +25,8 @@ h1 {
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  z-index: 1;
   color: black;
+  z-index: 1;
 }
 
 canvas {
@@ -40,7 +34,6 @@ canvas {
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  width: 50%;
   background-color: black;
   border: 2px solid black;
   z-index: 1;
@@ -51,40 +44,8 @@ canvas {
   display: inline-block;
 }
 
-#fullscreenButton {
-  position: absolute;
-  top: 600px;
-  left: 30%;
-  z-index: 100;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  border-radius: 30px;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-}
-
 .d-none {
   display: none;
-}
-
-#startButton {
-  width: 40px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 15px 30px;
-  font-size: 24px;
-  z-index: 10;
-  background-color: orange;
-  border-radius: 30px;
-  border: unset;
-  font-size: 12px;
-}
-#startButton:hover {
-  cursor: pointer;
-  opacity: 80%;
 }
 
 #explanation {
@@ -96,16 +57,15 @@ canvas {
 }
 
 .rassels-img {
-    height: 40px;
-    width: 20px;
-
+  height: 40px;
+  width: 20px;
 }
 
 .d-flex-ex {
-    display: flex;
-    flex-direction: row;
-    width: 183px;
-    justify-content: space-evenly;
+  display: flex;
+  flex-direction: row;
+  width: 183px;
+  justify-content: space-evenly;
 }
 .overdraw {
   mix-blend-mode: multiply;
@@ -124,44 +84,51 @@ canvas {
   width: 80px;
 }
 
-#btnLeft {
-  border-radius: 30px;
-  border: unset;
-  background-color: orangered;
-  position: absolute;
-  top: 500px;
-  left: 200px;
-  cursor: pointer;
+.panel {
+  width: 720px;
+  display: flex;
+  justify-content: space-between;
+  position: absolute; 
+  z-index: 1000;
+  top: 510px;
+  left: 600px;
 }
 
-#btnRight {
-  border-radius: 30px;
-  border: unset;
-  background-color: orangered;
-  position: absolute;
-  top: 500px;
-  left: 250px;
-  cursor: pointer;
+.panel-2 {
+  width: 720px;
+  display: flex;
+  position: absolute; 
+  z-index: 1000;
+  top: 210px;
+  left: 900px;
 }
 
-#btnJump {
-  border-radius: 30px;
-  border: unset;
-  background-color: orangered;
-  position: absolute;
-  top: 500px;
-  left: 550px;
-  cursor: pointer;
+.wrapper-move {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
-#btnThrow {
-  border-radius: 30px;
-  border: unset;
+.wrapper-action {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#btnLeft, #btnRight, #btnJump, #btnThrow, #btnFullscreen, #btnControls, #btnSound {
+  margin: 5px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
   background-color: orangered;
-  position: absolute;
-  top: 500px;
-  left: 700px;
   cursor: pointer;
+  border: none;
+  box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3), -2px -2px 15px rgba(22, 22, 22, 0.9);
+  transition: all 0.3s ease;
+}
+
+#btnLeft:active, #btnRight:active,#btnJump:active, #btnThrow:active {
+  transform: scale(0.95);
 }
 
 h2 {
@@ -186,5 +153,34 @@ footer a {
   height: 24px;
   text-decoration: none;
   font-size: 34px;
-  color:aquamarine;
+  color: aquamarine;
+}
+
+@media (max-width: 768px) {
+  canvas {
+    width: 90%;
+    height: 70%;
+    top: 15%;
+  }
+
+  #btnLeft, #btnRight, #btnJump, #btnThrow {
+    height: 8vw;
+    width: 8vw;
+    min-height: 32px;
+    min-width: 32px; 
+    font-size: 14px;
+  }
+
+  .wrapper-move, .wrapper-action {
+    top: 75%;
+  }
+
+  @media (max-width: 480px) {
+    #btnLeft, #btnRight, #btnJump, #btnThrow {
+      height: 6vw;
+      width: 6vw;
+      min-height: 28px;
+      min-width: 28px;
+    }
+  }
 }

@@ -26,7 +26,7 @@
     <script src="models/endboss.class.js"></script>
     <script src="level/level-1.js"></script>
     <script src="js/game.js"></script>
-    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png" />
     <title>El Pollo Loco</title>
   </head>
   <body onload="init()">
@@ -34,39 +34,74 @@
     <img src="img/background.png" />
 
     <h1 class="overdraw">
-        <img src="img/rassels.jpg" class="rassels-img">
+      <img src="img/rassels.jpg" class="rassels-img" />
       El Pollo Loco
-        <img src="img/rassels.jpg" class="rassels-img">
+      <img src="img/rassels.jpg" class="rassels-img" />
     </h1>
-    
-    <button id="startButton" class="btn pointer d-none" onclick="world.startGame()">Start Game</button>
-    <button id="fullscreenButton" onclick="toggleFullScreen()">V</button>
 
-    <div class="wrapper-move">
-      <button id="btnLeft" onclick="keyboard.LEFT = true" onmouseup="keyboard.LEFT = false" onmouseleave="keyboard.LEFT = false">Left</button>
-      <button id="btnRight" onclick="keyboard.RIGHT = true" onmouseup="keyboard.RIGHT = false" onmouseleave="keyboard.RIGHT = false">Right</button>
+
+    <div class="coneten">
+      <div class="panel">
+        <div class="wrapper-move">
+          <button
+            id="btnLeft"
+            onclick="keyboard.LEFT = true"
+            onmouseup="keyboard.LEFT = false"
+            onmouseleave="keyboard.LEFT = false"
+          >
+            <
+          </button>
+          <button
+            id="btnRight"
+            onclick="keyboard.RIGHT = true"
+            onmouseup="keyboard.RIGHT = false"
+            onmouseleave="keyboard.RIGHT = false"
+          >
+            >
+          </button>
+        </div>
+        <div class="wrapper-action">
+          <button
+            id="btnJump"
+            onclick="keyboard.UP = true"
+            onmouseup="keyboard.UP = false"
+            onmouseleave="keyboard.UP = false"
+          >
+            Jump
+          </button>
+          <button
+            id="btnThrow"
+            onclick="keyboard.D = true"
+            onmouseup="keyboard.D = false"
+            onmouseleave="keyboard.D = false"
+          >
+            Throw
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-2">
+        <button id="btnFullscreen">F</button>
+        <button id="btnSound">S</button>
+        <button id="btnControls">C</button>
+      </div>
+      <canvas id="canvas" width="720" height="480"> </canvas>
     </div>
-    <div class="wrapper-action">
-      <button id="btnJump" onclick="keyboard.UP = true" onmouseup="keyboard.UP = false" onmouseleave="keyboard.UP = false">Jump</button>
-      <button id="btnThrow" onclick="keyboard.D = true" onmouseup="keyboard.D = false" onmouseleave="keyboard.D = false">Throw</button>
-    </div>
-    <canvas id="canvas" width="720" height="480">
-    </canvas>
 
     <h2>CONTROLS:</h2>
     <div id="explanation">
-        <div class="d-flex-ex">
-            <h3>MOVE</h3>
-            <img src="img/arrow.jpg" id="img-ex1" class="overdraw" />
-        </div>
-        <div class="d-flex-ex">
-            <h3>JUMP</h3>
-            <img src="img/space.png" id="img-ex2" class="overdraw" />
-        </div>
-        <div class="d-flex-ex">
-            <h3>THROW</h3>
-            <img src="img/keyboard_key_d.png" id="img-ex3" class="overdraw" />
-        </div>
+      <div class="d-flex-ex">
+        <h3>MOVE</h3>
+        <img src="img/arrow.jpg" id="img-ex1" class="overdraw" />
+      </div>
+      <div class="d-flex-ex">
+        <h3>JUMP</h3>
+        <img src="img/space.png" id="img-ex2" class="overdraw" />
+      </div>
+      <div class="d-flex-ex">
+        <h3>THROW</h3>
+        <img src="img/keyboard_key_d.png" id="img-ex3" class="overdraw" />
+      </div>
     </div>
     <footer>
       <a href="impressum.html">Impressum</a>

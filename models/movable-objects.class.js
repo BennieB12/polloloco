@@ -91,13 +91,14 @@ class MovableObject extends DrawableObject {
     if (this instanceof Character && !this.isHurt()) {
       this.reduceEnergy(20);
       this.updateLastHit();
+      this.isHurt();
       this.world.statusBarHealth.setpercentage(this.energy);
     } else if (this instanceof Chicken || this instanceof Minichicken) {
       this.reduceEnergy(10);
     } else if (this instanceof Endboss && !this.isHurt()) {
       this.reduceEnergy(20);
-      this.updateLastHit();
-      this.isHurt();
+       this.updateLastHit();
+       this.isHurt();
       this.statusBar.setpercentage(this.energy);
     }
   }
@@ -109,7 +110,7 @@ class MovableObject extends DrawableObject {
   isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
     timePassed = timePassed / 1000;
-    return timePassed < 0.8;
+    return timePassed < 0.5;
   }
 
   updateLastHit() {
@@ -134,13 +135,6 @@ class MovableObject extends DrawableObject {
     if (this.isJumping) {
       this.standingTimer = 0;
     }
-  }
-
-  checkLevelBegin() {
-    if (this.x > 0) return;
-    this.speed = -this.speed;
-    this.otherDirection = !this.otherDirection;
-    this.moveLeft();
   }
 
   playAnimation(images, speed) {

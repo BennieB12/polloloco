@@ -170,7 +170,7 @@ class Character extends MovableObject {
       this.jump();
       this.startInterval(() => {
         if (this.isJumping) {
-          this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
+          this.playAnimation(this.IMAGES_JUMPING, 6);
         }
       }, 1000 / 60);
     }
@@ -209,14 +209,7 @@ class Character extends MovableObject {
     if (!this.deadAnimationPlayed) {
       this.deadAnimationPlayed = true;
       this.playAnimation(this.IMAGES_DEAD, this.animationSpeed);
-
       this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 2]];
-
-      setTimeout(() => {
-        this.world.showEndScreen();
-        this.world.gameOver = true;
-      }, 5000);
-
       this.WALKING_SOUND.pause();
     }
   }
@@ -269,8 +262,8 @@ class Character extends MovableObject {
   }
 
   onGround() {
-    super.onGround();
     this.isJumping = false;
+    super.onGround();
     this.clearAllIntervals();
   }
 }

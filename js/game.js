@@ -9,13 +9,19 @@ function init() {
 
 function toggleFullScreen() {
   if (!document.fullscreenElement) {
-    canvas.requestFullscreen().catch(err => {
+    canvas.requestFullscreen().then(() => {
+    }).catch(err => {
+      console.error(err);
     });
   } else {
-    document.exitFullscreen().catch(err => {
+    document.exitFullscreen().then(() => {
+    }).catch(err => {
+      console.error(err);
     });
   }
 }
+
+
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
@@ -91,14 +97,46 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-document.getElementById("btnLeft").addEventListener("touchstart", () => keyboard.LEFT = true);
-document.getElementById("btnLeft").addEventListener("touchend", () => keyboard.LEFT = false);
 
-document.getElementById("btnRight").addEventListener("touchstart", () => keyboard.RIGHT = true);
-document.getElementById("btnRight").addEventListener("touchend", () => keyboard.RIGHT = false);
+document.getElementById("btnLeft").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  keyboard.LEFT = true;
+});
+document.getElementById("btnLeft").addEventListener("touchend", (e) => {
+  e.preventDefault();
+  keyboard.LEFT = false;
+});
 
-document.getElementById("btnJump").addEventListener("touchstart", () => keyboard.UP = true);
-document.getElementById("btnJump").addEventListener("touchend", () => keyboard.UP = false);
+document.getElementById("btnFullscreen").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+});
+document.getElementById("btnFullscreen").addEventListener("touchend", (e) => {
+  e.preventDefault();
+});
 
-document.getElementById("btnThrow").addEventListener("touchstart", () => keyboard.D = true);
-document.getElementById("btnThrow").addEventListener("touchend", () => keyboard.D = false);
+document.getElementById("btnRight").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  keyboard.RIGHT = true;
+});
+document.getElementById("btnRight").addEventListener("touchend", (e) => {
+  e.preventDefault();
+  keyboard.RIGHT = false;
+});
+
+document.getElementById("btnJump").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  keyboard.UP = true;
+});
+document.getElementById("btnJump").addEventListener("touchend", (e) => {
+  e.preventDefault();
+  keyboard.UP = false;
+});
+
+document.getElementById("btnThrow").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  keyboard.D = true;
+});
+document.getElementById("btnThrow").addEventListener("touchend", (e) => {
+  e.preventDefault();
+  keyboard.D = false;
+});

@@ -16,19 +16,6 @@ class World {
   isPlayingSound = false;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
   enemyHit = false;
-
-  button = {
-    x: 650,
-    y: 30,
-    width: 30,
-    height: 30,
-    text: '⟵',
-    border: "none",
-    color: '#3498db',
-    textColor: '#fff',
-  };
-
-
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -37,69 +24,56 @@ class World {
     this.showStartScreen();
     this.run();
     this.draw();
-    this.addButtonListener();
   }
 
   setWorld() {
     this.character.world = this;
   }
 
-    drawButton() {
-      this.ctx.fillStyle = this.button.color;
-      this.ctx.fillRect(this.button.x, this.button.y, this.button.width, this.button.height);
-      this.ctx.fillStyle = this.button.textColor;
-      this.ctx.font = '20px Arial';
-      this.ctx.textAlign = 'center';
-      this.ctx.textBaseline = 'middle';
-      this.ctx.fillText(this.button.text, this.button.x + this.button.width / 2, this.button.y + this.button.height / 2);
-    }
-  
-    addButtonListener() {
-      this.canvas.addEventListener('click', (event) => {
-        const mouseX = event.offsetX;
-        const mouseY = event.offsetY;
-  
-        if (
-          mouseX >= this.button.x &&
-          mouseX <= this.button.x + this.button.width &&
-          mouseY >= this.button.y &&
-          mouseY <= this.button.y + this.button.height
-        ) {
-          this.startGame();
-        }
-      });
+  draw() {
+    if (this.gameOver) {
+      this.ctx.save();
+      this.ctx.globalAlpha = 0.75;
+      this.clearBoard();
+      this.ctx.translate(this.camera_x, 0);
+      this.addObjectsToMap(this.level.backgroundObjects);
+      this.addToMap(this.character);
+      this.drawObjects();
+      this.drawBars();
+      this.ctx.translate(-this.camera_x, 0);
+
+      this.ctx.restore();
+      this.showLoseScreen();
+
+      return;
     }
 
-    draw() {
-      if (this.gameOver) return;
-      if (!this.gameStarted) {
-        if (!this.startScreenDrawn) {
-          this.showStartScreen();
-          this.startScreenDrawn = true;
-        }
-      } else {
-        this.clearBoard();
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.addToMap(this.character);
-        this.checkVisibility();
-        this.drawObjects();
-        this.drawBars();
-        this.ctx.translate(-this.camera_x, 0);
+    if (!this.gameStarted) {
+      if (!this.startScreenDrawn) {
+        this.showStartScreen();
+        this.startScreenDrawn = true;
       }
-  
-      this.drawButton();
-  
-      requestAnimationFrame(() => this.draw());
+    } else {
+      this.clearBoard();
+      this.ctx.translate(this.camera_x, 0);
+      this.addObjectsToMap(this.level.backgroundObjects);
+      this.addToMap(this.character);
+      this.checkVisibility();
+      this.drawObjects();
+      this.drawBars();
+      this.ctx.translate(-this.camera_x, 0);
     }
+
+    requestAnimationFrame(() => this.draw());
+  }
 
   checkVisibility() {
     if (this.character.x >= 1800) {
       this.statusBarEnemy.visible = true;
+    } else {
+      this.statusBarEnemy.visible = false;
     }
-    return;
   }
-
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
@@ -107,7 +81,9 @@ class World {
   drawBars() {
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.statusBarHealth);
-    this.addToMap(this.statusBarEnemy);
+    if (this.statusBarEnemy.visible) {
+      this.addToMap(this.statusBarEnemy);
+    }
     this.addToMap(this.statusBarCoin);
     this.addToMap(this.statusBarBottle);
     this.ctx.translate(this.camera_x, 0);
@@ -155,11 +131,10 @@ class World {
     this.startScreenDrawn = false;
     this.clearBoard();
     this.clearAllIntervalsForObjects();
-    // this.level.clouds.forEach(cloud => cloud.startMoving());
+    // this.level.clouds.forEach((cloud) => cloud.startMoving());
     this.run();
     this.draw();
     this.GAMESTART_SOUND.pause();
-    document.getElementById("startButton").classList.add("d-none");
 
     if (this.gameStarted) {
       this.level.enemies.forEach((enemy) => {
@@ -210,7 +185,6 @@ class World {
       }
       enemy.getDamage();
     }
-
   }
 
   handleEnemyCollision(enemy) {
@@ -221,7 +195,6 @@ class World {
       ) {
         enemy.getDamage();
         this.character.jump();
-        
       } else {
         this.character.getDamage();
       }
@@ -284,24 +257,10 @@ class World {
 
       animateText();
 
-      const startButton = document.getElementById("startButton");
-      startButton.classList.remove("d-none");
-
       const startGameHandler = () => {
         this.startGame();
       };
-
-      window.addEventListener("keydown", (event) => {
-        if (event.code === "Space") {
-          startGameHandler();
-        }
-      });
-
-      this.canvas.addEventListener("click", () => {
-        startGameHandler();
-      });
-
-      startButton.onclick = startGameHandler;
+      this.canvas.addEventListener("click", startGameHandler, { once: true });
     };
   }
 
@@ -312,22 +271,8 @@ class World {
     }
   }
 
-  showEndScreen() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.font = "bold 60px Arial";
-    this.ctx.fillStyle = "red";
-    this.ctx.textAlign = "center";
-    this.ctx.fillText("Game Over", this.canvas.width / 2, this.canvas.height / 2 - 50);
-    this.ctx.font = "30px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
-
-    this.canvas.removeEventListener("click", this.restartGame.bind(this));
-    this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
-  }
   restartGame() {
+    this.clearBoard();
     this.gameOver = true;
     this.gameStarted = false;
     this.character.otherDirection = false;
@@ -347,11 +292,47 @@ class World {
     this.startGame();
   }
 
+  showWinScreen() {
+    const winImage = new Image();
+    winImage.src = "img/9_intro_outro_screens/win/win_2.png";
+
+    winImage.onload = () => {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
+
+      this.ctx.font = "bold 60px Arial";
+      this.ctx.fillStyle = "white";
+      this.ctx.textAlign = "center";
+      this.ctx.fillText("You Win!", this.canvas.width / 2, this.canvas.height / 2 - 50);
+      this.ctx.font = "30px Arial";
+      this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
+
+      this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
+    };
+  }
+
+  showLoseScreen() {
+    const loseImage = new Image();
+    loseImage.src = "img/9_intro_outro_screens/game_over/file.png";
+
+    loseImage.onload = () => {
+      this.ctx.drawImage(loseImage, 0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.font = "bold 60px Arial";
+      this.ctx.textAlign = "center";
+      this.ctx.fillStyle = "white";
+      const textY = this.canvas.height / 2 - 150;
+      this.ctx.fillText("TAP to Restart", this.canvas.width / 2, textY);
+      this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
+    };
+  }
+
   checkGameOver() {
     if (this.character.energy <= 0 && !this.gameOver) {
-      this.gameOver = true;
-      this.gameStarted = false;
-      this.showEndScreen();
+      setTimeout(() => {
+        this.gameOver = true;
+        this.gameStarted = false;
+        this.showLoseScreen();
+      }, 1000);
     }
   }
 }
