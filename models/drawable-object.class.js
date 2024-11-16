@@ -1,4 +1,22 @@
+/**
+ * Represents a drawable object in the game, which can be drawn to a canvas and have various properties like position, size, and visibility.
+ * @class DrawableObject
+ */
 class DrawableObject {
+  /**
+   * @property {HTMLImageElement} img - The image of the drawable object.
+   * @property {Object} imageCache - Cache to store multiple images loaded by the object.
+   * @property {number} x - The x-coordinate of the object.
+   * @property {number} y - The y-coordinate of the object.
+   * @property {number} height - The height of the object.
+   * @property {number} width - The width of the object.
+   * @property {number} collectedCoins - The number of coins collected by the object.
+   * @property {number} bottles - The number of bottles the object has.
+   * @property {number} rotationAngle - The rotation angle for the object.
+   * @property {boolean} visible - Indicates whether the object is visible.
+   * @property {Object} offset - The offset of the object (left, right, top, bottom).
+   * @property {Array<string>} LOSE_IMAGES - An array of image paths for the game's "lose" screens.
+   */
   img;
   imageCache = {};
   x = 120;
@@ -10,11 +28,15 @@ class DrawableObject {
   rotationAngle = 0;
   visible = false;
 
-  LOSE_IMAGES =[
-    'img/9_intro_outro_screens/game_over/game over.png',
-    'img/9_intro_outro_screens/game_over/you lost.png'
+  LOSE_IMAGES = [
+    "img/9_intro_outro_screens/game_over/game over.png",
+    "img/9_intro_outro_screens/game_over/you lost.png",
   ];
 
+  /**
+   * Creates an instance of a DrawableObject.
+   * Initializes position, size, image cache, and offset properties.
+   */
   constructor() {
     this.offset = {
       left: 0,
@@ -24,18 +46,29 @@ class DrawableObject {
     };
   }
 
-
+  /**
+   * Adjusts the offset of collectible objects (e.g., Coin, Bottle).
+   * @remarks Only collectible objects (Coin, Bottle) are affected by this method.
+   */
   adjustCollectibleOffsets() {
     if (this instanceof Coin || this instanceof Bottle) {
       this.setOffset(10, 10, 10, 10);
     }
   }
 
+  /**
+   * Loads an image from the specified path and sets it to the `img` property.
+   * @param {string} path - The path to the image to be loaded.
+   */
   loadImage(path) {
     this.img = new Image();
     this.img.src = path;
   }
 
+  /**
+   * Loads an array of images into the `imageCache`.
+   * @param {Array<string>} arr - An array of image paths to be loaded into the cache.
+   */
   loadImages(arr) {
     arr.forEach((path) => {
       let img = new Image();
@@ -44,6 +77,10 @@ class DrawableObject {
     });
   }
 
+  /**
+   * Draws the object to the canvas with applied transformations and effects.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context used to draw the object.
+   */
   draw(ctx) {
     ctx.save();
     ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
@@ -53,6 +90,11 @@ class DrawableObject {
     ctx.restore();
   }
 
+  /**
+   * Applies a coin-flip effect to the object (scaling the object along the x-axis).
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context used to apply the effect.
+   * @remarks This effect is applied only to instances of the Coin class.
+   */
   CoinFlip(ctx) {
     if (this instanceof Coin) {
       let scaleFactor = Math.cos((this.rotationAngle * Math.PI) / 180);
@@ -60,12 +102,24 @@ class DrawableObject {
     }
   }
 
+  /**
+   * Applies a color filter effect to the object (random color effect).
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context used to apply the effect.
+   * @remarks This effect is applied only to instances of the Minichicken class.
+   */
   ColorFilter(ctx) {
     if (this instanceof Minichicken) {
       ctx.filter = this.randomColor;
     }
   }
 
+  /**
+   * Sets the offsets (left, right, top, bottom) of the object.
+   * @param {number} left - The left offset.
+   * @param {number} right - The right offset.
+   * @param {number} top - The top offset.
+   * @param {number} bottom - The bottom offset.
+   */
   setOffset(left, right, top, bottom) {
     this.offset = {
       left: left || this.offset.left,
@@ -75,12 +129,15 @@ class DrawableObject {
     };
   }
 
-  drawFrame(ctx) {
+  /**
+   * Draws the hitbox frame for the object, which helps with collision detection.
+   * The hitbox is calculated based on the object's size and offset.
+   */
+  drawFrame() {
     this.hitboxWidth = this.width * 0.5;
     this.hitboxHeight = this.height * 0.6;
-  
+
     this.hitboxX = this.x + (this.width - this.hitboxWidth) / 2 + this.offset.left / 2;
     this.hitboxY = this.y + (this.height - this.hitboxHeight) / 2 + this.offset.top / 2;
   }
-
 }
