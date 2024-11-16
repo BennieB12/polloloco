@@ -1,5 +1,6 @@
 class World {
   character = new Character();
+  Endboss = new Endboss();
   level = level1;
   canvas;
   ctx;
@@ -16,6 +17,9 @@ class World {
   isPlayingSound = false;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
   enemyHit = false;
+
+
+
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -28,18 +32,18 @@ class World {
 
   setWorld() {
     this.character.world = this;
+    this.Endboss.world = this;
   }
 
   draw() {
     if (this.gameOver) {
       this.ctx.save();
-      this.ctx.globalAlpha = 0.75;
       this.clearBoard();
+      this.ctx.globalAlpha = 0.95;
       this.ctx.translate(this.camera_x, 0);
       this.addObjectsToMap(this.level.backgroundObjects);
-      this.addToMap(this.character);
-      this.drawObjects();
-      this.drawBars();
+      // this.addToMap(this.character);
+      // this.drawObjects();
       this.ctx.translate(-this.camera_x, 0);
 
       this.ctx.restore();
@@ -67,13 +71,6 @@ class World {
     requestAnimationFrame(() => this.draw());
   }
 
-  checkVisibility() {
-    if (this.character.x >= 1800) {
-      this.statusBarEnemy.visible = true;
-    } else {
-      this.statusBarEnemy.visible = false;
-    }
-  }
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
@@ -81,7 +78,7 @@ class World {
   drawBars() {
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.statusBarHealth);
-    if (this.statusBarEnemy.visible) {
+    if (this.statusBarEnemy.visible && this.Endboss.isLiving) {
       this.addToMap(this.statusBarEnemy);
     }
     this.addToMap(this.statusBarCoin);
@@ -153,12 +150,21 @@ class World {
   run() {
     if (this.gameStarted && !this.gameOver) {
       this.checkCollision();
+      this.checkCollectables();
       this.character.handleThrow();
       this.checkGameOver();
       requestAnimationFrame(this.run.bind(this));
     }
   }
 
+  checkVisibility() {
+    if (this.character.x >= 1800) {
+      this.statusBarEnemy.visible = true;
+    } else {
+      this.statusBarEnemy.visible = false;
+    }
+  }
+  
   checkCollision() {
     this.level.enemies.forEach((enemy) => this.handleEnemyCollision(enemy));
     this.level.enemies.forEach((enemy) => {
@@ -166,13 +172,46 @@ class World {
         enemy.statusBar = this.statusBarEnemy;
       }
     });
-    this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
-    this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
+  
     this.throwableObjects.forEach((bottle, bottleIndex) =>
       this.level.enemies.forEach((enemy, enemyIndex) =>
         this.handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex)
       )
     );
+  }
+  
+  checkCollectables() {
+    this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
+    this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
+  }
+  
+  checkCollect(index, item, type) {
+    if (this.character.isColliding(item)) {
+      if (type === "coin") {
+        this.character.collectCoin(index);
+        this.level.coins.splice(index, 1);
+      } else if (type === "bottle") {
+        this.character.collectBottle(index);
+        this.level.bottles.splice(index, 1);
+      }
+    }
+  }
+
+  checkGameOver() {
+    if (this.character.energy <= 0 && !this.gameOver) {
+      setTimeout(() => {
+        this.gameOver = true;
+        this.gameStarted = false;
+        this.showLoseScreen();
+      }, 1000);
+      if (!this.Endboss.isLiving) {
+        setTimeout(() => {
+          this.gameOver = true;
+          this.gameStarted = false;
+          this.showWinScreen();
+        }, 1000);
+      }
+    }
   }
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
@@ -197,16 +236,6 @@ class World {
         this.character.jump();
       } else {
         this.character.getDamage();
-      }
-    }
-  }
-
-  checkCollect(index, item, type) {
-    if (this.character.isColliding(item)) {
-      if (type === "coin") {
-        this.character.collectCoin(index);
-      } else if (type === "bottle") {
-        this.character.collectBottle(index);
       }
     }
   }
@@ -293,46 +322,65 @@ class World {
   }
 
   showWinScreen() {
-    const winImage = new Image();
-    winImage.src = "img/9_intro_outro_screens/win/win_2.png";
-
-    winImage.onload = () => {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
-
-      this.ctx.font = "bold 60px Arial";
-      this.ctx.fillStyle = "white";
-      this.ctx.textAlign = "center";
-      this.ctx.fillText("You Win!", this.canvas.width / 2, this.canvas.height / 2 - 50);
-      this.ctx.font = "30px Arial";
-      this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
-
-      this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
-    };
+    if (!this.Endboss.isLiving) {
+      const winImage = new Image();
+      winImage.src = "img/9_intro_outro_screens/win/win_2.png";
+  
+      winImage.onload = () => {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
+  
+        this.ctx.font = "bold 60px Arial";
+        this.ctx.fillStyle = "white";
+        this.ctx.textAlign = "center";
+        this.ctx.fillText("You Win!", this.canvas.width / 2, this.canvas.height / 2 - 50);
+        this.ctx.font = "30px Arial";
+        this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
+  
+        this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
+      };
+    }
   }
+  
 
   showLoseScreen() {
     const loseImage = new Image();
     loseImage.src = "img/9_intro_outro_screens/game_over/file.png";
-
+  
     loseImage.onload = () => {
       this.ctx.drawImage(loseImage, 0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.font = "bold 60px Arial";
-      this.ctx.textAlign = "center";
-      this.ctx.fillStyle = "white";
+  
       const textY = this.canvas.height / 2 - 150;
-      this.ctx.fillText("TAP to Restart", this.canvas.width / 2, textY);
+      let colorValue = 255;
+      let decreasing = true;
+  
+      const animateText = () => {
+        this.ctx.drawImage(loseImage, 0, 0, this.canvas.width, this.canvas.height);
+  
+        if (decreasing) {
+          colorValue -= 2;
+          if (colorValue <= 0) {
+            colorValue = 0;
+            decreasing = false;
+          }
+        } else {
+          colorValue += 2;
+          if (colorValue >= 255) {
+            colorValue = 255;
+            decreasing = true;
+          }
+        }
+
+        this.ctx.font = "bold 60px Arial";
+        this.ctx.textAlign = "center";
+        this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+        this.ctx.fillText("TAP to Restart", this.canvas.width / 2, textY);
+        if (!this.gameStarted) {
+          requestAnimationFrame(animateText);
+        }
+      };
+      animateText();
       this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
     };
-  }
-
-  checkGameOver() {
-    if (this.character.energy <= 0 && !this.gameOver) {
-      setTimeout(() => {
-        this.gameOver = true;
-        this.gameStarted = false;
-        this.showLoseScreen();
-      }, 1000);
-    }
   }
 }

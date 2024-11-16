@@ -7,6 +7,8 @@ class Endboss extends MovableObject {
   deadAnimationPlayed = false;
   remove = false;
   statusBar;
+  isLiving = true;
+  world;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -125,6 +127,7 @@ class Endboss extends MovableObject {
       this.deadAnimationPlayed = true;
       this.speed = 0;
       this.currentImage = 0;
+      this.isLiving = false;
 
       this.startInterval(() => {
         if (this.currentImage < this.IMAGES_DEAD.length) {
@@ -137,6 +140,7 @@ class Endboss extends MovableObject {
 
           setTimeout(() => {
             this.remove = true;
+            this.isLiving = false;
           }, 1000);
         }
       }, 1000 / 60);
@@ -144,6 +148,7 @@ class Endboss extends MovableObject {
   }
 
   reset() {
+    this.clearAllIntervals();
     this.energy = 100;
   }
 }
