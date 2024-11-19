@@ -31,7 +31,7 @@ class Minichicken extends MovableObject {
    * Ground level for the `Minichicken`.
    * @type {number}
    */
-   groundLevel = 370;
+   groundLevel = 360;
 
   /**
    * Walking animation images.
@@ -79,6 +79,7 @@ class Minichicken extends MovableObject {
     this.x = x;
     this.speed = speed;
     this.applyGravity();
+    // this.setOffset(0, 0, -10, 0);
   }
 
   /**

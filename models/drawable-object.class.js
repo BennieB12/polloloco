@@ -133,10 +133,10 @@ class DrawableObject {
    * Draws the hitbox frame for the object, which helps with collision detection.
    * The hitbox is calculated based on the object's size and offset.
    */
-  drawFrame() {
+  drawFrame(ctx) {
     this.hitboxWidth = this.width * 0.5;
     this.hitboxHeight = this.height * 0.6;
-
+  
     this.hitboxX = this.x + (this.width - this.hitboxWidth) / 2 + this.offset.left / 2;
     this.hitboxY = this.y + (this.height - this.hitboxHeight) / 2 + this.offset.top / 2;
   }

@@ -156,7 +156,7 @@ constructor() {
   ]);
   this.applyGravity();
   this.animate();
-  this.setOffset(0, 0, 0, 0);
+  this.setOffset(0, 0, 50, 0);
 }
 
 /**

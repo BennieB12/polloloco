@@ -200,15 +200,13 @@ class World {
   checkGameOver() {
     if (!this.gameOver) {
       if (this.character.energy <= 0) {
-        // Spieler stirbt, nur Lose-Screen anzeigen
         this.gameOver = true;
         this.gameStarted = false;
-        setTimeout(() => this.showLoseScreen(), 1000);
+        setTimeout(() => this.showLoseScreen(), 500);
       } else if (this.endboss && !this.endboss.isLiving) {
-        // Endboss stirbt, nur Win-Screen anzeigen
         this.gameOver = true;
         this.gameStarted = false;
-        setTimeout(() => this.showWinScreen(), 1000);
+        setTimeout(() => this.showWinScreen(), 500);
       }
     }
   }
@@ -356,7 +354,7 @@ showWinScreen() {
                 requestAnimationFrame(animateText);
             }
         };
-        animateText();
+        animateText(); // hier was ändern damit text korrekt animiert wird:
         this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
     };
 }
@@ -398,7 +396,9 @@ showWinScreen() {
           requestAnimationFrame(animateText);
         }
       };
-      animateText();
+      setTimeout(() => {
+        animateText();
+      }, 1000);
       this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
     };
   }

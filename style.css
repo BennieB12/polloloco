@@ -37,6 +37,7 @@ canvas {
   background-color: black;
   border: 2px solid black;
   z-index: 1;
+  border-radius: 10px;
 }
 
 .canvas-con {

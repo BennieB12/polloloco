@@ -106,6 +106,37 @@ class Chicken extends MovableObject {
     this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
   }
 
+  blinkRed() {
+    let blinkTime = 300;
+    this.isBlinking = true;
+    
+    setTimeout(() => {
+      this.isBlinking = false;
+    }, blinkTime);
+  }
+
+  draw(ctx) {
+    ctx.save();
+  
+    if (this.isBlinking) {
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+  
+      const radius = Math.min(this.width, this.height) / 2;
+      const centerX = this.x + this.width / 2;
+      const centerY = this.y + this.height / 2;
+  
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+  
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  
+    ctx.restore();
+  }
+
   /**
    * Plays the dead animation for the `Chicken` and marks it for removal.
    */

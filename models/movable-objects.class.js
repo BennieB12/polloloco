@@ -55,36 +55,40 @@ class MovableObject extends DrawableObject {
     this.speedY = 0;
   }
 
-  isColliding(mo) {
+ isColliding(mo) {
     if (this instanceof ThrowableObject) {
       if (this.splashAnimation) return false;
-
-      return (
+  
+      const isColliding = 
         this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
         this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
         this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
-        this.y > mo.y
-      );
+        this.y > mo.y;
+  
+      return isColliding;
     } else if (this instanceof Endboss) {
-      return (
-        this.x < mo.x + mo.width &&
-        this.x + this.width > mo.x &&
-        this.y < mo.y + mo.height &&
-        this.y + this.height > mo.y
-      );
+    const isColliding = 
+      this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+      this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+      this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+      this.y < mo.y + mo.height - mo.offset.bottom;
+  
+    if (isColliding) {
+      return true;
     }
-    else {
-      return (
+    return false;
+    } else {
+      const isColliding = 
         Math.sqrt(
           Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
             Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
-        ) <
-          (this.width / 2 + mo.width / 2) * 0.5 &&
+        ) < (this.width / 2 + mo.width / 2) * 0.5 &&
         this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
-        this.y < mo.y
-      );
+        this.y < mo.y;
+
+      return isColliding;
     }
-  }
+  }  
 
   getDamage() {
     if (this instanceof Character && !this.isHurt()) {
@@ -92,11 +96,18 @@ class MovableObject extends DrawableObject {
       this.updateLastHit();
       this.isHurt();
       this.world.statusBarHealth.setpercentage(this.energy);
-    } else if (this instanceof Chicken && !this.isHurt() || this instanceof Minichicken && !this.isHurt()) {
+    } if (this instanceof Minichicken && !this.isHurt()) {
       this.reduceEnergy(10);
       this.updateLastHit();
       this.isHurt();
-    } else if (this instanceof Endboss && !this.isHurt()) {
+    }
+    if (this instanceof Chicken && !this.isHurt()) {
+        this.reduceEnergy(10);
+        this.updateLastHit();
+        this.isHurt();
+        this.blinkRed();
+      }
+      else if (this instanceof Endboss && !this.isHurt()) {
       this.reduceEnergy(20);
       this.updateLastHit();
       this.isHurt();
