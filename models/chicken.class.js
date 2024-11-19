@@ -7,7 +7,7 @@ class Chicken extends MovableObject {
    * Vertical position of the `Chicken`.
    * @type {number}
    */
-  y = 340;
+  y = 350;
 
   /**
    * Height of the `Chicken` sprite.
@@ -25,7 +25,7 @@ class Chicken extends MovableObject {
    * Initial energy of the `Chicken`.
    * @type {number}
    */
-  energy = 5;
+  energy = 20;
 
   /**
    * Animation speed for the walking cycle.

@@ -1,6 +1,6 @@
 class World {
   character = new Character();
-  Endboss = new Endboss();
+  endboss = new Endboss();
   level = level1;
   canvas;
   ctx;
@@ -18,8 +18,6 @@ class World {
   GAMESTART_SOUND = new Audio("audio/start.mp3");
   enemyHit = false;
 
-
-
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -32,7 +30,7 @@ class World {
 
   setWorld() {
     this.character.world = this;
-    this.Endboss.world = this;
+    this.endboss.world = this;
   }
 
   draw() {
@@ -47,7 +45,7 @@ class World {
       this.ctx.translate(-this.camera_x, 0);
 
       this.ctx.restore();
-      this.showLoseScreen();
+      // this.showLoseScreen();
 
       return;
     }
@@ -78,7 +76,7 @@ class World {
   drawBars() {
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.statusBarHealth);
-    if (this.statusBarEnemy.visible && this.Endboss.isLiving) {
+    if (this.statusBarEnemy.visible && this.endboss.isLiving) {
       this.addToMap(this.statusBarEnemy);
     }
     this.addToMap(this.statusBarCoin);
@@ -128,6 +126,7 @@ class World {
     this.startScreenDrawn = false;
     this.clearBoard();
     this.clearAllIntervalsForObjects();
+    this.addEndbossToLevel();
     // this.level.clouds.forEach((cloud) => cloud.startMoving());
     this.run();
     this.draw();
@@ -141,6 +140,11 @@ class World {
     }
   }
 
+  addEndbossToLevel() {
+    this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Endboss));
+    this.level.enemies.push(this.endboss);
+  }
+
   clearAllIntervalsForObjects() {
     this.character.clearAllIntervals();
     this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
@@ -150,7 +154,7 @@ class World {
   run() {
     if (this.gameStarted && !this.gameOver) {
       this.checkCollision();
-      this.checkCollectables();
+      // this.checkCollectables();
       this.character.handleThrow();
       this.checkGameOver();
       requestAnimationFrame(this.run.bind(this));
@@ -164,52 +168,47 @@ class World {
       this.statusBarEnemy.visible = false;
     }
   }
-  
+
   checkCollision() {
-    this.level.enemies.forEach((enemy) => this.handleEnemyCollision(enemy));
     this.level.enemies.forEach((enemy) => {
+      this.handleEnemyCollision(enemy);
+
       if (enemy instanceof Endboss) {
         enemy.statusBar = this.statusBarEnemy;
       }
     });
-  
+    this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
+    this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
+
     this.throwableObjects.forEach((bottle, bottleIndex) =>
       this.level.enemies.forEach((enemy, enemyIndex) =>
         this.handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex)
       )
     );
   }
-  
-  checkCollectables() {
-    this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
-    this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
-  }
-  
+
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {
       if (type === "coin") {
         this.character.collectCoin(index);
-        this.level.coins.splice(index, 1);
       } else if (type === "bottle") {
         this.character.collectBottle(index);
-        this.level.bottles.splice(index, 1);
       }
     }
   }
 
   checkGameOver() {
-    if (this.character.energy <= 0 && !this.gameOver) {
-      setTimeout(() => {
+    if (!this.gameOver) {
+      if (this.character.energy <= 0) {
+        // Spieler stirbt, nur Lose-Screen anzeigen
         this.gameOver = true;
         this.gameStarted = false;
-        this.showLoseScreen();
-      }, 1000);
-      if (!this.Endboss.isLiving) {
-        setTimeout(() => {
-          this.gameOver = true;
-          this.gameStarted = false;
-          this.showWinScreen();
-        }, 1000);
+        setTimeout(() => this.showLoseScreen(), 1000);
+      } else if (this.endboss && !this.endboss.isLiving) {
+        // Endboss stirbt, nur Win-Screen anzeigen
+        this.gameOver = true;
+        this.gameStarted = false;
+        setTimeout(() => this.showWinScreen(), 1000);
       }
     }
   }
@@ -321,42 +320,62 @@ class World {
     this.startGame();
   }
 
-  showWinScreen() {
-    if (!this.Endboss.isLiving) {
-      const winImage = new Image();
-      winImage.src = "img/9_intro_outro_screens/win/win_2.png";
-  
-      winImage.onload = () => {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+showWinScreen() {
+    const winImage = new Image();
+    winImage.src = "img/9_intro_outro_screens/win/win_2.png";
+
+    winImage.onload = () => {
         this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
-  
-        this.ctx.font = "bold 60px Arial";
-        this.ctx.fillStyle = "white";
-        this.ctx.textAlign = "center";
-        this.ctx.fillText("You Win!", this.canvas.width / 2, this.canvas.height / 2 - 50);
-        this.ctx.font = "30px Arial";
-        this.ctx.fillText("Click to Restart", this.canvas.width / 2, this.canvas.height / 2 + 30);
-  
+
+        const textY = this.canvas.height / 2 - 150;
+        let colorValue = 255;
+        let decreasing = true;
+
+        const animateText = () => {
+            this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
+
+            if (decreasing) {
+                colorValue -= 2;
+                if (colorValue <= 0) {
+                    colorValue = 0;
+                    decreasing = false;
+                }
+            } else {
+                colorValue += 2;
+                if (colorValue >= 255) {
+                    colorValue = 255;
+                    decreasing = true;
+                }
+            }
+
+            this.ctx.font = "bold 60px Arial";
+            this.ctx.textAlign = "center";
+            this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+            this.ctx.fillText("TAP to Restart", this.canvas.width / 2, textY);
+            if (!this.gameStarted) {
+                requestAnimationFrame(animateText);
+            }
+        };
+        animateText();
         this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
-      };
-    }
-  }
-  
+    };
+}
+
 
   showLoseScreen() {
     const loseImage = new Image();
     loseImage.src = "img/9_intro_outro_screens/game_over/file.png";
-  
+
     loseImage.onload = () => {
       this.ctx.drawImage(loseImage, 0, 0, this.canvas.width, this.canvas.height);
-  
+
       const textY = this.canvas.height / 2 - 150;
       let colorValue = 255;
       let decreasing = true;
-  
+
       const animateText = () => {
         this.ctx.drawImage(loseImage, 0, 0, this.canvas.width, this.canvas.height);
-  
+
         if (decreasing) {
           colorValue -= 2;
           if (colorValue <= 0) {

@@ -4,12 +4,6 @@
  */
 class Minichicken extends MovableObject {
   /**
-   * Vertical position of the `Minichicken`.
-   * @type {number}
-   */
-  y;
-
-  /**
    * Height of the `Minichicken` sprite.
    * @type {number}
    */
@@ -37,7 +31,7 @@ class Minichicken extends MovableObject {
    * Ground level for the `Minichicken`.
    * @type {number}
    */
-  groundLevel = 360;
+   groundLevel = 370;
 
   /**
    * Walking animation images.
@@ -153,6 +147,12 @@ class Minichicken extends MovableObject {
   reset() {
     this.clearAllIntervals();
     this.energy = 10;
+  }
+
+  onGround() {
+    this.isJumping = false;
+    this.y = this.groundLevel;
+    this.speedY = 0;
   }
 }
 

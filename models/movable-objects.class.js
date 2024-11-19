@@ -1,10 +1,10 @@
 class MovableObject extends DrawableObject {
-  speed;
+  // speed;
   otherDirection = false;
   speedY = 3;
   currentImage = 0;
   accelaration = 1;
-  energy;
+  //  energy;
   isJumping = false;
   animationSpeed = 5;
   groundLevel = 320;
@@ -13,7 +13,7 @@ class MovableObject extends DrawableObject {
   remove = false;
   deadAnimationPlayed = false;
   standingTimer = 0;
-  damage;
+  // damage;
   splashAnimation = false;
 
   startInterval(intervalFunc, intervalTime) {
@@ -52,7 +52,6 @@ class MovableObject extends DrawableObject {
 
   onGround() {
     this.isJumping = false;
-    this.y = this.groundLevel;
     this.speedY = 0;
   }
 
@@ -93,10 +92,14 @@ class MovableObject extends DrawableObject {
       this.updateLastHit();
       this.isHurt();
       this.world.statusBarHealth.setpercentage(this.energy);
-    } else if (this instanceof Chicken || this instanceof Minichicken) {
-      this.reduceEnergy(5);
-    } else if (this instanceof Endboss) {
+    } else if (this instanceof Chicken && !this.isHurt() || this instanceof Minichicken && !this.isHurt()) {
+      this.reduceEnergy(10);
+      this.updateLastHit();
+      this.isHurt();
+    } else if (this instanceof Endboss && !this.isHurt()) {
       this.reduceEnergy(20);
+      this.updateLastHit();
+      this.isHurt();
       this.statusBar.setpercentage(this.energy);
     }
   }

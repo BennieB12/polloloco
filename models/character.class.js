@@ -4,17 +4,12 @@
  */
 class Character extends MovableObject {
   /**
-   * The vertical position of the character.
-   * @type {number}
-   */
-  y = 320;
-
-  /**
    * The height of the character.
    * @type {number}
    */
   height = 100;
 
+  groundLevel = 320;
   /**
    * The width of the character.
    * @type {number}
@@ -37,7 +32,7 @@ class Character extends MovableObject {
    * The speed at which animations play.
    * @type {number}
    */
-  animationSpeed = 3;
+  animationSpeed = 5;
 
   /**
    * The timestamp of the last time the character was hit.
