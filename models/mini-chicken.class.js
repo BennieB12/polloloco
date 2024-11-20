@@ -128,7 +128,7 @@ class Minichicken extends MovableObject {
 
   draw(ctx) {
     ctx.save();
-  
+    this.ColorFilter(ctx);
     if (this.isBlinking) {
       ctx.globalCompositeOperation = 'source-atop';
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
@@ -144,7 +144,6 @@ class Minichicken extends MovableObject {
     }
   
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-  
     ctx.restore();
   }
 

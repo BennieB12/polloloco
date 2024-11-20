@@ -14,8 +14,6 @@ class World {
   gameOver = false;
   gameStarted = false;
   startScreenDrawn = false;
-  isPlayingSound = false;
-  GAMESTART_SOUND = new Audio("audio/start.mp3");
   enemyHit = false;
 
   constructor(canvas) {
@@ -23,7 +21,7 @@ class World {
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.setWorld();
-    this.showStartScreen();
+    this.screenManager.showStartScreen();
     this.run();
     this.draw();
   }
@@ -31,6 +29,7 @@ class World {
   setWorld() {
     this.character.world = this;
     this.endboss.world = this;
+    this.screenManager = new ScreenManager(canvas, this);
   }
 
   draw() {
@@ -42,13 +41,13 @@ class World {
       this.addObjectsToMap(this.level.backgroundObjects);
       this.ctx.translate(-this.camera_x, 0);
       this.ctx.restore();
-      
+
       return;
     }
 
     if (!this.gameStarted) {
       if (!this.startScreenDrawn) {
-        this.showStartScreen();
+        this.screenManager.showStartScreen();
         this.startScreenDrawn = true;
       }
     } else {
@@ -117,6 +116,7 @@ class World {
   }
 
   startGame() {
+    this.throwableObjects = [];
     this.gameStarted = true;
     this.gameOver = false;
     this.startScreenDrawn = false;
@@ -126,14 +126,9 @@ class World {
     this.level.clouds.forEach((cloud) => cloud.startMoving());
     this.run();
     this.draw();
-    this.GAMESTART_SOUND.pause();
-
-    if (this.gameStarted) {
-      this.level.enemies.forEach((enemy) => {
-        enemy.animate();
-        this.character.standingTimer = 0;
-      });
-    }
+    this.level.enemies.forEach((enemy) => {
+      enemy.animate();
+    });
   }
 
   addEndbossToLevel() {
@@ -141,7 +136,6 @@ class World {
     this.endboss.reset();
     this.level.enemies.push(this.endboss);
   }
-  
 
   clearAllIntervalsForObjects() {
     this.character.clearAllIntervals();
@@ -199,11 +193,11 @@ class World {
       if (this.character.energy <= 0) {
         this.gameOver = true;
         this.gameStarted = false;
-        setTimeout(() => this.showLoseScreen(), 500);
+        setTimeout(() => this.screenManager.showLoseScreen(), 500);
       } else if (this.endboss && !this.endboss.isLiving) {
         this.gameOver = true;
         this.gameStarted = false;
-        setTimeout(() => this.showWinScreen(), 500);
+        setTimeout(() => this.screenManager.showWinScreen(), 500);
       }
     }
   }
@@ -237,161 +231,13 @@ class World {
   restartGame() {
     this.clearBoard();
     this.level.resetLevel();
-    this.throwableObjects = [];
     this.character.reset();
-    this.endboss.reset(); 
+    this.endboss.reset();
     this.statusBarHealth.reset();
     this.statusBarBottle.reset();
     this.statusBarCoin.reset();
     this.statusBarEnemy.reset();
     this.level.clouds.forEach((cloud) => cloud.stopMoving());
     this.startGame();
-  }
-
-  playStartSound() {
-    if (!this.isPlayingSound) {
-      this.GAMESTART_SOUND.play();
-      this.isPlayingSound = true;
-    }
-  }
-
-  showStartScreen() {
-    if (this.gameStarted) return;
-
-    const startImage = new Image();
-    startImage.src = "img/9_intro_outro_screens/start/startscreen_1.png";
-    this.playStartSound();
-
-    startImage.onload = () => {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.drawImage(startImage, 0, 0, this.canvas.width, this.canvas.height);
-
-      this.ctx.font = "bold 60px Arial";
-      this.ctx.textAlign = "center";
-      const textY = 100;
-
-      let colorValue = 255;
-      let decreasing = true;
-
-      const animateText = () => {
-        this.ctx.clearRect(0, textY - 60, this.canvas.width, 80);
-        this.ctx.drawImage(startImage, 0, 0, this.canvas.width, this.canvas.height);
-
-        if (decreasing) {
-          colorValue -= 2;
-          if (colorValue <= 0) {
-            colorValue = 0;
-            decreasing = false;
-          }
-        } else {
-          colorValue += 2;
-          if (colorValue >= 255) {
-            colorValue = 255;
-            decreasing = true;
-          }
-        }
-
-        this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-        this.ctx.fillText("TAP to Start", this.canvas.width / 2, textY);
-
-        if (!this.gameStarted) {
-          requestAnimationFrame(animateText);
-        }
-      };
-
-      animateText();
-
-      const startGameHandler = () => {
-        this.startGame();
-      };
-      this.canvas.addEventListener("click", startGameHandler, { once: true });
-    };
-  }
-  
-  showWinScreen() {
-    const winImage = new Image();
-    winImage.src = "img/9_intro_outro_screens/win/win_2.png";
-
-    winImage.onload = () => {
-      this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
-
-      const textY = this.canvas.height / 2 - 150;
-      let colorValue = 255;
-      let decreasing = true;
-
-      const animateText = () => {
-        this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
-
-        if (decreasing) {
-          colorValue -= 2;
-          if (colorValue <= 0) {
-            colorValue = 0;
-            decreasing = false;
-          }
-        } else {
-          colorValue += 2;
-          if (colorValue >= 255) {
-            colorValue = 255;
-            decreasing = true;
-          }
-        }
-
-        this.ctx.font = "bold 60px Arial";
-        this.ctx.textAlign = "center";
-        this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-        this.ctx.fillText("TAP to Restart", this.canvas.width / 2, textY);
-        if (!this.gameStarted) {
-          requestAnimationFrame(animateText);
-        }
-      };
-      setTimeout(() => {
-        animateText();
-      }, 1000);
-      this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
-    };
-  }
-
-
-  showLoseScreen() {
-    const loseImage = new Image();
-    loseImage.src = "img/9_intro_outro_screens/game_over/file.png";
-
-    loseImage.onload = () => {
-      this.ctx.drawImage(loseImage, 0, 0, this.canvas.width, this.canvas.height);
-
-      const textY = this.canvas.height / 2 - 150;
-      let colorValue = 255;
-      let decreasing = true;
-
-      const animateText = () => {
-        this.ctx.drawImage(loseImage, 0, 0, this.canvas.width, this.canvas.height);
-
-        if (decreasing) {
-          colorValue -= 2;
-          if (colorValue <= 0) {
-            colorValue = 0;
-            decreasing = false;
-          }
-        } else {
-          colorValue += 2;
-          if (colorValue >= 255) {
-            colorValue = 255;
-            decreasing = true;
-          }
-        }
-
-        this.ctx.font = "bold 60px Arial";
-        this.ctx.textAlign = "center";
-        this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-        this.ctx.fillText("TAP to Restart", this.canvas.width / 2, textY);
-        if (!this.gameStarted) {
-          requestAnimationFrame(animateText);
-        }
-      };
-      setTimeout(() => {
-        animateText();
-      }, 1000);
-      this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
-    };
   }
 }

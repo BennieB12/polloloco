@@ -1,9 +1,9 @@
 class Endboss extends MovableObject {
-  height = 120;
-  width = 100;
+  height = 140;
+  width = 90;
   energy = 100;
-  animationSpeed = 6;
-  groundLevel = 325;
+  animationSpeed = 8;
+  groundLevel = 300;
   deadAnimationPlayed = false;
   remove = false;
   statusBar;
@@ -136,7 +136,6 @@ class Endboss extends MovableObject {
           this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
           setTimeout(() => {
             this.die();
-            this.remove = true;
           }, 1000);
         }
       }, 1000 / 60);
@@ -145,16 +144,18 @@ class Endboss extends MovableObject {
 
   die() {
     this.isLiving = false;
+    this.remove = true;
 }
 
   reset() {
+    this.clearAllIntervals();
     this.energy = 100;
     this.isLiving = true;
     this.remove = false;
-    this.deadAnimationPlayed = false;
+    this.otherDirection = false;
+    // this.deadAnimationPlayed = false;
     this.x = 2850;
     this.speed = 11;
-    this.clearAllIntervals();
   }
 
   isDead() {
