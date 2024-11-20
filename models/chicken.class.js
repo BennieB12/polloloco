@@ -122,7 +122,7 @@ class Chicken extends MovableObject {
       ctx.globalCompositeOperation = 'source-atop';
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
   
-      const radius = Math.min(this.width, this.height) / 2;
+      const radius = Math.min(this.width, this.height) / 3;
       const centerX = this.x + this.width / 2;
       const centerY = this.y + this.height / 2;
   
@@ -156,5 +156,6 @@ class Chicken extends MovableObject {
   reset() {
     this.clearAllIntervals();
     this.energy = 5;
+    this.remove = false;
   }
 }

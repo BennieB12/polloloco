@@ -40,13 +40,9 @@ class World {
       this.ctx.globalAlpha = 0.95;
       this.ctx.translate(this.camera_x, 0);
       this.addObjectsToMap(this.level.backgroundObjects);
-      // this.addToMap(this.character);
-      // this.drawObjects();
       this.ctx.translate(-this.camera_x, 0);
-
       this.ctx.restore();
-      // this.showLoseScreen();
-
+      
       return;
     }
 
@@ -121,13 +117,13 @@ class World {
   }
 
   startGame() {
-    this.gameOver = false;
     this.gameStarted = true;
+    this.gameOver = false;
     this.startScreenDrawn = false;
     this.clearBoard();
     this.clearAllIntervalsForObjects();
     this.addEndbossToLevel();
-    // this.level.clouds.forEach((cloud) => cloud.startMoving());
+    this.level.clouds.forEach((cloud) => cloud.startMoving());
     this.run();
     this.draw();
     this.GAMESTART_SOUND.pause();
@@ -142,8 +138,10 @@ class World {
 
   addEndbossToLevel() {
     this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Endboss));
+    this.endboss.reset();
     this.level.enemies.push(this.endboss);
   }
+  
 
   clearAllIntervalsForObjects() {
     this.character.clearAllIntervals();
@@ -154,7 +152,6 @@ class World {
   run() {
     if (this.gameStarted && !this.gameOver) {
       this.checkCollision();
-      // this.checkCollectables();
       this.character.handleThrow();
       this.checkGameOver();
       requestAnimationFrame(this.run.bind(this));
@@ -162,7 +159,7 @@ class World {
   }
 
   checkVisibility() {
-    if (this.character.x >= 1800) {
+    if (this.character.x >= 1800 && this.endboss.isLiving) {
       this.statusBarEnemy.visible = true;
     } else {
       this.statusBarEnemy.visible = false;
@@ -237,6 +234,27 @@ class World {
     }
   }
 
+  restartGame() {
+    this.clearBoard();
+    this.level.resetLevel();
+    this.throwableObjects = [];
+    this.character.reset();
+    this.endboss.reset(); 
+    this.statusBarHealth.reset();
+    this.statusBarBottle.reset();
+    this.statusBarCoin.reset();
+    this.statusBarEnemy.reset();
+    this.level.clouds.forEach((cloud) => cloud.stopMoving());
+    this.startGame();
+  }
+
+  playStartSound() {
+    if (!this.isPlayingSound) {
+      this.GAMESTART_SOUND.play();
+      this.isPlayingSound = true;
+    }
+  }
+
   showStartScreen() {
     if (this.gameStarted) return;
 
@@ -289,75 +307,49 @@ class World {
       this.canvas.addEventListener("click", startGameHandler, { once: true });
     };
   }
-
-  playStartSound() {
-    if (!this.isPlayingSound) {
-      this.GAMESTART_SOUND.play();
-      this.isPlayingSound = true;
-    }
-  }
-
-  restartGame() {
-    this.clearBoard();
-    this.gameOver = true;
-    this.gameStarted = false;
-    this.character.otherDirection = false;
-    this.throwableObjects = [];
-    this.startScreenDrawn = true;
-    this.character.standingTimer = 0;
-    this.character.x = 80;
-    this.character.energy = 100;
-    this.character.resetCoins();
-    this.character.resetBottles();
-    this.statusBarHealth.reset();
-    this.statusBarBottle.reset();
-    this.statusBarCoin.reset();
-    this.statusBarEnemy.reset();
-    this.level.resetLevel();
-    // this.level.clouds.forEach((cloud) => cloud.stopMoving());
-    this.startGame();
-  }
-
-showWinScreen() {
+  
+  showWinScreen() {
     const winImage = new Image();
     winImage.src = "img/9_intro_outro_screens/win/win_2.png";
 
     winImage.onload = () => {
+      this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
+
+      const textY = this.canvas.height / 2 - 150;
+      let colorValue = 255;
+      let decreasing = true;
+
+      const animateText = () => {
         this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
 
-        const textY = this.canvas.height / 2 - 150;
-        let colorValue = 255;
-        let decreasing = true;
+        if (decreasing) {
+          colorValue -= 2;
+          if (colorValue <= 0) {
+            colorValue = 0;
+            decreasing = false;
+          }
+        } else {
+          colorValue += 2;
+          if (colorValue >= 255) {
+            colorValue = 255;
+            decreasing = true;
+          }
+        }
 
-        const animateText = () => {
-            this.ctx.drawImage(winImage, 0, 0, this.canvas.width, this.canvas.height);
-
-            if (decreasing) {
-                colorValue -= 2;
-                if (colorValue <= 0) {
-                    colorValue = 0;
-                    decreasing = false;
-                }
-            } else {
-                colorValue += 2;
-                if (colorValue >= 255) {
-                    colorValue = 255;
-                    decreasing = true;
-                }
-            }
-
-            this.ctx.font = "bold 60px Arial";
-            this.ctx.textAlign = "center";
-            this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-            this.ctx.fillText("TAP to Restart", this.canvas.width / 2, textY);
-            if (!this.gameStarted) {
-                requestAnimationFrame(animateText);
-            }
-        };
-        animateText(); // hier was ändern damit text korrekt animiert wird:
-        this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
+        this.ctx.font = "bold 60px Arial";
+        this.ctx.textAlign = "center";
+        this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+        this.ctx.fillText("TAP to Restart", this.canvas.width / 2, textY);
+        if (!this.gameStarted) {
+          requestAnimationFrame(animateText);
+        }
+      };
+      setTimeout(() => {
+        animateText();
+      }, 1000);
+      this.canvas.addEventListener("click", this.restartGame.bind(this), { once: true });
     };
-}
+  }
 
 
   showLoseScreen() {

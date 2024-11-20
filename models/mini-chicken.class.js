@@ -31,7 +31,7 @@ class Minichicken extends MovableObject {
    * Ground level for the `Minichicken`.
    * @type {number}
    */
-   groundLevel = 360;
+   groundLevel = 365;
 
   /**
    * Walking animation images.
@@ -117,6 +117,37 @@ class Minichicken extends MovableObject {
     }, 100);
   }
 
+  blinkRed() {
+    let blinkTime = 300;
+    this.isBlinking = true;
+    
+    setTimeout(() => {
+      this.isBlinking = false;
+    }, blinkTime);
+  }
+
+  draw(ctx) {
+    ctx.save();
+  
+    if (this.isBlinking) {
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+  
+      const radius = Math.min(this.width, this.height) / 3;
+      const centerX = this.x + this.width / 2;
+      const centerY = this.y + this.height / 2;
+  
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+  
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  
+    ctx.restore();
+  }
+
   /**
    * Handles the jumping logic for the `Minichicken`.
    */
@@ -148,6 +179,7 @@ class Minichicken extends MovableObject {
   reset() {
     this.clearAllIntervals();
     this.energy = 10;
+    this.remove = false;
   }
 
   onGround() {

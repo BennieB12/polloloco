@@ -25,7 +25,6 @@ class Level {
       new Minichicken(1100 + Math.random() * 2000,  6 + Math.random() * 2),
       new Minichicken(1400 + Math.random() * 1000,  6 + Math.random() * 2),
       new Minichicken(1500,  6 + Math.random() * 2),
-      new Endboss()
     ],
     
     this.clouds = [

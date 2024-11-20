@@ -133,10 +133,10 @@ class Endboss extends MovableObject {
           this.img = this.imageCache[this.IMAGES_DEAD[this.currentImage]];
           this.currentImage++;
         } else {
-          this.clearAllIntervals();
           this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
           setTimeout(() => {
             this.die();
+            this.remove = true;
           }, 1000);
         }
       }, 1000 / 60);
@@ -145,12 +145,16 @@ class Endboss extends MovableObject {
 
   die() {
     this.isLiving = false;
-    this.remove = true;
 }
 
   reset() {
-    this.clearAllIntervals();
     this.energy = 100;
+    this.isLiving = true;
+    this.remove = false;
+    this.deadAnimationPlayed = false;
+    this.x = 2850;
+    this.speed = 11;
+    this.clearAllIntervals();
   }
 
   isDead() {

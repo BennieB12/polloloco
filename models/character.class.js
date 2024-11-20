@@ -407,4 +407,14 @@ longIdle() {
   return this.standingTimer > 5000;
 }
 
+reset() {
+  this.otherDirection = false;
+  this.resetBottles();
+  this.resetCoins();
+  this.standingTimer = 0;
+  this.x = 80;
+  this.energy = 100;
+  this.clearAllIntervals();
+}
+
 }

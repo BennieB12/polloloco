@@ -7,13 +7,8 @@ class Bottle extends DrawableObject {
      * The vertical position of the bottle.
      * @type {number}
      */
-    y = 370;
-  
-    /**
-     * The horizontal position of the bottle, randomized on instantiation.
-     * @type {number}
-     */
-    x = 300 + Math.random() * 2000;
+    y = 365;
+
   
     /**
      * The height of the bottle.
@@ -44,15 +39,6 @@ class Bottle extends DrawableObject {
       super().loadImage(imagePath);
       this.x = x;
       this.setOffset(0, 0, 0, 0);
-    }
-  
-    /**
-     * Resets the bottle's position and state.
-     * Randomizes the horizontal position and sets bottle count to 0.
-     */
-    reset() {
-      this.x = 300 + Math.random() * 2000;
-      this.bottles = 0;
     }
   }
   

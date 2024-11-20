@@ -100,6 +100,7 @@ class MovableObject extends DrawableObject {
       this.reduceEnergy(10);
       this.updateLastHit();
       this.isHurt();
+      this.blinkRed();
     }
     if (this instanceof Chicken && !this.isHurt()) {
         this.reduceEnergy(10);
