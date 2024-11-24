@@ -25,26 +25,43 @@ class World {
     this.screenManager.showStartScreen();
     this.run();
     this.draw();
-     canvas.addEventListener("click", (event) => {
+    canvas.addEventListener("click", (event) => {
       const rect = canvas.getBoundingClientRect();
-      const clickX = event.clientX - rect.left;
-      const clickY = event.clientY - rect.top;
-
-      const buttonX = this.canvas.width - 60;
-      const buttonY = 10;
+    
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+    
+      const clickX = (event.clientX - rect.left) * scaleX;
+      const clickY = (event.clientY - rect.top) * scaleY;
+    
+      const muteButtonX = this.canvas.width - 60;
+      const muteButtonY = 10;
       const buttonWidth = 50;
       const buttonHeight = 50;
+    
       if (
-        clickX >= buttonX &&
-        clickX <= buttonX + buttonWidth &&
-        clickY >= buttonY &&
-        clickY <= buttonY + buttonHeight
+        clickX >= muteButtonX &&
+        clickX <= muteButtonX + buttonWidth &&
+        clickY >= muteButtonY &&
+        clickY <= muteButtonY + buttonHeight
       ) {
         this.toggleMute();
+        return;
+      }
+    
+      const fullscreenButtonX = this.canvas.width - 120;
+      const fullscreenButtonY = 10;
+    
+      if (
+        clickX >= fullscreenButtonX &&
+        clickX <= fullscreenButtonX + buttonWidth &&
+        clickY >= fullscreenButtonY &&
+        clickY <= fullscreenButtonY + buttonHeight
+      ) {
+        toggleFullScreen();
       }
     });
   }
-  
 
   toggleMute() {
     this.isMuted = !this.isMuted;
@@ -90,6 +107,7 @@ class World {
       this.ctx.translate(-this.camera_x, 0);
     }
     this.drawMuteButton();
+    this.drawFullscreenButton();
     requestAnimationFrame(() => this.draw());
   }
 
@@ -109,6 +127,20 @@ class World {
 
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  drawFullscreenButton() {
+    const buttonX = this.canvas.width - 120; // Links vom Mute-Button
+    const buttonY = 10;
+    const buttonWidth = 50;
+    const buttonHeight = 50;
+
+    this.ctx.fillStyle = "blue";
+    this.ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+
+    this.ctx.font = "20px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText("⛶", buttonX + 15, buttonY + 30); // Symbol für Vollbild
   }
 
   drawBars() {
@@ -286,6 +318,4 @@ class World {
     this.statusBarEnemy.reset();
     this.level.clouds.forEach((cloud) => cloud.stopMoving());
   }
-
-  
 }
