@@ -1,5 +1,6 @@
 class World {
   character = new Character();
+  // audiomanager = new AudioManager();
   endboss = new Endboss();
   level = level1;
   canvas;
@@ -25,112 +26,13 @@ class World {
     this.screenManager.showStartScreen();
     this.run();
     this.draw();
-    canvas.addEventListener("click", (event) => {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      const clickX = (event.clientX - rect.left) * scaleX;
-      const clickY = (event.clientY - rect.top) * scaleY;
-      const buttonRadius = 15;
-
-      const controlButtonX = canvas.width - 105;
-      const controlButtonY = 20;
-      if (this.isInsideCircle(clickX, clickY, controlButtonX, controlButtonY, buttonRadius)) {
-        this.toggleControlPanel();
-        return;
-      }
-
-      const muteButtonX = canvas.width - 35;
-      const muteButtonY = 20;
-      if (this.isInsideCircle(clickX, clickY, muteButtonX, muteButtonY, buttonRadius)) {
-        this.toggleMute();
-        return;
-      }
-
-      const fullscreenButtonX = canvas.width - 70;
-      const fullscreenButtonY = 20;
-      if (this.isInsideCircle(clickX, clickY, fullscreenButtonX, fullscreenButtonY, buttonRadius)) {
-        this.toggleFullscreen();
-        return;
-      }
-    });
-  }
-
-  toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      if (this.canvas.requestFullscreen) {
-        this.canvas.requestFullscreen();
-      } else if (this.canvas.webkitRequestFullscreen) {
-        this.canvas.webkitRequestFullscreen();
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
-    }
-  }
-
-  toggleMute() {
-    this.isMuted = !this.isMuted;
-    if (this.isMuted) {
-      AudioManager.muteAll();
-    } else {
-      AudioManager.unmuteAll();
-    }
-  }
-
-  isInsideCircle(clickX, clickY, centerX, centerY, radius) {
-    const distance = Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2);
-    return distance <= radius;
-  }
-
-  toggleControlPanel() {
-    let panel = document.getElementById("control-panel");
-    if (!panel) {
-      this.createControlPanel();
-      panel = document.getElementById("control-panel");
-    }
-    if (panel) {
-      const isHidden = panel.style.display === "none" || panel.style.display === "";
-      panel.style.display = isHidden ? "block" : "none";
-    }
-  }
-
-  createControlPanel() {
-    const existingPanel = document.getElementById("control-panel");
-    if (existingPanel) {
-      return;
-    }
-
-    const panel = document.createElement("div");
-    panel.id = "control-panel";
-    panel.style.display = "none";
-    panel.innerHTML = `
-      <h2>Steuerung</h2>
-      <ul>
-          <li><b>Pfeiltasten:</b> Bewegung</li>
-          <li><b>Leertaste:</b> Springen</li>
-          <li><b>D:</b> Flaschen werfen</li>
-      </ul>
-      <button id="close-panel" style="margin-top: 20px; padding: 10px 20px;">Schließen</button>
-  `;
-
-    document.body.appendChild(panel);
-
-    const closeButton = document.getElementById("close-panel");
-    if (closeButton) {
-      closeButton.addEventListener("click", () => {
-        panel.style.display = "none";
-      });
-    }
   }
 
   setWorld() {
     this.character.world = this;
     this.endboss.world = this;
     this.screenManager = new ScreenManager(canvas, this);
+    // this.audiomanager = new AudioManager();
   }
 
   draw() {
@@ -142,7 +44,6 @@ class World {
       this.addObjectsToMap(this.level.backgroundObjects);
       this.ctx.translate(-this.camera_x, 0);
       this.ctx.restore();
-
       return;
     }
 
@@ -161,63 +62,12 @@ class World {
       this.drawBars();
       this.ctx.translate(-this.camera_x, 0);
     }
-    this.drawMuteButton();
-    this.drawFullscreenButton();
-    this.drawControlPanelButton();
+    this.screenManager.drawUIButtons();
     requestAnimationFrame(() => this.draw());
   }
 
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
-
-  drawMuteButton() {
-    const buttonX = this.canvas.width - 35;
-    const buttonY = 20;
-    const buttonRadius = 15;
-
-    this.ctx.beginPath();
-    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
-    this.ctx.fillStyle = this.isMuted ? "gray" : "green";
-    this.ctx.fillStyle = this.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(150, 110, 50, 8)";
-    this.ctx.fill();
-    this.ctx.font = "20px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.fillText("🔊", buttonX, buttonY);
-  }
-
-  drawFullscreenButton() {
-    const buttonX = this.canvas.width - 70;
-    const buttonY = 20;
-    const buttonRadius = 15;
-
-    this.ctx.beginPath();
-    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
-    this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
-    this.ctx.fill();
-    this.ctx.font = "20px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.fillText("⛶", buttonX, buttonY);
-  }
-
-  drawControlPanelButton() {
-    const buttonX = this.canvas.width - 105;
-    const buttonY = 20;
-    const buttonRadius = 15;
-
-    this.ctx.beginPath();
-    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
-    this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
-    this.ctx.fill();
-    this.ctx.font = "20px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.fillText("?", buttonX, buttonY);
   }
 
   drawBars() {
