@@ -176,7 +176,7 @@ class Minichicken extends MovableObject {
    * Resets the `Minichicken` to its initial state.
    */
   reset() {
-    this.clearAllIntervals();
+    // this.clearAllIntervals();
     this.energy = 10;
     this.remove = false;
   }

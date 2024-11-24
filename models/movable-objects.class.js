@@ -1,10 +1,8 @@
 class MovableObject extends DrawableObject {
-  // speed;
   otherDirection = false;
   speedY = 3;
   currentImage = 0;
   accelaration = 1;
-  //  energy;
   isJumping = false;
   animationSpeed = 5;
   groundLevel = 320;
@@ -13,7 +11,6 @@ class MovableObject extends DrawableObject {
   remove = false;
   deadAnimationPlayed = false;
   standingTimer = 0;
-  // damage;
   splashAnimation = false;
 
   startInterval(intervalFunc, intervalTime) {
@@ -55,66 +52,53 @@ class MovableObject extends DrawableObject {
     this.speedY = 0;
   }
 
- isColliding(mo) {
-    if (this instanceof ThrowableObject) {
-      if (this.splashAnimation) return false;
+  isColliding(mo) {
+    let isColliding = false;
   
-      const isColliding = 
-        this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+    if (this instanceof ThrowableObject && !this.splashAnimation) {
+      isColliding = this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
         this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
         this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
         this.y > mo.y;
-  
-      return isColliding;
-    } else if (this instanceof Endboss) {
-    const isColliding = 
-      this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
-      this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
-      this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
-      this.y < mo.y + mo.height - mo.offset.bottom;
-  
-    if (isColliding) {
-      return true;
     }
-    return false;
-    } else {
-      const isColliding = 
-        Math.sqrt(
-          Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
-            Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
-        ) < (this.width / 2 + mo.width / 2) * 0.5 &&
+
+    else {
+      isColliding = Math.sqrt(
+        Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
+          Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
+      ) < (this.width / 2 + mo.width / 2) * 0.5 &&
         this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
         this.y < mo.y;
-
-      return isColliding;
     }
-  }  
+  
+    return isColliding;
+  } 
+
 
   getDamage() {
-    if (this instanceof Character && !this.isHurt()) {
-      this.reduceEnergy(20);
+    if (!this.isHurt()) {
+      let damage = 0;
+  
+      if (this instanceof Endboss || this instanceof Character) {
+        damage = 20;
+      } else if (this instanceof Chicken || this instanceof Minichicken) {
+        damage = 10;
+      }
+  
+      this.reduceEnergy(damage);
       this.updateLastHit();
       this.isHurt();
-      this.world.statusBarHealth.setpercentage(this.energy);
-    } if (this instanceof Minichicken && !this.isHurt()) {
-      this.reduceEnergy(10);
-      this.updateLastHit();
-      this.isHurt();
-      this.blinkRed();
-    }
-    if (this instanceof Chicken && !this.isHurt()) {
-        this.reduceEnergy(10);
-        this.updateLastHit();
-        this.isHurt();
+
+      if (this instanceof Character) {
+        this.world.statusBarHealth.setpercentage(this.energy);
+      } else if (this instanceof Endboss) {
+        this.statusBar.setpercentage(this.energy);
+      } else if (this instanceof Chicken || this instanceof Minichicken) {
         this.blinkRed();
       }
-      else if (this instanceof Endboss && !this.isHurt()) {
-      this.reduceEnergy(20);
-      this.updateLastHit();
-      this.isHurt();
-      this.statusBar.setpercentage(this.energy);
     }
   }
+  
 
   reduceEnergy(amount) {
     this.energy -= amount;
@@ -161,7 +145,7 @@ class MovableObject extends DrawableObject {
 
   checkLevelBegin() {
     if (this instanceof Endboss) {
-      if (this.x <= 1800) {
+      if (this.x <= 2350) {
         this.speed = -this.speed;
         this.otherDirection = !this.otherDirection;
         this.moveLeft();
@@ -174,7 +158,7 @@ class MovableObject extends DrawableObject {
   }
 
   checkLevelEnd() {
-    if (this.x >= 2850) {
+    if (this.x >= 2900) {
       this.speed = -this.speed;
       this.otherDirection = !this.otherDirection;
       this.moveLeft();

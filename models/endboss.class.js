@@ -88,10 +88,6 @@ class Endboss extends MovableObject {
     }, 1000 / 60);
   }
 
-  handleAnimation() {
-    this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
-  }
-
   walk() {
     this.startInterval(() => {
       this.moveLeft();
@@ -111,11 +107,11 @@ class Endboss extends MovableObject {
 
   handleAnimation() {
     if (!this.isJumping) {
-      this.playAnimation(this.IMAGES_WALKING, 3);
+      this.playAnimation(this.IMAGES_WALKING, 8);
     } else if (this.isJumping) {
       this.handleJumpAnimation();
     } else if (this.isHurt()) {
-      this.playAnimation(this.IMAGES_HURT, 3);
+      this.playAnimation(this.IMAGES_HURT, 8);
     }
   }
 
@@ -148,15 +144,16 @@ class Endboss extends MovableObject {
 }
 
   reset() {
-    this.clearAllIntervals();
     this.energy = 100;
-    this.isLiving = true;
     this.remove = false;
+    this.isLiving = true;
+    this.isJumping = false;
     this.otherDirection = false;
-    // this.deadAnimationPlayed = false;
     this.x = 2850;
     this.speed = 11;
   }
+
+  
 
   isDead() {
     return this.energy <= 0;

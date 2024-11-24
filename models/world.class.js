@@ -15,6 +15,7 @@ class World {
   gameStarted = false;
   startScreenDrawn = false;
   enemyHit = false;
+  isMuted = false;
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -24,6 +25,34 @@ class World {
     this.screenManager.showStartScreen();
     this.run();
     this.draw();
+     canvas.addEventListener("click", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const clickY = event.clientY - rect.top;
+
+      const buttonX = this.canvas.width - 60;
+      const buttonY = 10;
+      const buttonWidth = 50;
+      const buttonHeight = 50;
+      if (
+        clickX >= buttonX &&
+        clickX <= buttonX + buttonWidth &&
+        clickY >= buttonY &&
+        clickY <= buttonY + buttonHeight
+      ) {
+        this.toggleMute();
+      }
+    });
+  }
+  
+
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    if (this.isMuted) {
+      AudioManager.muteAll();
+    } else {
+      AudioManager.unmuteAll();
+    }
   }
 
   setWorld() {
@@ -60,8 +89,22 @@ class World {
       this.drawBars();
       this.ctx.translate(-this.camera_x, 0);
     }
-
+    this.drawMuteButton();
     requestAnimationFrame(() => this.draw());
+  }
+
+  drawMuteButton() {
+    const buttonX = this.canvas.width - 60;
+    const buttonY = 10;
+    const buttonWidth = 50;
+    const buttonHeight = 50;
+
+    this.ctx.fillStyle = this.isMuted ? "gray" : "green";
+    this.ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+
+    this.ctx.font = "20px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText("🔊", buttonX + 15, buttonY + 30);
   }
 
   clearBoard() {
@@ -116,19 +159,19 @@ class World {
   }
 
   startGame() {
-    this.throwableObjects = [];
+    this.clearBoard();
+    this.draw();
+    this.run();
+    this.level.clouds.forEach((cloud) => cloud.startMoving());
     this.gameStarted = true;
     this.gameOver = false;
     this.startScreenDrawn = false;
-    this.clearBoard();
+    this.character.standingTimer = 0;
     this.clearAllIntervalsForObjects();
-    this.addEndbossToLevel();
-    this.level.clouds.forEach((cloud) => cloud.startMoving());
-    this.run();
-    this.draw();
     this.level.enemies.forEach((enemy) => {
       enemy.animate();
     });
+    this.addEndbossToLevel();
   }
 
   addEndbossToLevel() {
@@ -191,13 +234,17 @@ class World {
   checkGameOver() {
     if (!this.gameOver) {
       if (this.character.energy <= 0) {
-        this.gameOver = true;
-        this.gameStarted = false;
-        setTimeout(() => this.screenManager.showLoseScreen(), 500);
+        setTimeout(() => {
+          this.gameOver = true;
+          this.gameStarted = false;
+          this.screenManager.showLoseScreen();
+        }, 1000);
       } else if (this.endboss && !this.endboss.isLiving) {
-        this.gameOver = true;
-        this.gameStarted = false;
-        setTimeout(() => this.screenManager.showWinScreen(), 500);
+        setTimeout(() => {
+          this.gameOver = true;
+          this.gameStarted = false;
+          this.screenManager.showWinScreen();
+        }, 1000);
       }
     }
   }
@@ -229,15 +276,16 @@ class World {
   }
 
   restartGame() {
-    this.clearBoard();
-    this.level.resetLevel();
+    this.startGame();
     this.character.reset();
-    this.endboss.reset();
+    this.level.enemies.forEach((enemy) => enemy.reset && enemy.reset());
+    this.throwableObjects.forEach((object) => object.reset && object.reset());
     this.statusBarHealth.reset();
     this.statusBarBottle.reset();
     this.statusBarCoin.reset();
     this.statusBarEnemy.reset();
     this.level.clouds.forEach((cloud) => cloud.stopMoving());
-    this.startGame();
   }
+
+  
 }

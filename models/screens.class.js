@@ -7,14 +7,25 @@ GAMESTART_SOUND = new Audio("audio/start.mp3");
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.world = world;
-  }
 
-  playStartSound() {
-    if (this.GAMESTART_SOUND.paused) {
-      this.GAMESTART_SOUND.loop = true;
-      this.GAMESTART_SOUND.play();
-    }
+  this.GAMESTART_SOUND = GAMESTART_SOUND; // Bestehender Sound
+  AudioManager.registerAudio(this.GAMESTART_SOUND); // Audio registrieren
+}
+
+playStartSound() {
+  if (!this.world.isMuted && this.GAMESTART_SOUND.paused) {
+    this.GAMESTART_SOUND.loop = true;
+    this.GAMESTART_SOUND.play();
   }
+}
+
+
+  // playStartSound() {
+  //   if (this.GAMESTART_SOUND.paused) {
+  //     this.GAMESTART_SOUND.loop = true;
+  //     this.GAMESTART_SOUND.play();
+  //   }
+  // }
 
   stopStartSound() {
     if (!this.GAMESTART_SOUND.paused) {
@@ -97,4 +108,5 @@ GAMESTART_SOUND = new Audio("audio/start.mp3");
       1000
     );
   }
+  
 }

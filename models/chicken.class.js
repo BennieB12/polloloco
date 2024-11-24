@@ -154,7 +154,7 @@ class Chicken extends MovableObject {
    * Resets the `Chicken` to its initial state.
    */
   reset() {
-    this.clearAllIntervals();
+    // this.clearAllIntervals();
     this.energy = 5;
     this.remove = false;
   }
