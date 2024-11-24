@@ -1,6 +1,6 @@
 class AudioManager {
     static audioElements = [];
-  
+    
 
     static registerAudio(audio) {
       this.audioElements.push(audio);
@@ -18,7 +18,6 @@ class AudioManager {
       });
     }
   }
-  
-  const GAMESTART_SOUND = new Audio("audio/start.mp3");
+  GAMESTART_SOUND = new Audio("audio/start.mp3");
   AudioManager.registerAudio(GAMESTART_SOUND);
   

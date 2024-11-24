@@ -29,6 +29,21 @@ h1 {
   z-index: 1;
 }
 
+#control-panel {
+  position: absolute;
+  z-index: 2;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 400px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: none; 
+}
+
 canvas {
   position: absolute;
   top: 10%;

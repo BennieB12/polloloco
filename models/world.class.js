@@ -27,18 +27,29 @@ class World {
     this.draw();
     canvas.addEventListener("click", (event) => {
       const rect = canvas.getBoundingClientRect();
-    
+
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
-    
+
       const clickX = (event.clientX - rect.left) * scaleX;
       const clickY = (event.clientY - rect.top) * scaleY;
-    
+
       const muteButtonX = this.canvas.width - 60;
       const muteButtonY = 10;
       const buttonWidth = 50;
       const buttonHeight = 50;
-    
+      const controlButtonX = this.canvas.width - 180; // Links vom Vollbild-Button
+      const controlButtonY = 10;
+
+      if (
+        clickX >= controlButtonX &&
+        clickX <= controlButtonX + buttonWidth &&
+        clickY >= controlButtonY &&
+        clickY <= controlButtonY + buttonHeight
+      ) {
+        this.toggleControlPanel();
+      }
+
       if (
         clickX >= muteButtonX &&
         clickX <= muteButtonX + buttonWidth &&
@@ -48,10 +59,10 @@ class World {
         this.toggleMute();
         return;
       }
-    
+
       const fullscreenButtonX = this.canvas.width - 120;
       const fullscreenButtonY = 10;
-    
+
       if (
         clickX >= fullscreenButtonX &&
         clickX <= fullscreenButtonX + buttonWidth &&
@@ -71,6 +82,50 @@ class World {
       AudioManager.unmuteAll();
     }
   }
+
+  toggleControlPanel() {
+    let panel = document.getElementById("control-panel");
+    if (!panel) {
+        this.createControlPanel();
+        panel = document.getElementById("control-panel");
+    }
+    if (panel) {
+        const isHidden = panel.style.display === "none" || panel.style.display === "";
+        panel.style.display = isHidden ? "block" : "none";
+    }
+  }
+
+createControlPanel() {
+  const existingPanel = document.getElementById("control-panel");
+  if (existingPanel) {
+      return;
+  }
+
+  const panel = document.createElement("div");
+  panel.id = "control-panel";
+  panel.style.display = "none";
+  panel.innerHTML = `
+      <h2>Steuerung</h2>
+      <ul>
+          <li><b>Pfeiltasten:</b> Bewegung</li>
+          <li><b>Leertaste:</b> Springen</li>
+          <li><b>D:</b> Flaschen werfen</li>
+      </ul>
+      <button id="close-panel" style="margin-top: 20px; padding: 10px 20px;">Schließen</button>
+  `;
+  
+
+  document.body.appendChild(panel);
+
+  const closeButton = document.getElementById("close-panel");
+  if (closeButton) {
+      closeButton.addEventListener("click", () => {
+          panel.style.display = "none";
+      });
+  }
+}
+
+
 
   setWorld() {
     this.character.world = this;
@@ -108,6 +163,7 @@ class World {
     }
     this.drawMuteButton();
     this.drawFullscreenButton();
+    this.drawControlPanelButton();
     requestAnimationFrame(() => this.draw());
   }
 
@@ -130,7 +186,7 @@ class World {
   }
 
   drawFullscreenButton() {
-    const buttonX = this.canvas.width - 120; // Links vom Mute-Button
+    const buttonX = this.canvas.width - 120;
     const buttonY = 10;
     const buttonWidth = 50;
     const buttonHeight = 50;
@@ -140,7 +196,21 @@ class World {
 
     this.ctx.font = "20px Arial";
     this.ctx.fillStyle = "white";
-    this.ctx.fillText("⛶", buttonX + 15, buttonY + 30); // Symbol für Vollbild
+    this.ctx.fillText("⛶", buttonX + 15, buttonY + 30);
+  }
+
+  drawControlPanelButton() {
+    const buttonX = this.canvas.width - 180;
+    const buttonY = 10;
+    const buttonWidth = 50;
+    const buttonHeight = 50;
+
+    this.ctx.fillStyle = "purple";
+    this.ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+
+    this.ctx.font = "20px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText("?", buttonX + 15, buttonY + 30);
   }
 
   drawBars() {
@@ -159,6 +229,9 @@ class World {
     this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
+    if (this.level.endboss && this.level.endboss.isLiving) {
+      this.addToMap(this.level.endboss);
+    }
     this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.throwableObjects);
@@ -199,23 +272,37 @@ class World {
     this.gameOver = false;
     this.startScreenDrawn = false;
     this.character.standingTimer = 0;
-    this.clearAllIntervalsForObjects();
+    // this.clearAllIntervalsForObjects();
     this.level.enemies.forEach((enemy) => {
       enemy.animate();
     });
-    this.addEndbossToLevel();
+    // this.addEndbossToLevel();
   }
 
-  addEndbossToLevel() {
-    this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Endboss));
-    this.endboss.reset();
-    this.level.enemies.push(this.endboss);
-  }
+  // addEndbossToLevel() {
+  //   this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Endboss));
+  //   this.endboss.reset();
+  //   this.level.enemies.push(this.endboss);
+  // }
 
-  clearAllIntervalsForObjects() {
-    this.character.clearAllIntervals();
-    this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
-    this.throwableObjects.forEach((throwable) => throwable.clearAllIntervals());
+  // clearAllIntervalsForObjects() {
+  //   this.character.clearAllIntervals();
+  //   this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
+  //   this.throwableObjects.forEach((throwable) => throwable.clearAllIntervals());
+  // }
+
+  restartGame() {
+    this.character.reset();
+    // this.endboss.reset();
+    // this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
+    this.level.enemies.forEach((enemy) => enemy.reset && enemy.reset());
+    this.throwableObjects.forEach((object) => object.reset && object.reset());
+    this.statusBarHealth.reset();
+    this.statusBarBottle.reset();
+    this.statusBarCoin.reset();
+    this.statusBarEnemy.reset();
+    this.level.clouds.forEach((cloud) => cloud.stopMoving());
+    this.startGame();
   }
 
   run() {
@@ -305,17 +392,5 @@ class World {
         this.character.getDamage();
       }
     }
-  }
-
-  restartGame() {
-    this.startGame();
-    this.character.reset();
-    this.level.enemies.forEach((enemy) => enemy.reset && enemy.reset());
-    this.throwableObjects.forEach((object) => object.reset && object.reset());
-    this.statusBarHealth.reset();
-    this.statusBarBottle.reset();
-    this.statusBarCoin.reset();
-    this.statusBarEnemy.reset();
-    this.level.clouds.forEach((cloud) => cloud.stopMoving());
   }
 }
