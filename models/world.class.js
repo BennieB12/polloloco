@@ -27,51 +27,49 @@ class World {
     this.draw();
     canvas.addEventListener("click", (event) => {
       const rect = canvas.getBoundingClientRect();
-
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
-
       const clickX = (event.clientX - rect.left) * scaleX;
       const clickY = (event.clientY - rect.top) * scaleY;
+      const buttonRadius = 15;
 
-      const muteButtonX = this.canvas.width - 60;
-      const muteButtonY = 10;
-      const buttonWidth = 50;
-      const buttonHeight = 50;
-      const controlButtonX = this.canvas.width - 180; // Links vom Vollbild-Button
-      const controlButtonY = 10;
-
-      if (
-        clickX >= controlButtonX &&
-        clickX <= controlButtonX + buttonWidth &&
-        clickY >= controlButtonY &&
-        clickY <= controlButtonY + buttonHeight
-      ) {
+      const controlButtonX = canvas.width - 105;
+      const controlButtonY = 20;
+      if (this.isInsideCircle(clickX, clickY, controlButtonX, controlButtonY, buttonRadius)) {
         this.toggleControlPanel();
+        return;
       }
 
-      if (
-        clickX >= muteButtonX &&
-        clickX <= muteButtonX + buttonWidth &&
-        clickY >= muteButtonY &&
-        clickY <= muteButtonY + buttonHeight
-      ) {
+      const muteButtonX = canvas.width - 35;
+      const muteButtonY = 20;
+      if (this.isInsideCircle(clickX, clickY, muteButtonX, muteButtonY, buttonRadius)) {
         this.toggleMute();
         return;
       }
 
-      const fullscreenButtonX = this.canvas.width - 120;
-      const fullscreenButtonY = 10;
-
-      if (
-        clickX >= fullscreenButtonX &&
-        clickX <= fullscreenButtonX + buttonWidth &&
-        clickY >= fullscreenButtonY &&
-        clickY <= fullscreenButtonY + buttonHeight
-      ) {
-        toggleFullScreen();
+      const fullscreenButtonX = canvas.width - 70;
+      const fullscreenButtonY = 20;
+      if (this.isInsideCircle(clickX, clickY, fullscreenButtonX, fullscreenButtonY, buttonRadius)) {
+        this.toggleFullscreen();
+        return;
       }
     });
+  }
+
+  toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      if (this.canvas.requestFullscreen) {
+        this.canvas.requestFullscreen();
+      } else if (this.canvas.webkitRequestFullscreen) {
+        this.canvas.webkitRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
   }
 
   toggleMute() {
@@ -83,28 +81,33 @@ class World {
     }
   }
 
+  isInsideCircle(clickX, clickY, centerX, centerY, radius) {
+    const distance = Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2);
+    return distance <= radius;
+  }
+
   toggleControlPanel() {
     let panel = document.getElementById("control-panel");
     if (!panel) {
-        this.createControlPanel();
-        panel = document.getElementById("control-panel");
+      this.createControlPanel();
+      panel = document.getElementById("control-panel");
     }
     if (panel) {
-        const isHidden = panel.style.display === "none" || panel.style.display === "";
-        panel.style.display = isHidden ? "block" : "none";
+      const isHidden = panel.style.display === "none" || panel.style.display === "";
+      panel.style.display = isHidden ? "block" : "none";
     }
   }
 
-createControlPanel() {
-  const existingPanel = document.getElementById("control-panel");
-  if (existingPanel) {
+  createControlPanel() {
+    const existingPanel = document.getElementById("control-panel");
+    if (existingPanel) {
       return;
-  }
+    }
 
-  const panel = document.createElement("div");
-  panel.id = "control-panel";
-  panel.style.display = "none";
-  panel.innerHTML = `
+    const panel = document.createElement("div");
+    panel.id = "control-panel";
+    panel.style.display = "none";
+    panel.innerHTML = `
       <h2>Steuerung</h2>
       <ul>
           <li><b>Pfeiltasten:</b> Bewegung</li>
@@ -113,19 +116,16 @@ createControlPanel() {
       </ul>
       <button id="close-panel" style="margin-top: 20px; padding: 10px 20px;">Schließen</button>
   `;
-  
 
-  document.body.appendChild(panel);
+    document.body.appendChild(panel);
 
-  const closeButton = document.getElementById("close-panel");
-  if (closeButton) {
+    const closeButton = document.getElementById("close-panel");
+    if (closeButton) {
       closeButton.addEventListener("click", () => {
-          panel.style.display = "none";
+        panel.style.display = "none";
       });
+    }
   }
-}
-
-
 
   setWorld() {
     this.character.world = this;
@@ -167,50 +167,57 @@ createControlPanel() {
     requestAnimationFrame(() => this.draw());
   }
 
-  drawMuteButton() {
-    const buttonX = this.canvas.width - 60;
-    const buttonY = 10;
-    const buttonWidth = 50;
-    const buttonHeight = 50;
-
-    this.ctx.fillStyle = this.isMuted ? "gray" : "green";
-    this.ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
-
-    this.ctx.font = "20px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.fillText("🔊", buttonX + 15, buttonY + 30);
-  }
-
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  drawFullscreenButton() {
-    const buttonX = this.canvas.width - 120;
-    const buttonY = 10;
-    const buttonWidth = 50;
-    const buttonHeight = 50;
+  drawMuteButton() {
+    const buttonX = this.canvas.width - 35;
+    const buttonY = 20;
+    const buttonRadius = 15;
 
-    this.ctx.fillStyle = "blue";
-    this.ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
-
+    this.ctx.beginPath();
+    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
+    this.ctx.fillStyle = this.isMuted ? "gray" : "green";
+    this.ctx.fillStyle = this.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(150, 110, 50, 8)";
+    this.ctx.fill();
     this.ctx.font = "20px Arial";
     this.ctx.fillStyle = "white";
-    this.ctx.fillText("⛶", buttonX + 15, buttonY + 30);
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("🔊", buttonX, buttonY);
+  }
+
+  drawFullscreenButton() {
+    const buttonX = this.canvas.width - 70;
+    const buttonY = 20;
+    const buttonRadius = 15;
+
+    this.ctx.beginPath();
+    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
+    this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
+    this.ctx.fill();
+    this.ctx.font = "20px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("⛶", buttonX, buttonY);
   }
 
   drawControlPanelButton() {
-    const buttonX = this.canvas.width - 180;
-    const buttonY = 10;
-    const buttonWidth = 50;
-    const buttonHeight = 50;
+    const buttonX = this.canvas.width - 105;
+    const buttonY = 20;
+    const buttonRadius = 15;
 
-    this.ctx.fillStyle = "purple";
-    this.ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
-
+    this.ctx.beginPath();
+    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
+    this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
+    this.ctx.fill();
     this.ctx.font = "20px Arial";
     this.ctx.fillStyle = "white";
-    this.ctx.fillText("?", buttonX + 15, buttonY + 30);
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("?", buttonX, buttonY);
   }
 
   drawBars() {

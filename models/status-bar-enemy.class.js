@@ -13,8 +13,8 @@ class Statusbar_enemy extends DrawableObject {
   constructor() {
     super();
     this.loadImages(this.IMAGES);
-    this.x = 500;
-    this.y = 10;
+    this.x = 535;
+    this.y = 35;
     this.width = 180;
     this.height = 50;
     this.setpercentage(100);
