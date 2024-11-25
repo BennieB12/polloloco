@@ -248,12 +248,14 @@ draw() {
         setTimeout(() => {
           this.gameOver = true;
           this.gameStarted = false;
+          this.isPaused = false;
           this.screenManager.showLoseScreen();
         }, 1000);
       } else if (this.endboss && !this.endboss.isLiving) {
         setTimeout(() => {
           this.gameOver = true;
           this.gameStarted = false;
+          this.isPaused = false;
           this.screenManager.showWinScreen();
         }, 1000);
       }

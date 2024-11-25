@@ -66,7 +66,7 @@ class ScreenManager {
         this.ctx.textAlign = "center";
         this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
         this.ctx.fillText(text, this.canvas.width / 2, textY);
-
+        this.drawUIButtons();
         if (!this.world.gameStarted) {
           requestAnimationFrame(animateText);
         }
@@ -117,94 +117,129 @@ class ScreenManager {
     );
     this.drawButton(this.canvas.width - 70, 20, "⛶", "rgba(50, 50, 50, 1)");
     this.drawButton(this.canvas.width - 105, 20, "?", "rgba(50, 50, 50, 1)");
+
+    if (this.world.gameStarted) {
+      this.drawPauseButton();
+    }
+
     if (this.controlPanelVisible) {
       this.drawControlPanel();
     }
-    this.drawPauseButton();
   }
 
-
   drawButton(x, y, icon, color) {
-    const radius = 15;
     this.ctx.beginPath();
-    this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    this.ctx.arc(x, y, 15, 0, 2 * Math.PI);
     this.ctx.fillStyle = color;
     this.ctx.fill();
-    this.ctx.font = `${radius}px Arial`;
+    this.ctx.font = "15px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.fillText(icon, x, y);
   }
 
-  drawMuteButton() {
-    const buttonX = this.canvas.width - 35;
-    const buttonY = 20;
-    const buttonRadius = 15;
+  
+  drawControlPanel() {
+    this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    this.ctx.fillRect(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200);
+
+    this.ctx.strokeStyle = "white";
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200);
+
+    this.ctx.font = "18px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "left";
+    this.ctx.fillText("Steuerung:", this.canvas.width / 2 - 130, this.canvas.height / 2 - 70);
+    this.ctx.fillText("⬅️ ➡️ Bewegung", this.canvas.width / 2 - 130, this.canvas.height / 2 - 40);
+    this.ctx.fillText("⏎ Springen", this.canvas.width / 2 - 130, this.canvas.height / 2 - 10);
+    this.ctx.fillText("D Flaschen werfen", this.canvas.width / 2 - 130, this.canvas.height / 2 + 20);
+
     this.ctx.beginPath();
-    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
-    this.ctx.fillStyle = this.isMuted ? "gray" : "green";
-    this.ctx.fillStyle = this.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(150, 110, 50, 8)";
+    this.ctx.arc(this.canvas.width / 2, this.canvas.height / 2 + 60, 20, 0, 2 * Math.PI);
+    this.ctx.fillStyle = "red";
+    this.ctx.fill();
+    this.ctx.font = "16px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("X", this.canvas.width / 2, this.canvas.height / 2 + 60);
+  }
+
+  drawPauseButton() {
+    this.drawButton(this.canvas.width - 140, 20, this.world.isPaused ? "▶" : "⏸", "rgba(50, 50, 50, 1)");
+  }
+
+  drawMuteButton() {
+    this.ctx.beginPath();
+    this.ctx.arc(this.canvas.width - 35, 20, 15, 0, 2 * Math.PI);
+    this.ctx.fillStyle = this.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(150, 110, 50, 0.8)";
     this.ctx.fill();
     this.ctx.font = "20px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
-    this.ctx.fillText("🔊", buttonX, buttonY);
+    this.ctx.fillText("🔊", this.canvas.width - 35, 20);
   }
 
   drawFullscreenButton() {
-    const buttonX = this.canvas.width - 70;
-    const buttonY = 20;
-    const buttonRadius = 15;
     this.ctx.beginPath();
-    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
+    this.ctx.arc(this.canvas.width - 70, 20, 15, 0, 2 * Math.PI);
     this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
     this.ctx.fill();
     this.ctx.font = "20px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
-    this.ctx.fillText("⛶", buttonX, buttonY);
+    this.ctx.fillText("⛶", this.canvas.width - 70, 20);
   }
 
   registerClickEvents() {
     this.canvas.addEventListener("click", (event) => {
-      const rect = this.canvas.getBoundingClientRect();
-      const scaleX = this.canvas.width / rect.width;
-      const scaleY = this.canvas.height / rect.height;
-  
-      const clickX = (event.clientX - rect.left) * scaleX;
-      const clickY = (event.clientY - rect.top) * scaleY;
-  
-      const buttonRadius = 15;
-      const muteButton = { x: this.canvas.width - 35, y: 20 };
-      const fullscreenButton = { x: this.canvas.width - 70, y: 20 };
-      const helpButton = { x: this.canvas.width - 105, y: 20 };
-      const pauseButton = { x: this.canvas.width - 140, y: 20 };
-  
+      this.rect = this.canvas.getBoundingClientRect();
+      this.scaleX = this.canvas.width / this.rect.width;
+      this.scaleY = this.canvas.height / this.rect.height;
+
+      this.clickX = (event.clientX - this.rect.left) * this.scaleX;
+      this.clickY = (event.clientY - this.rect.top) * this.scaleY;
+
+      this.buttonRadius = 15;
+      this.muteButton = { x: this.canvas.width - 35, y: 20 };
+      this.fullscreenButton = { x: this.canvas.width - 70, y: 20 };
+      this.helpButton = { x: this.canvas.width - 105, y: 20 };
+      this.pauseButton = { x: this.canvas.width - 140, y: 20 };
+
       if (this.controlPanelVisible) {
-        this.handleControlPanelClick(clickX, clickY);
+        this.handleControlPanelClick(this.clickX, this.clickY);
       }
-  
-      if (this.isInsideCircle(clickX, clickY, pauseButton.x, pauseButton.y, buttonRadius)) {
+
+      if (this.isInsideCircle(this.clickX, this.clickY, this.pauseButton.x, this.pauseButton.y, this.buttonRadius)) {
         this.world.togglePause();
       }
-  
-      if (this.isInsideCircle(clickX, clickY, helpButton.x, helpButton.y, buttonRadius)) {
+
+      if (this.isInsideCircle(this.clickX, this.clickY, this.helpButton.x, this.helpButton.y, this.buttonRadius)) {
         this.toggleControlPanel();
-      } else if (this.isInsideCircle(clickX, clickY, muteButton.x, muteButton.y, buttonRadius)) {
+      } else if (
+        this.isInsideCircle(this.clickX, this.clickY, this.muteButton.x, this.muteButton.y, this.buttonRadius)
+      ) {
         this.toggleMute();
-      } else if (this.isInsideCircle(clickX, clickY, fullscreenButton.x, fullscreenButton.y, buttonRadius)) {
+      } else if (
+        this.isInsideCircle(
+          this.clickX,
+          this.clickY,
+          this.fullscreenButton.x,
+          this.fullscreenButton.y,
+          this.buttonRadius
+        )
+      ) {
         this.toggleFullscreen();
       }
     });
   }
-  
 
   isInsideCircle(clickX, clickY, centerX, centerY, radius) {
-    const distance = Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2);
-    return distance <= radius;
+    return Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2) <= radius;
   }
 
   toggleFullscreen() {
@@ -249,45 +284,4 @@ class ScreenManager {
     this.drawUIButtons();
   }
 
-  drawControlPanel() {
-    const panelX = this.canvas.width / 2 - 150;
-    const panelY = this.canvas.height / 2 - 100;
-    const panelWidth = 300;
-    const panelHeight = 200;
-
-    this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-    this.ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
-
-    this.ctx.strokeStyle = "white";
-    this.ctx.lineWidth = 2;
-    this.ctx.strokeRect(panelX, panelY, panelWidth, panelHeight);
-
-    this.ctx.font = "18px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "left";
-    this.ctx.fillText("Steuerung:", panelX + 20, panelY + 30);
-    this.ctx.fillText("⬅️ ➡️ Bewegung", panelX + 20, panelY + 60);
-    this.ctx.fillText("⏎ Springen", panelX + 20, panelY + 90);
-    this.ctx.fillText("D Flaschen werfen", panelX + 20, panelY + 120);
-
-    const buttonX = panelX + panelWidth / 2;
-    const buttonY = panelY + panelHeight - 40;
-    const buttonRadius = 20;
-
-    this.ctx.beginPath();
-    this.ctx.arc(buttonX, buttonY, buttonRadius, 0, 2 * Math.PI);
-    this.ctx.fillStyle = "red";
-    this.ctx.fill();
-    this.ctx.font = "16px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.fillText("X", buttonX, buttonY);
-  }
-
-  drawPauseButton() {
-    const symbol = this.world.isPaused ? "▶" : "⏸";
-    const color = "rgba(50, 50, 50, 1)";
-    this.drawButton(this.canvas.width - 140, 20, symbol, color);
-  }
 }
