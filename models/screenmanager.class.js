@@ -1,6 +1,7 @@
 class ScreenManager {
   isPlayingSound = false;
   controlPanelVisible = false;
+  startButtonVisible = true;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
 
   constructor(canvas, world) {
@@ -36,57 +37,79 @@ class ScreenManager {
     }
   }
 
-  displayScreen(imageSrc, text, callback, delay = 0) {
+  displayScreen(imageSrc, callback, delay = 0) {
     const image = new Image();
     image.src = imageSrc;
 
     image.onload = () => {
-      const textY = this.canvas.height / 2 - 150;
-      let colorValue = 255;
-      let decreasing = true;
-
-      const animateText = () => {
+      const animateButton = () => {
         this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
-
-        if (decreasing) {
-          colorValue -= 2;
-          if (colorValue <= 0) {
-            colorValue = 0;
-            decreasing = false;
-          }
-        } else {
-          colorValue += 2;
-          if (colorValue >= 255) {
-            colorValue = 255;
-            decreasing = true;
-          }
-        }
-
-        this.ctx.font = "bold 60px Arial";
-        this.ctx.textAlign = "center";
-        this.ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-        this.ctx.fillText(text, this.canvas.width / 2, textY);
         this.drawUIButtons();
+
         if (!this.world.gameStarted) {
-          requestAnimationFrame(animateText);
+          requestAnimationFrame(animateButton);
         }
       };
 
       setTimeout(() => {
-        animateText();
+        animateButton();
       }, delay);
 
-      this.canvas.addEventListener("click", callback, { once: true });
+      this.canvas.addEventListener("click", (event) => {
+        if (this.isStartButtonClicked(event)) {
+          this.stopStartSound();
+          this.world.startGame();
+          callback();
+        }
+      });
     };
+  }
+
+  drawStartButton() {
+    const buttonWidth = 150;
+    const buttonHeight = 50;
+    const x = this.canvas.width - buttonWidth - 20;
+    const y = this.canvas.height - buttonHeight - 20;
+
+    const colorValue = Math.floor(Math.abs(Math.sin(Date.now() / 500)) * 255);
+    this.ctx.fillStyle = `rgb(255, ${colorValue}, 0)`;
+    this.ctx.fillRect(x, y, buttonWidth, buttonHeight);
+
+    this.ctx.font = "bold 20px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("Start", x + buttonWidth / 2, y + buttonHeight / 2);
+  
+  }
+
+  isStartButtonClicked(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+
+    const clickX = (event.clientX - rect.left) * scaleX;
+    const clickY = (event.clientY - rect.top) * scaleY;
+
+    const buttonWidth = 150;
+    const buttonHeight = 50;
+    const x = this.canvas.width - buttonWidth - 20;
+    const y = this.canvas.height - buttonHeight - 20;
+
+    return (
+      clickX >= x &&
+      clickX <= x + buttonWidth &&
+      clickY >= y &&
+      clickY <= y + buttonHeight
+    );
   }
 
   showStartScreen() {
     if (this.world.gameStarted) return;
     this.playStartSound();
-    // this.drawMuteButton();
+    //  this.drawMuteButton();
     this.displayScreen("img/9_intro_outro_screens/start/startscreen_1.png", "TAP to Start", () => {
       this.stopStartSound();
-      this.world.startGame();
     });
   }
 
@@ -120,6 +143,9 @@ class ScreenManager {
 
     if (this.world.gameStarted) {
       this.drawPauseButton();
+    }
+    if (!this.world.gameStarted) {
+      this.drawStartButton();
     }
 
     if (this.controlPanelVisible) {
