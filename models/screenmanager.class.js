@@ -173,20 +173,24 @@ class ScreenManager {
       const rect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / rect.width;
       const scaleY = this.canvas.height / rect.height;
-
+  
       const clickX = (event.clientX - rect.left) * scaleX;
       const clickY = (event.clientY - rect.top) * scaleY;
-
+  
       const buttonRadius = 15;
       const muteButton = { x: this.canvas.width - 35, y: 20 };
       const fullscreenButton = { x: this.canvas.width - 70, y: 20 };
       const helpButton = { x: this.canvas.width - 105, y: 20 };
       const pauseButton = { x: this.canvas.width - 140, y: 20 };
-
+  
+      if (this.controlPanelVisible) {
+        this.handleControlPanelClick(clickX, clickY);
+      }
+  
       if (this.isInsideCircle(clickX, clickY, pauseButton.x, pauseButton.y, buttonRadius)) {
         this.world.togglePause();
       }
-
+  
       if (this.isInsideCircle(clickX, clickY, helpButton.x, helpButton.y, buttonRadius)) {
         this.toggleControlPanel();
       } else if (this.isInsideCircle(clickX, clickY, muteButton.x, muteButton.y, buttonRadius)) {
@@ -196,6 +200,7 @@ class ScreenManager {
       }
     });
   }
+  
 
   isInsideCircle(clickX, clickY, centerX, centerY, radius) {
     const distance = Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2);

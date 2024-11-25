@@ -36,47 +36,46 @@ class World {
     // this.audiomanager = new AudioManager();
   }
 
-  draw() {
+draw() {
     if (this.gameOver) {
-      this.ctx.save();
-      this.clearBoard();
-      this.ctx.globalAlpha = 0.95;
-      this.ctx.translate(this.camera_x, 0);
-      this.addObjectsToMap(this.level.backgroundObjects);
-      this.ctx.translate(-this.camera_x, 0);
-      this.ctx.restore();
-      return;
-    }
-  
-    if (this.isPaused) {
-      this.ctx.font = "bold 50px Arial";
-      this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-      this.ctx.textAlign = "center";
-      this.ctx.fillText("PAUSED", this.canvas.width / 2, this.canvas.height / 2);
-      return;
+        this.ctx.save();
+        this.clearBoard();
+        this.ctx.globalAlpha = 0.95;
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.backgroundObjects);
+        this.ctx.translate(-this.camera_x, 0);
+        this.ctx.restore();
+        return;
     }
 
-  
-    if (!this.gameStarted) {
-      if (!this.startScreenDrawn) {
-        this.screenManager.showStartScreen();
-        this.startScreenDrawn = true;
-      }
+    this.clearBoard();
+
+    if (this.isPaused) {
+        this.ctx.font = "bold 50px Arial";
+        this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        this.ctx.textAlign = "center";
+        this.ctx.fillText("PAUSED", this.canvas.width / 2, this.canvas.height / 2);
+    } else if (!this.gameStarted) {
+        if (!this.startScreenDrawn) {
+            this.screenManager.showStartScreen();
+            this.startScreenDrawn = true;
+        }
     } else {
-      this.clearBoard();
-      this.ctx.translate(this.camera_x, 0);
-      this.addObjectsToMap(this.level.backgroundObjects);
-      this.addToMap(this.character);
-      this.checkVisibility();
-      this.drawObjects();
-      this.drawBars();
-      this.ctx.translate(-this.camera_x, 0);
+
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.backgroundObjects);
+        this.addToMap(this.character);
+        this.checkVisibility();
+        this.drawObjects();
+        this.drawBars();
+        this.ctx.translate(-this.camera_x, 0);
     }
-    
+
     this.screenManager.drawUIButtons();
+
     requestAnimationFrame(() => this.draw());
-  }
-  
+}
+
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
@@ -99,6 +98,7 @@ class World {
     }
 
     this.screenManager.drawUIButtons();
+    // this.screenManager.registerClickEvents();
   }
 
   
