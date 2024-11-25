@@ -17,6 +17,7 @@ class World {
   startScreenDrawn = false;
   enemyHit = false;
   isMuted = false;
+  isPaused = false;
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -46,7 +47,15 @@ class World {
       this.ctx.restore();
       return;
     }
-
+  
+    if (this.isPaused) {
+      this.ctx.font = "bold 50px Arial";
+      this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      this.ctx.textAlign = "center";
+      this.ctx.fillText("PAUSED", this.canvas.width / 2, this.canvas.height / 2);
+      return;
+    }
+  
     if (!this.gameStarted) {
       if (!this.startScreenDrawn) {
         this.screenManager.showStartScreen();
@@ -65,9 +74,19 @@ class World {
     this.screenManager.drawUIButtons();
     requestAnimationFrame(() => this.draw());
   }
-
+  
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  togglePause() {
+    this.isPaused = !this.isPaused;
+    if (this.isPaused) {
+      console.log("Game Paused");
+    } else {
+      console.log("Game Resumed");
+      this.run();
+    }
   }
 
   drawBars() {
@@ -130,9 +149,11 @@ class World {
     this.startScreenDrawn = false;
     this.character.standingTimer = 0;
     // this.clearAllIntervalsForObjects();
-    this.level.enemies.forEach((enemy) => {
-      enemy.animate();
-    });
+    if (!this.isPaused) {
+      this.level.enemies.forEach((enemy) => {
+        enemy.animate();
+      });
+    }
     // this.addEndbossToLevel();
   }
 

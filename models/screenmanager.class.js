@@ -120,6 +120,7 @@ class ScreenManager {
     if (this.controlPanelVisible) {
       this.drawControlPanel();
     }
+    this.drawButton(this.canvas.width - 140, 20, "⏸", "rgba(50, 50, 50, 1)");
   }
 
   drawButton(x, y, icon, color) {
@@ -128,7 +129,7 @@ class ScreenManager {
     this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
     this.ctx.fillStyle = color;
     this.ctx.fill();
-    this.ctx.font = "20px Arial";
+    this.ctx.font = `${radius}px Arial`;
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
@@ -171,20 +172,26 @@ class ScreenManager {
       const rect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / rect.width;
       const scaleY = this.canvas.height / rect.height;
+
       const clickX = (event.clientX - rect.left) * scaleX;
       const clickY = (event.clientY - rect.top) * scaleY;
 
-      if (this.controlPanelVisible) {
-        this.handleControlPanelClick(clickX, clickY);
-      } else {
-        const buttonRadius = 15;
-        if (this.isInsideCircle(clickX, clickY, this.canvas.width - 105, 20, buttonRadius)) {
-          this.toggleControlPanel();
-        } else if (this.isInsideCircle(clickX, clickY, this.canvas.width - 35, 20, buttonRadius)) {
-          this.toggleMute();
-        } else if (this.isInsideCircle(clickX, clickY, this.canvas.width - 70, 20, buttonRadius)) {
-          this.toggleFullscreen();
-        }
+      const buttonRadius = 15;
+      const muteButton = { x: this.canvas.width - 35, y: 20 };
+      const fullscreenButton = { x: this.canvas.width - 70, y: 20 };
+      const helpButton = { x: this.canvas.width - 105, y: 20 };
+      const pauseButton = { x: this.canvas.width - 140, y: 20 };
+
+      if (this.isInsideCircle(clickX, clickY, pauseButton.x, pauseButton.y, buttonRadius)) {
+        this.world.togglePause();
+      }
+
+      if (this.isInsideCircle(clickX, clickY, helpButton.x, helpButton.y, buttonRadius)) {
+        this.toggleControlPanel();
+      } else if (this.isInsideCircle(clickX, clickY, muteButton.x, muteButton.y, buttonRadius)) {
+        this.toggleMute();
+      } else if (this.isInsideCircle(clickX, clickY, fullscreenButton.x, fullscreenButton.y, buttonRadius)) {
+        this.toggleFullscreen();
       }
     });
   }
@@ -236,7 +243,7 @@ class ScreenManager {
     this.drawUIButtons();
   }
 
- drawControlPanel() {
+  drawControlPanel() {
     const panelX = this.canvas.width / 2 - 150;
     const panelY = this.canvas.height / 2 - 100;
     const panelWidth = 300;
