@@ -172,6 +172,10 @@ class Minichicken extends MovableObject {
     }, 300);
   }
 
+  stopAnimations() {
+    this.clearAllIntervals();
+  }
+
   /**
    * Resets the `Minichicken` to its initial state.
    */

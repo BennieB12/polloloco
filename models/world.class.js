@@ -55,6 +55,7 @@ class World {
       this.ctx.fillText("PAUSED", this.canvas.width / 2, this.canvas.height / 2);
       return;
     }
+
   
     if (!this.gameStarted) {
       if (!this.startScreenDrawn) {
@@ -71,6 +72,7 @@ class World {
       this.drawBars();
       this.ctx.translate(-this.camera_x, 0);
     }
+    
     this.screenManager.drawUIButtons();
     requestAnimationFrame(() => this.draw());
   }
@@ -81,13 +83,25 @@ class World {
 
   togglePause() {
     this.isPaused = !this.isPaused;
+
     if (this.isPaused) {
       console.log("Game Paused");
+      this.level.enemies.forEach((enemy) => {
+        enemy.stopAnimations && enemy.stopAnimations();
+      });
     } else {
       console.log("Game Resumed");
+      this.draw();
       this.run();
+      this.level.enemies.forEach((enemy) => {
+        enemy.animate && enemy.animate();
+      });
     }
+
+    this.screenManager.drawUIButtons();
   }
+
+  
 
   drawBars() {
     this.ctx.translate(-this.camera_x, 0);

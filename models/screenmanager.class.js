@@ -120,8 +120,9 @@ class ScreenManager {
     if (this.controlPanelVisible) {
       this.drawControlPanel();
     }
-    this.drawButton(this.canvas.width - 140, 20, "⏸", "rgba(50, 50, 50, 1)");
+    this.drawPauseButton();
   }
+
 
   drawButton(x, y, icon, color) {
     const radius = 15;
@@ -277,5 +278,11 @@ class ScreenManager {
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.fillText("X", buttonX, buttonY);
+  }
+
+  drawPauseButton() {
+    const symbol = this.world.isPaused ? "▶" : "⏸";
+    const color = "rgba(50, 50, 50, 1)";
+    this.drawButton(this.canvas.width - 140, 20, symbol, color);
   }
 }

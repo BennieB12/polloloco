@@ -150,6 +150,9 @@ class Chicken extends MovableObject {
     }, 300);
   }
 
+  stopAnimations() {
+    this.clearAllIntervals();
+  }
   /**
    * Resets the `Chicken` to its initial state.
    */
