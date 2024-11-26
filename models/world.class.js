@@ -1,7 +1,6 @@
 class World {
   character = new Character();
-  // audiomanager = new AudioManager();
-  endboss = new Endboss();
+  audiomanager = new AudioManager();
   level = level1;
   canvas;
   ctx;
@@ -31,9 +30,9 @@ class World {
 
   setWorld() {
     this.character.world = this;
-    this.endboss.world = this;
+    // this.endboss.world = this;
     this.screenManager = new ScreenManager(canvas, this);
-    // this.audiomanager = new AudioManager();
+    this.audiomanager = new AudioManager();
   }
 
 draw() {
@@ -106,7 +105,7 @@ draw() {
   drawBars() {
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.statusBarHealth);
-    if (this.statusBarEnemy.visible && this.endboss.isLiving) {
+    if (this.statusBarEnemy.visible) {
       this.addToMap(this.statusBarEnemy);
     }
     this.addToMap(this.statusBarCoin);
@@ -114,18 +113,24 @@ draw() {
     this.ctx.translate(this.camera_x, 0);
   }
 
-  drawObjects() {
-    this.level.enemies = this.level.enemies.filter((enemy) => !enemy.remove);
-    this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
-    this.addObjectsToMap(this.level.clouds);
-    this.addObjectsToMap(this.level.enemies);
-    if (this.level.endboss && this.level.endboss.isLiving) {
-      this.addToMap(this.level.endboss);
-    }
-    this.addObjectsToMap(this.level.coins);
-    this.addObjectsToMap(this.level.bottles);
-    this.addObjectsToMap(this.throwableObjects);
+drawObjects() {
+  this.level.enemies = this.level.enemies.filter((enemy) => !enemy.remove);
+  this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
+  
+  this.addObjectsToMap(this.level.clouds);
+
+  const regularEnemies = this.level.enemies.filter((enemy) => !(enemy instanceof Endboss));
+  this.addObjectsToMap(regularEnemies);
+
+  const endboss = this.getEndboss();
+  if (endboss) {
+    this.addToMap(endboss);
   }
+
+  this.addObjectsToMap(this.level.coins);
+  this.addObjectsToMap(this.level.bottles);
+  this.addObjectsToMap(this.throwableObjects);
+}
 
   addObjectsToMap(objects) {
     objects.forEach((o) => this.addToMap(o));
@@ -171,23 +176,22 @@ draw() {
     // this.addEndbossToLevel();
   }
 
-  // addEndbossToLevel() {
-  //   this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Endboss));
-  //   this.endboss.reset();
-  //   this.level.enemies.push(this.endboss);
-  // }
+  getEndboss() {
+    return this.level.enemies.find((enemy) => enemy instanceof Endboss);
+  }
 
-  // clearAllIntervalsForObjects() {
-  //   this.character.clearAllIntervals();
-  //   this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
-  //   this.throwableObjects.forEach((throwable) => throwable.clearAllIntervals());
-  // }
+
+  clearAllIntervalsForObjects() {
+    this.character.clearAllIntervals();
+    this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
+    this.throwableObjects.forEach((throwable) => throwable.clearAllIntervals());
+  }
 
   restartGame() {
     this.character.reset();
-    // this.endboss.reset();
-    // this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
-    this.level.enemies.forEach((enemy) => enemy.reset && enemy.reset());
+    this.getEndboss().reset();
+    this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
+    // this.level.enemies.forEach((enemy) => enemy.reset && enemy.reset());
     this.throwableObjects.forEach((object) => object.reset && object.reset());
     this.statusBarHealth.reset();
     this.statusBarBottle.reset();
@@ -196,6 +200,8 @@ draw() {
     this.level.clouds.forEach((cloud) => cloud.stopMoving());
     this.startGame();
   }
+
+  
 
   run() {
     if (this.gameStarted && !this.gameOver) {
@@ -207,7 +213,7 @@ draw() {
   }
 
   checkVisibility() {
-    if (this.character.x >= 1800 && this.endboss.isLiving) {
+    if (this.character.x >= 1800 && this.getEndboss().isLiving) {
       this.statusBarEnemy.visible = true;
     } else {
       this.statusBarEnemy.visible = false;
@@ -244,6 +250,8 @@ draw() {
 
   checkGameOver() {
     if (!this.gameOver) {
+      const endboss = this.getEndboss();
+  
       if (this.character.energy <= 0) {
         setTimeout(() => {
           this.gameOver = true;
@@ -251,7 +259,7 @@ draw() {
           this.isPaused = false;
           this.screenManager.showLoseScreen();
         }, 1000);
-      } else if (this.endboss && !this.endboss.isLiving) {
+      } else if (endboss && !endboss.isLiving) {
         setTimeout(() => {
           this.gameOver = true;
           this.gameStarted = false;
@@ -261,6 +269,7 @@ draw() {
       }
     }
   }
+  
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {

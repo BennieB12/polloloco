@@ -7,7 +7,7 @@ class Bottle extends DrawableObject {
      * The vertical position of the bottle.
      * @type {number}
      */
-    y = 365;
+    y = 360;
 
   
     /**
@@ -38,7 +38,7 @@ class Bottle extends DrawableObject {
     constructor(imagePath, x) {
       super().loadImage(imagePath);
       this.x = x;
-      this.setOffset(0, 0, 0, 0);
+      this.setOffset(35, 35, 20, 20);
     }
   }
   

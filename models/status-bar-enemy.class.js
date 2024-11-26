@@ -1,5 +1,6 @@
 class Statusbar_enemy extends DrawableObject {
   percentage = 100;
+  visible = false;
 
   IMAGES = [
     "img/7_statusbars/2_statusbar_endboss/green/green0.png",

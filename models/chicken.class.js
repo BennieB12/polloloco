@@ -31,7 +31,7 @@ class Chicken extends MovableObject {
    * Animation speed for the walking cycle.
    * @type {number}
    */
-  animationSpeed = 5;
+  animationSpeed = 7;
 
   /**
    * Walking animation images.
@@ -71,6 +71,7 @@ class Chicken extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.x = x;
     this.speed = 16 + Math.random() * 2;
+    this.setOffset(25, 25, 20, 20);
   }
 
   /**
@@ -157,7 +158,7 @@ class Chicken extends MovableObject {
    * Resets the `Chicken` to its initial state.
    */
   reset() {
-    this.otherDirection = false;
+    // this.otherDirection = false;
     this.energy = 5;
     this.remove = false;
     this.clearAllIntervals();

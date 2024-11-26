@@ -1,5 +1,5 @@
 const level1 = new Level(
-  [
+  enemies =[
     new Chicken(600 + Math.random() * 2000),
     new Chicken(600 + Math.random() * 2000),
     new Chicken(600 + Math.random() * 2000),

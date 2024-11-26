@@ -27,6 +27,7 @@ class MovableObject extends DrawableObject {
   applyGravity() {
     if (this.aboveGround() || this.speedY > 0) {
       this.setAcceleration();
+      this.isJumping = true;
     } else {
       this.onGround();
     }
@@ -50,29 +51,18 @@ class MovableObject extends DrawableObject {
   onGround() {
     this.isJumping = false;
     this.speedY = 0;
+    this.y = this.groundLevel;
   }
 
-  isColliding(mo) {
-    let isColliding = false;
-  
-    if (this instanceof ThrowableObject && !this.splashAnimation) {
-      isColliding = this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
-        this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
-        this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
-        this.y > mo.y;
-    }
 
-    else {
-      isColliding = Math.sqrt(
-        Math.pow(this.x + this.width / 2 - (mo.x + mo.width / 2), 2) +
-          Math.pow(this.y + this.height / 2 - (mo.y + mo.height / 2), 2)
-      ) < (this.width / 2 + mo.width / 2) * 0.5 &&
-        this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
-        this.y < mo.y;
-    }
-  
-    return isColliding;
-  } 
+  isColliding(mo) {
+    return (
+      this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+      this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+      this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+      this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom
+    );
+  }
 
 
   getDamage() {
@@ -129,9 +119,7 @@ class MovableObject extends DrawableObject {
   jump(speedY = 20) {
     this.speedY = speedY;
     this.isJumping = true;
-    if (this.isJumping) {
-      this.standingTimer = 0;
-    }
+    this.standingTimer = 0;
   }
 
   playAnimation(images, speed) {

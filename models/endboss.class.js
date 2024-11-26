@@ -1,9 +1,9 @@
 class Endboss extends MovableObject {
-  height = 140;
+  height = 180;
   width = 90;
   energy = 100;
   animationSpeed = 8;
-  groundLevel = 300;
+  groundLevel = 250;
   deadAnimationPlayed = false;
   remove = false;
   statusBar;
@@ -64,7 +64,7 @@ class Endboss extends MovableObject {
     this.x = 2850;
     this.speed = 11;
     this.applyGravity();
-    this.setOffset(0, 0, 0, 0);
+    this.setOffset(40, 40, 60, 60);
   }
 
  updateStatusBar() {
@@ -140,7 +140,7 @@ class Endboss extends MovableObject {
 
   die() {
     this.isLiving = false;
-    this.remove = true;
+    //  this.remove = true;
 }
 
   reset() {

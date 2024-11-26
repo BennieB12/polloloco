@@ -59,17 +59,17 @@ class ScreenManager {
         if (this.isStartButtonClicked(event)) {
           this.stopStartSound();
           this.world.startGame();
-          callback();
+          // callback();
         }
       });
     };
   }
 
   drawStartButton() {
-    const buttonWidth = 150;
+    const buttonWidth = 50;
     const buttonHeight = 50;
-    const x = this.canvas.width - buttonWidth - 20;
-    const y = this.canvas.height - buttonHeight - 20;
+    const x = this.canvas.width - buttonWidth - 520;
+    const y = this.canvas.height - buttonHeight - 160;
 
     const colorValue = Math.floor(Math.abs(Math.sin(Date.now() / 500)) * 255);
     this.ctx.fillStyle = `rgb(255, ${colorValue}, 0)`;
@@ -91,10 +91,10 @@ class ScreenManager {
     const clickX = (event.clientX - rect.left) * scaleX;
     const clickY = (event.clientY - rect.top) * scaleY;
 
-    const buttonWidth = 150;
+    const buttonWidth = 50;
     const buttonHeight = 50;
-    const x = this.canvas.width - buttonWidth - 20;
-    const y = this.canvas.height - buttonHeight - 20;
+    const x = this.canvas.width - buttonWidth - 520;
+    const y = this.canvas.height - buttonHeight - 160;
 
     return (
       clickX >= x &&
@@ -139,10 +139,11 @@ class ScreenManager {
       this.world.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(250, 150, 50, 1)"
     );
     this.drawButton(this.canvas.width - 70, 20, "⛶", "rgba(50, 50, 50, 1)");
-    this.drawButton(this.canvas.width - 105, 20, "?", "rgba(50, 50, 50, 1)");
-
+    
     if (this.world.gameStarted) {
       this.drawPauseButton();
+      this.drawButton(this.canvas.width - 105, 20, "?", "rgba(50, 50, 50, 1)");
+
     }
     if (!this.world.gameStarted) {
       this.drawStartButton();
