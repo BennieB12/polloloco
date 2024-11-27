@@ -413,11 +413,11 @@ class Character extends MovableObject {
   }
 
   reset() {
+    this.energy = 100;
+    this.x = 80;
     this.otherDirection = false;
     this.resetBottles();
     this.resetCoins();
-    this.x = 80;
-    this.energy = 100;
     this.clearAllIntervals();
   }
 }

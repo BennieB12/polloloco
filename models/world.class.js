@@ -30,7 +30,6 @@ class World {
 
   setWorld() {
     this.character.world = this;
-    // this.endboss.world = this;
     this.screenManager = new ScreenManager(canvas, this);
     this.audiomanager = new AudioManager();
   }
@@ -64,9 +63,9 @@ draw() {
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addToMap(this.character);
-        this.checkVisibility();
         this.drawObjects();
         this.drawBars();
+        // this.checkVisibility();
         this.ctx.translate(-this.camera_x, 0);
     }
 
@@ -91,6 +90,7 @@ draw() {
       console.log("Game Resumed");
       this.draw();
       this.run();
+      this.character.standingTimer = 0;
       this.level.enemies.forEach((enemy) => {
         enemy.animate && enemy.animate();
       });
@@ -160,20 +160,23 @@ drawObjects() {
 
   startGame() {
     this.clearBoard();
-    this.draw();
-    this.run();
-    this.level.clouds.forEach((cloud) => cloud.startMoving());
+    this.clearAllIntervalsForObjects();
+
+
+    
     this.gameStarted = true;
     this.gameOver = false;
+    this.draw();
+    this.getEndboss();
+    this.run();
+    this.level.clouds.forEach((cloud) => cloud.startMoving());
     this.startScreenDrawn = false;
     this.character.standingTimer = 0;
-    // this.clearAllIntervalsForObjects();
     if (!this.isPaused) {
       this.level.enemies.forEach((enemy) => {
         enemy.animate();
       });
     }
-    // this.addEndbossToLevel();
   }
 
   getEndboss() {
@@ -190,9 +193,9 @@ drawObjects() {
   restartGame() {
     this.character.reset();
     this.getEndboss().reset();
-    this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
-    // this.level.enemies.forEach((enemy) => enemy.reset && enemy.reset());
-    this.throwableObjects.forEach((object) => object.reset && object.reset());
+    // this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
+    // this.level.enemies.forEach((enemy) => enemy.reset());
+    this.throwableObjects.forEach((object) => object.reset());
     this.statusBarHealth.reset();
     this.statusBarBottle.reset();
     this.statusBarCoin.reset();
@@ -249,26 +252,27 @@ drawObjects() {
   }
 
   checkGameOver() {
-    if (!this.gameOver) {
-      const endboss = this.getEndboss();
-  
-      if (this.character.energy <= 0) {
+    if (this.gameOver) return;
+
+    const endboss = this.getEndboss();
+
+    if (this.character.energy <= 0) {
+        this.gameOver = true;
         setTimeout(() => {
-          this.gameOver = true;
-          this.gameStarted = false;
-          this.isPaused = false;
-          this.screenManager.showLoseScreen();
+            this.gameStarted = false;
+            this.isPaused = false;
+            this.screenManager.showLoseScreen();
         }, 1000);
-      } else if (endboss && !endboss.isLiving) {
+    } else if (endboss && !endboss.isLiving) {
+        this.gameOver = true;
         setTimeout(() => {
-          this.gameOver = true;
-          this.gameStarted = false;
-          this.isPaused = false;
-          this.screenManager.showWinScreen();
+            this.gameStarted = false;
+            this.isPaused = false;
+            this.screenManager.showWinScreen();
         }, 1000);
-      }
     }
-  }
+}
+
   
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {

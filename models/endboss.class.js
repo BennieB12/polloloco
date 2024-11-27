@@ -8,7 +8,6 @@ class Endboss extends MovableObject {
   remove = false;
   statusBar;
   isLiving = true;
-  world;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -65,6 +64,7 @@ class Endboss extends MovableObject {
     this.speed = 11;
     this.applyGravity();
     this.setOffset(40, 40, 60, 60);
+    this.animate();
   }
 
  updateStatusBar() {
@@ -75,7 +75,7 @@ class Endboss extends MovableObject {
 
 
   animate() {
-    this.clearAllIntervals();
+    // this.clearAllIntervals();
     this.jump();
     this.walk();
 

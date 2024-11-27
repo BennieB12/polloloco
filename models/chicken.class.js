@@ -72,6 +72,7 @@ class Chicken extends MovableObject {
     this.x = x;
     this.speed = 16 + Math.random() * 2;
     this.setOffset(25, 25, 20, 20);
+    this.animate();
   }
 
   /**
@@ -157,10 +158,28 @@ class Chicken extends MovableObject {
   /**
    * Resets the `Chicken` to its initial state.
    */
-  reset() {
-    // this.otherDirection = false;
-    this.energy = 5;
-    this.remove = false;
-    this.clearAllIntervals();
-  }
+/**
+ * Resets the `Chicken` to its initial state.
+ */
+reset() {
+  this.clearAllIntervals();
+
+  this.x = Math.random() * 2900; // Zufällige Startposition im Level
+  this.y = 350;
+  this.speed = 16 + Math.random() * 2;
+
+  // Reset animations and state
+  this.currentImage = 0;
+  this.img = this.imageCache[this.IMAGES_WALKING[0]]; // Ursprüngliches Bild setzen
+  this.otherDirection = false;
+  this.deadAnimationPlayed = false;
+  this.isBlinking = false;
+
+  this.energy = 20; 
+  this.remove = false;
+ 
+  this.loadImages(this.IMAGES_WALKING);
+  this.loadImages(this.IMAGES_DEAD);
+}
+
 }

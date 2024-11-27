@@ -37,7 +37,7 @@ class ScreenManager {
     }
   }
 
-  displayScreen(imageSrc, callback, delay = 0) {
+  displayScreen(imageSrc) {
     const image = new Image();
     image.src = imageSrc;
 
@@ -53,13 +53,12 @@ class ScreenManager {
 
       setTimeout(() => {
         animateButton();
-      }, delay);
+      }, 200);
 
       this.canvas.addEventListener("click", (event) => {
         if (this.isStartButtonClicked(event)) {
           this.stopStartSound();
           this.world.startGame();
-          // callback();
         }
       });
     };
@@ -113,23 +112,74 @@ class ScreenManager {
     });
   }
 
+  drawRestartButton() {
+    const buttonWidth = 50;
+    const buttonHeight = 50;
+    const x = this.canvas.width - buttonWidth - 520;
+    const y = this.canvas.height - buttonHeight - 160;
+
+    const colorValue = Math.floor(Math.abs(Math.sin(Date.now() / 500)) * 255);
+    this.ctx.fillStyle = `rgb(0, ${colorValue}, 255)`;
+    this.ctx.fillRect(x, y, buttonWidth, buttonHeight);
+
+    this.ctx.font = "bold 20px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("Restart", x + buttonWidth / 2, y + buttonHeight / 2);
+  }
+
+  isRestartButtonClicked(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+
+    const clickX = (event.clientX - rect.left) * scaleX;
+    const clickY = (event.clientY - rect.top) * scaleY;
+
+    const buttonWidth = 50;
+    const buttonHeight = 50;
+    const x = this.canvas.width - buttonWidth - 520;
+    const y = this.canvas.height - buttonHeight - 160;
+
+    return (
+      clickX >= x &&
+      clickX <= x + buttonWidth &&
+      clickY >= y &&
+      clickY <= y + buttonHeight
+    );
+  }
+
   showWinScreen() {
     this.displayScreen(
-      "img/9_intro_outro_screens/win/win_2.png",
-      "TAP to Restart",
-      this.world.restartGame.bind(this.world),
-      1000
+      "img/9_intro_outro_screens/win/win_2.png"
     );
+
+    this.canvas.addEventListener("click", (event) => {
+      if (this.isRestartButtonClicked(event)) {
+        this.world.restartGame();
+      }
+    });
+    setTimeout(() => {
+      this.drawRestartButton();
+    }, 200);
   }
 
   showLoseScreen() {
     this.displayScreen(
-      "img/9_intro_outro_screens/game_over/file.png",
-      "TAP to Restart",
-      this.world.restartGame.bind(this.world),
-      1000
+      "img/9_intro_outro_screens/game_over/file.png"
     );
+
+    this.canvas.addEventListener("click", (event) => {
+      if (this.isRestartButtonClicked(event)) {
+        this.world.restartGame();
+      }
+    });
+    setTimeout(() => {
+      this.drawRestartButton();
+    }, 200);
   }
+
 
   drawUIButtons() {
     this.drawButton(

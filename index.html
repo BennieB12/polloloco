@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="media.css" />
     <link rel="stylesheet" href="fonts.css" />
     <script src="models/drawable-object.class.js"></script>
     <script src="models/movable-objects.class.js"></script>
@@ -26,22 +27,21 @@
     <script src="models/throwable-object.class.js"></script>
     <script src="models/endboss.class.js"></script>
     <script src="level/level-1.js"></script>
+    <script src="js/cookiebar.js"></script>
     <script src="js/game.js"></script>
     <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png" />
     <title>El Pollo Loco</title>
   </head>
   <body onload="init()">
-    <div class="img background"></div>
-    <img src="img/background.png" />
+    
+    <img id="background-object" src="/img/background.png" /><img>
 
-    <h1 class="overdraw">
-      <img src="img/rassels.jpg" class="rassels-img" />
-      El Pollo Loco
-      <img src="img/rassels.jpg" class="rassels-img" />
-    </h1>
-
-
-    <div class="coneten">
+      
+      <div class="headline">
+        <img src="img/rassels.jpg" />
+        <h1>El Pollo Loco</h1>
+        <img src="img/rassels.jpg" />
+      </div>
       <div class="panel">
         <div class="wrapper-move">
           <button
@@ -50,7 +50,7 @@
             onmouseup="keyboard.LEFT = false"
             onmouseleave="keyboard.LEFT = false"
           >
-            <
+            &lt;
           </button>
           <button
             id="btnRight"
@@ -58,7 +58,7 @@
             onmouseup="keyboard.RIGHT = false"
             onmouseleave="keyboard.RIGHT = false"
           >
-            >
+            &gt;
           </button>
         </div>
         <div class="wrapper-action">
@@ -68,7 +68,7 @@
             onmouseup="keyboard.UP = false"
             onmouseleave="keyboard.UP = false"
           >
-            Jump
+            J
           </button>
           <button
             id="btnThrow"
@@ -76,16 +76,19 @@
             onmouseup="keyboard.D = false"
             onmouseleave="keyboard.D = false"
           >
-            Throw
+            T
           </button>
         </div>
       </div>
 
-      <canvas id="canvas" width="720" height="480"> </canvas>
-    </div>
+      <canvas id="canvas" width="720" height="480"></canvas>
+
+
+
 
     <footer>
       <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
     </footer>
   </body>
 </html>
