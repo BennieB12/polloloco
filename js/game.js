@@ -140,3 +140,5 @@ document.getElementById("btnThrow").addEventListener("touchend", (e) => {
   e.preventDefault();
   keyboard.D = false;
 });
+
+

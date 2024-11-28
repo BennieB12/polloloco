@@ -60,6 +60,7 @@ canvas {
   width: 90vw;
   max-width: 1000px; 
   aspect-ratio: 16 / 9;
+  height: auto;
   position: absolute;
   top: 50%;
   left: 50%;
