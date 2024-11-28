@@ -5,15 +5,13 @@
 
   .headline {
     mix-blend-mode: multiply;
-    width: 334px;
-    margin-top: 0;
   }
   .headline img {
     margin: 10px;
   }
-
   h1 {
-    font-size: 40px;
+    font-size: clamp(16px, 3.5vw, 40px);
+    margin-top: 10px;
   }
 }
 
@@ -24,8 +22,6 @@
 
   .headline {
     mix-blend-mode: multiply;
-    width: 334px;
-    margin-top: 0;
   }
   .headline img {
     margin: 10px;
@@ -56,7 +52,8 @@
   }
 
   h1 {
-    font-size: 40px;
+    font-size: clamp(16px, 3.5vw, 40px);
+    margin-top: 10px;
   }
 }
 
@@ -67,8 +64,6 @@
 
   .headline {
     mix-blend-mode: multiply;
-    width: 278px;
-    margin-top: 10px;
   }
 
   .headline img {
@@ -78,7 +73,7 @@
   canvas {
     width: 700px;
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
@@ -103,17 +98,18 @@
   }
   .headline {
     mix-blend-mode: multiply;
-    width: 280px;
-    margin-top: 40px;
+  }
+
+  h1 {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 20px;
   }
 
   canvas {
-    height: 400px;
-    width: 600px;
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: auto;
+    aspect-ratio: 16 / 9;
   }
 
   .wrapper-move {
@@ -147,8 +143,6 @@
 
   .headline {
     mix-blend-mode: multiply;
-    width: 228px;
-    margin-top: 80px;
   }
 
   h1 {
@@ -156,12 +150,9 @@
   }
 
   canvas {
-    height: 324px;
-    width: 460px;
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: auto;
+    aspect-ratio: 16 / 9;
   }
 
   .headline {
@@ -194,21 +185,19 @@
   .headline {
     mix-blend-mode: multiply;
     width: 206px;
-    margin-top: 70px;
+
   }
 
   h1 {
     font-size: 20px;
+    margin-top: 15px;
   }
 
   canvas {
-    height: 260px;
-    width: 320px;
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 95vw;
+    height: auto;
   }
+
 
   .wrapper-move {
     top: 40%;
@@ -244,12 +233,8 @@
   }
 
   canvas {
-    height: 200px;
-    width: 260px;
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 95vw;
+    height: auto;
   }
 
   #btnLeft,

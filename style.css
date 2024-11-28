@@ -21,47 +21,51 @@ body {
   display: flex;
   flex-direction: row;
   mix-blend-mode: multiply;
+  max-width: 90%;
+  z-index: 3;
+  width: auto;
   position: absolute;
   top: 10%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 3;
 }
 
 h1 {
-  color: black;
-  align-self: center;
-  font-size: 48px;
-  z-index: 3;
-  margin-block-start: 0;
-  margin-block-end: 0;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  unicode-bidi: isolate;
+  font-size: clamp(18px, 4vw, 44px);
+  line-height: 1.2;
+  color: #ff6600;
+  text-align: center;
+  margin: 0 auto;
+  z-index: 4;
+  position: relative;
 }
 
+
+
 .headline img {
-  height: 40px;
-  width: 20px;
-  margin: 10px;
+  width: auto;
+  height: auto;
+  max-height: 50px;
+  max-width: 300px;
+  margin: 5px;
 }
 
 canvas {
-  display: block;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background-color: black;
   border: 2px solid black;
   z-index: 1;
-  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 90vw;
+  max-width: 1000px; 
+  aspect-ratio: 16 / 9;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
 }
-
-
 
 .panel {
   position: fixed;
@@ -96,8 +100,8 @@ canvas {
 #btnControls,
 #btnSound {
   margin: 10px;
-  height: 2.5em; /* Relativ zur Schriftgröße */
-  width: 2.5em; /* Relativ zur Schriftgröße */
+  height: 2.5em;
+  width: 2.5em;
   border-radius: 50%;
   background-color: orangered;
   cursor: pointer;
