@@ -58,6 +58,17 @@ canvas {
   display: none;
 }
 
+#btnThrow,
+#btnJump,
+#btnLeft,
+#btnRight {
+  border: unset;
+  fill: rgb(206, 206, 206);
+  stroke: #6e6e6e;
+  stroke-width: 2px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
 #btnThrow:active,
 #btnLeft:active,
 #btnJump:active,
@@ -70,14 +81,12 @@ canvas {
   transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
 }
 
-#btnThrow,
-#btnJump,
-#btnLeft,
-#btnRight {
-  fill: rgb(206, 206, 206);
-  stroke: #6e6e6e;
-  stroke-width: 2px;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+#btnThrow:hover,
+#btnLeft:hover,
+#btnJump:hover,
+#btnRight:hover {
+  cursor: pointer;
+  opacity: 80%;
 }
 
 footer {

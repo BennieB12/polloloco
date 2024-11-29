@@ -22,13 +22,6 @@ class ScreenManager {
     }
   }
 
-  // playStartSound() {
-  //   if (this.GAMESTART_SOUND.paused) {
-  //     this.GAMESTART_SOUND.loop = true;
-  //     this.GAMESTART_SOUND.play();
-  //   }
-  // }
-
   stopStartSound() {
     if (!this.GAMESTART_SOUND.paused) {
       this.GAMESTART_SOUND.pause();
@@ -63,93 +56,14 @@ class ScreenManager {
       });
     };
   }
-
-  drawStartButton() {
-    const buttonWidth = 50;
-    const buttonHeight = 50;
-    const x = this.canvas.width - buttonWidth - 520;
-    const y = this.canvas.height - buttonHeight - 160;
-
-    const colorValue = Math.floor(Math.abs(Math.sin(Date.now() / 500)) * 255);
-    this.ctx.fillStyle = `rgb(255, ${colorValue}, 0)`;
-    this.ctx.fillRect(x, y, buttonWidth, buttonHeight);
-
-    this.ctx.font = "bold 20px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.fillText("Start", x + buttonWidth / 2, y + buttonHeight / 2);
-  
-  }
-
-  isStartButtonClicked(event) {
-    const rect = this.canvas.getBoundingClientRect();
-    const scaleX = this.canvas.width / rect.width;
-    const scaleY = this.canvas.height / rect.height;
-
-    const clickX = (event.clientX - rect.left) * scaleX;
-    const clickY = (event.clientY - rect.top) * scaleY;
-
-    const buttonWidth = 50;
-    const buttonHeight = 50;
-    const x = this.canvas.width - buttonWidth - 520;
-    const y = this.canvas.height - buttonHeight - 160;
-
-    return (
-      clickX >= x &&
-      clickX <= x + buttonWidth &&
-      clickY >= y &&
-      clickY <= y + buttonHeight
-    );
-  }
-
   showStartScreen() {
     if (this.world.gameStarted) return;
     this.playStartSound();
     //  this.drawMuteButton();
-    this.displayScreen("img/9_intro_outro_screens/start/startscreen_1.png", "TAP to Start", () => {
+    this.displayScreen("img/9_intro_outro_screens/start/startscreen_1.png", () => {
       this.stopStartSound();
     });
   }
-
-  drawRestartButton() {
-    const buttonWidth = 50;
-    const buttonHeight = 50;
-    const x = this.canvas.width - buttonWidth - 520;
-    const y = this.canvas.height - buttonHeight - 160;
-
-    const colorValue = Math.floor(Math.abs(Math.sin(Date.now() / 500)) * 255);
-    this.ctx.fillStyle = `rgb(0, ${colorValue}, 255)`;
-    this.ctx.fillRect(x, y, buttonWidth, buttonHeight);
-
-    this.ctx.font = "bold 20px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.fillText("Restart", x + buttonWidth / 2, y + buttonHeight / 2);
-  }
-
-  isRestartButtonClicked(event) {
-    const rect = this.canvas.getBoundingClientRect();
-    const scaleX = this.canvas.width / rect.width;
-    const scaleY = this.canvas.height / rect.height;
-
-    const clickX = (event.clientX - rect.left) * scaleX;
-    const clickY = (event.clientY - rect.top) * scaleY;
-
-    const buttonWidth = 50;
-    const buttonHeight = 50;
-    const x = this.canvas.width - buttonWidth - 520;
-    const y = this.canvas.height - buttonHeight - 160;
-
-    return (
-      clickX >= x &&
-      clickX <= x + buttonWidth &&
-      clickY >= y &&
-      clickY <= y + buttonHeight
-    );
-  }
-
   showWinScreen() {
     this.displayScreen(
       "img/9_intro_outro_screens/win/win_2.png"
@@ -179,6 +93,93 @@ class ScreenManager {
       this.drawRestartButton();
     }, 200);
   }
+  
+  drawStartButton() {
+    const buttonWidth = 150;
+    const buttonHeight = 60;
+    const x = (this.canvas.width - buttonWidth) / 2;
+    const y = this.canvas.height - buttonHeight - 350;
+    this.ctx.fillStyle = "rgb(255, 87, 34)";
+    this.ctx.roundRect(x, y, buttonWidth, buttonHeight, 15);
+    this.ctx.fill();
+    this.ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+    this.ctx.shadowBlur = 10;
+    this.ctx.shadowOffsetX = 0;
+    this.ctx.shadowOffsetY = 5;
+    this.ctx.font = "bold 24px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("Start", x + buttonWidth / 2, y + buttonHeight / 2);
+    this.ctx.shadowColor = "transparent";
+  }
+  
+  isStartButtonClicked(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+    
+    const clickX = (event.clientX - rect.left) * scaleX;
+    const clickY = (event.clientY - rect.top) * scaleY;
+    const buttonWidth = 150;
+    const buttonHeight = 60;
+    const x = (this.canvas.width - buttonWidth) / 2;
+    const y = this.canvas.height - buttonHeight - 350;
+
+    return (
+      clickX >= x &&
+      clickX <= x + buttonWidth &&
+      clickY >= y &&
+      clickY <= y + buttonHeight
+    );
+  }
+
+
+  drawRestartButton() {
+    const buttonWidth = 150;
+    const buttonHeight = 60; 
+    const x = (this.canvas.width - buttonWidth) / 2;
+    const y = this.canvas.height - buttonHeight - 50; 
+  
+    const colorValue = Math.floor(Math.abs(Math.sin(Date.now() / 500)) * 255);
+    this.ctx.fillStyle = `rgb(255, ${colorValue}, 0)`;
+    this.ctx.roundRect(x, y, buttonWidth, buttonHeight, 15);
+    this.ctx.fill();
+  
+    this.ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+    this.ctx.shadowBlur = 10;
+    this.ctx.shadowOffsetX = 0;
+    this.ctx.shadowOffsetY = 5;
+  
+    this.ctx.font = "bold 24px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("Restart", x + buttonWidth / 2, y + buttonHeight / 2);
+  
+    this.ctx.shadowColor = "transparent";
+  }
+
+  isRestartButtonClicked(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+
+    const clickX = (event.clientX - rect.left) * scaleX;
+    const clickY = (event.clientY - rect.top) * scaleY;
+    const buttonWidth = 150;
+    const buttonHeight = 60;
+    const x = (this.canvas.width - buttonWidth) / 2;
+    const y = this.canvas.height - buttonHeight - 50;
+
+    return (
+      clickX >= x &&
+      clickX <= x + buttonWidth &&
+      clickY >= y &&
+      clickY <= y + buttonHeight
+    );
+  }
+
 
 
   drawUIButtons() {
@@ -228,10 +229,11 @@ class ScreenManager {
     this.ctx.font = "18px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "left";
-    this.ctx.fillText("Steuerung:", this.canvas.width / 2 - 130, this.canvas.height / 2 - 70);
-    this.ctx.fillText("⬅️ ➡️ Bewegung", this.canvas.width / 2 - 130, this.canvas.height / 2 - 40);
-    this.ctx.fillText("⏎ Springen", this.canvas.width / 2 - 130, this.canvas.height / 2 - 10);
-    this.ctx.fillText("D Flaschen werfen", this.canvas.width / 2 - 130, this.canvas.height / 2 + 20);
+    this.ctx.fillText("controls:", this.canvas.width / 2 - 130, this.canvas.height / 2 - 70);
+    this.ctx.fillText("⬅️ ➡️ Move", this.canvas.width / 2 - 130, this.canvas.height / 2 - 40);
+    this.ctx.fillText("⬆️ or SPACE Jump", this.canvas.width / 2 - 130, this.canvas.height / 2 - 10);
+    this.ctx.fillText("'D' for throw bottle ", this.canvas.width / 2 - 130, this.canvas.height / 2 + 20);
+    
 
     this.ctx.beginPath();
     this.ctx.arc(this.canvas.width / 2, this.canvas.height / 2 + 60, 20, 0, 2 * Math.PI);
