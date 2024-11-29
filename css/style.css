@@ -1,0 +1,102 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: "Poppins";
+}
+
+#background-object {
+  height: 90vh;
+  width: 100vw;
+  object-fit: cover;
+}
+
+.headline {
+  display: flex;
+  flex-direction: row;
+  mix-blend-mode: multiply;
+  max-width: 90%;
+  width: auto;
+  top: 10%;
+}
+
+h1 {
+  font-size: clamp(18px, 4vw, 44px);
+  line-height: 1.2;
+  color: #ff6600;
+  margin: 0 auto;
+  position: relative;
+}
+
+.headline img {
+  width: auto;
+  height: auto;
+  max-height: 50px;
+  max-width: 300px;
+  margin: 5px;
+}
+
+#content {
+  top: 50%;
+}
+
+canvas {
+  background-color: black;
+  border: 2px solid black;
+  z-index: 1;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+}
+
+.buttonbox-walk,
+.buttonbox-action {
+  display: none;
+}
+
+#btnThrow:active,
+#btnLeft:active,
+#btnJump:active,
+#btnRight:active {
+  fill: rgb(240, 240, 240);
+  stroke: #242323;
+  stroke-width: 3px;
+  transform: translateY(2px) scale(0.98);
+  box-shadow: inset 0px 4px 8px rgba(0, 0, 0, 0.6);
+  transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+}
+
+#btnThrow,
+#btnJump,
+#btnLeft,
+#btnRight {
+  fill: rgb(206, 206, 206);
+  stroke: #6e6e6e;
+  stroke-width: 2px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+footer {
+  width: 100%;
+  height: 10vh;
+  background-color: #000000;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  flex-direction: row;
+}
+
+footer a {
+  margin: 10px;
+  text-decoration: none;
+  font-size: clamp(18px, 4vw, 44px);
+  color: rgb(233, 96, 42);
+}
+
+footer a:hover {
+  opacity: 80%;
+}

@@ -98,6 +98,14 @@ document.addEventListener("keydown", (e) => {
 });
 
 
+document.getElementById("btnFullscreen").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+});
+document.getElementById("btnFullscreen").addEventListener("touchend", (e) => {
+  e.preventDefault();
+});
+
+
 document.getElementById("btnLeft").addEventListener("touchstart", (e) => {
   e.preventDefault();
   keyboard.LEFT = true;
@@ -106,19 +114,20 @@ document.getElementById("btnLeft").addEventListener("touchend", (e) => {
   e.preventDefault();
   keyboard.LEFT = false;
 });
-
-document.getElementById("btnFullscreen").addEventListener("touchstart", (e) => {
+document.getElementById("btnLeft").addEventListener("touchcancel", (e) => {
   e.preventDefault();
-});
-document.getElementById("btnFullscreen").addEventListener("touchend", (e) => {
-  e.preventDefault();
+  keyboard.LEFT = false;
 });
 
 document.getElementById("btnRight").addEventListener("touchstart", (e) => {
   e.preventDefault();
-  keyboard.RIGHT = true;
+  keyboard.RIGHT = true; 
 });
-document.getElementById("btnRight").addEventListener("touchend", (e) => {
+  document.getElementById("btnRight").addEventListener("touchend", (e) => {
+  e.preventDefault();
+  keyboard.RIGHT = false;
+});
+document.getElementById("btnRight").addEventListener("touchcancel", (e) => {
   e.preventDefault();
   keyboard.RIGHT = false;
 });
@@ -131,12 +140,20 @@ document.getElementById("btnJump").addEventListener("touchend", (e) => {
   e.preventDefault();
   keyboard.UP = false;
 });
+document.getElementById("btnJump").addEventListener("touchcancel", (e) => {
+  e.preventDefault();
+  keyboard.UP = false;
+});
 
 document.getElementById("btnThrow").addEventListener("touchstart", (e) => {
   e.preventDefault();
   keyboard.D = true;
 });
 document.getElementById("btnThrow").addEventListener("touchend", (e) => {
+  e.preventDefault();
+  keyboard.D = false;
+});
+document.getElementById("btnThrow").addEventListener("touchcancel", (e) => {
   e.preventDefault();
   keyboard.D = false;
 });
