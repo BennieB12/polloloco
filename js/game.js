@@ -7,20 +7,6 @@ function init() {
   world = new World(canvas);
 }
 
-function toggleFullScreen() {
-  if (!document.fullscreenElement) {
-    canvas.requestFullscreen().then(() => {
-    }).catch(err => {
-      console.error(err);
-    });
-  } else {
-    document.exitFullscreen().then(() => {
-    }).catch(err => {
-      console.error(err);
-    });
-  }
-}
-
 
 
 window.addEventListener("keydown", (event) => {

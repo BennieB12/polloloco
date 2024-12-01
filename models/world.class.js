@@ -1,6 +1,5 @@
 class World {
   character = new Character();
-  audiomanager = new AudioManager();
   level = level1;
   canvas;
   ctx;
@@ -10,6 +9,7 @@ class World {
   statusBarCoin = new Statusbar_coin();
   statusBarBottle = new Statusbar_bottle();
   statusBarEnemy = new Statusbar_enemy();
+  audioManager = new AudioManager();
   throwableObjects = [];
   gameOver = false;
   gameStarted = false;
@@ -31,48 +31,54 @@ class World {
   setWorld() {
     this.character.world = this;
     this.screenManager = new ScreenManager(canvas, this);
-    this.audiomanager = new AudioManager();
   }
 
-draw() {
+  toggleMute() {
+    if (this.isMuted) {
+      this.audioManager.unmuteAll();
+    } else {
+      this.audioManager.muteAll();
+    }
+  }
+
+  draw() {
     if (this.gameOver) {
-        this.ctx.save();
-        this.clearBoard();
-        this.ctx.globalAlpha = 0.95;
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.ctx.translate(-this.camera_x, 0);
-        this.ctx.restore();
-        return;
+      this.ctx.save();
+      this.clearBoard();
+      this.ctx.globalAlpha = 0.95;
+      this.ctx.translate(this.camera_x, 0);
+      this.addObjectsToMap(this.level.backgroundObjects);
+      this.ctx.translate(-this.camera_x, 0);
+      this.ctx.restore();
+      return;
     }
 
     this.clearBoard();
 
     if (this.isPaused) {
-        this.ctx.font = "bold 50px Arial";
-        this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-        this.ctx.textAlign = "center";
-        this.ctx.fillText("PAUSED", this.canvas.width / 2, this.canvas.height / 2);
+      this.ctx.font = "bold 50px Arial";
+      this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      this.ctx.textAlign = "center";
+      this.ctx.fillText("PAUSED", this.canvas.width / 2, this.canvas.height / 2);
     } else if (!this.gameStarted) {
-        if (!this.startScreenDrawn) {
-            this.screenManager.showStartScreen();
-            this.startScreenDrawn = true;
-        }
+      if (!this.startScreenDrawn) {
+        this.screenManager.showStartScreen();
+        this.startScreenDrawn = true;
+      }
     } else {
-
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.addToMap(this.character);
-        this.drawObjects();
-        this.drawBars();
-        // this.checkVisibility();
-        this.ctx.translate(-this.camera_x, 0);
+      this.ctx.translate(this.camera_x, 0);
+      this.addObjectsToMap(this.level.backgroundObjects);
+      this.addToMap(this.character);
+      this.drawObjects();
+      this.drawBars();
+      // this.checkVisibility();
+      this.ctx.translate(-this.camera_x, 0);
     }
 
     this.screenManager.drawUIButtons();
 
     requestAnimationFrame(() => this.draw());
-}
+  }
 
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -80,14 +86,11 @@ draw() {
 
   togglePause() {
     this.isPaused = !this.isPaused;
-
     if (this.isPaused) {
-      console.log("Game Paused");
       this.level.enemies.forEach((enemy) => {
-        enemy.stopAnimations && enemy.stopAnimations();
+        enemy.clearAllIntervals();
       });
     } else {
-      console.log("Game Resumed");
       this.draw();
       this.run();
       this.character.standingTimer = 0;
@@ -97,10 +100,7 @@ draw() {
     }
 
     this.screenManager.drawUIButtons();
-    // this.screenManager.registerClickEvents();
   }
-
-  
 
   drawBars() {
     this.ctx.translate(-this.camera_x, 0);
@@ -113,24 +113,24 @@ draw() {
     this.ctx.translate(this.camera_x, 0);
   }
 
-drawObjects() {
-  this.level.enemies = this.level.enemies.filter((enemy) => !enemy.remove);
-  this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
-  
-  this.addObjectsToMap(this.level.clouds);
+  drawObjects() {
+    this.level.enemies = this.level.enemies.filter((enemy) => !enemy.remove);
+    this.throwableObjects = this.throwableObjects.filter((object) => !object.remove);
 
-  const regularEnemies = this.level.enemies.filter((enemy) => !(enemy instanceof Endboss));
-  this.addObjectsToMap(regularEnemies);
+    this.addObjectsToMap(this.level.clouds);
 
-  const endboss = this.getEndboss();
-  if (endboss) {
-    this.addToMap(endboss);
+    const regularEnemies = this.level.enemies.filter((enemy) => !(enemy instanceof Endboss));
+    this.addObjectsToMap(regularEnemies);
+
+    const endboss = this.getEndboss();
+    if (endboss) {
+      this.addToMap(endboss);
+    }
+
+    this.addObjectsToMap(this.level.coins);
+    this.addObjectsToMap(this.level.bottles);
+    this.addObjectsToMap(this.throwableObjects);
   }
-
-  this.addObjectsToMap(this.level.coins);
-  this.addObjectsToMap(this.level.bottles);
-  this.addObjectsToMap(this.throwableObjects);
-}
 
   addObjectsToMap(objects) {
     objects.forEach((o) => this.addToMap(o));
@@ -159,60 +159,59 @@ drawObjects() {
   }
 
   startGame() {
-    this.clearBoard();
-    this.clearAllIntervalsForObjects();
-
-
-    
+    if (this.gameStarted && !this.gameOver) return;
     this.gameStarted = true;
     this.gameOver = false;
+    this.startScreenDrawn = false;
+    this.clearBoard();
+    this.clearAllIntervalsForObjects();
     this.draw();
     this.getEndboss();
     this.run();
-    this.level.clouds.forEach((cloud) => cloud.startMoving());
-    this.startScreenDrawn = false;
     this.character.standingTimer = 0;
-    if (!this.isPaused) {
-      this.level.enemies.forEach((enemy) => {
-        enemy.animate();
-      });
-    }
+    this.character.animate();
+    this.level.replaceObjects();
+    this.level.enemies.forEach((enemy) => {
+      enemy.animate();
+    });
   }
 
   getEndboss() {
     return this.level.enemies.find((enemy) => enemy instanceof Endboss);
   }
 
-
   clearAllIntervalsForObjects() {
+
+    this.level.enemies.forEach((enemy) => {
+      enemy.clearAllIntervals();
     this.character.clearAllIntervals();
-    this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
-    this.throwableObjects.forEach((throwable) => throwable.clearAllIntervals());
+    });
+  }
+  reset() {
+    this.character.reset();
+    this.throwableObjects = [];
+    this.statusBarHealth.reset();
+    this.statusBarCoin.reset();
+    this.statusBarBottle.reset();
+    this.statusBarEnemy.reset();
+  
+
+    
   }
 
   restartGame() {
-    this.character.reset();
-    this.getEndboss().reset();
-    // this.level.enemies.forEach((enemy) => enemy.clearAllIntervals());
-    // this.level.enemies.forEach((enemy) => enemy.reset());
-    this.throwableObjects.forEach((object) => object.reset());
-    this.statusBarHealth.reset();
-    this.statusBarBottle.reset();
-    this.statusBarCoin.reset();
-    this.statusBarEnemy.reset();
-    this.level.clouds.forEach((cloud) => cloud.stopMoving());
+    this.reset();
     this.startGame();
-  }
-
-  
+}
 
   run() {
-    if (this.gameStarted && !this.gameOver) {
-      this.checkCollision();
-      this.character.handleThrow();
-      this.checkGameOver();
-      requestAnimationFrame(this.run.bind(this));
-    }
+    if (!this.gameStarted || this.gameOver) return;
+
+    this.checkCollision();
+    this.character.handleThrow();
+    this.checkGameOver();
+
+    requestAnimationFrame(this.run.bind(this));
   }
 
   checkVisibility() {
@@ -257,23 +256,21 @@ drawObjects() {
     const endboss = this.getEndboss();
 
     if (this.character.energy <= 0) {
+      setTimeout(() => {
         this.gameOver = true;
-        setTimeout(() => {
-            this.gameStarted = false;
-            this.isPaused = false;
-            this.screenManager.showLoseScreen();
-        }, 1000);
+        this.gameStarted = false;
+        this.isPaused = false;
+        this.screenManager.showLoseScreen();
+      }, 1000);
     } else if (endboss && !endboss.isLiving) {
+      setTimeout(() => {
         this.gameOver = true;
-        setTimeout(() => {
-            this.gameStarted = false;
-            this.isPaused = false;
-            this.screenManager.showWinScreen();
-        }, 1000);
+        this.gameStarted = false;
+        this.isPaused = false;
+        this.screenManager.showWinScreen();
+      }, 1000);
     }
-}
-
-  
+  }
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {

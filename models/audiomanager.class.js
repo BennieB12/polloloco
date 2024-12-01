@@ -1,23 +1,26 @@
 class AudioManager {
-    static audioElements = [];
-    
-
-    static registerAudio(audio) {
-      this.audioElements.push(audio);
-    }
-  
-    static muteAll() {
-      this.audioElements.forEach((audio) => {
-        audio.volume = 0;
-      });
-    }
-  
-    static unmuteAll() {
-      this.audioElements.forEach((audio) => {
-        audio.volume = 1;
-      });
-    }
-  }
   GAMESTART_SOUND = new Audio("audio/start.mp3");
-  AudioManager.registerAudio(GAMESTART_SOUND);
+  audioElements = [];
+
+  registerAudio(audio) {
+    this.audioElements.push(audio);
+  }
+
+  muteAll() {
+    this.audioElements.forEach((audio) => {
+      audio.volume = 0;
+    });
+    this.isMuted = true;
+  }
+
+  unmuteAll() {
+    this.audioElements.forEach((audio) => {
+      audio.volume = 1;
+    });
+    this.isMuted = false;
+  }
+}
+
+GAMESTART_SOUND = new Audio("audio/start.mp3");
+AudioManager.registerAudio(GAMESTART_SOUND);
   

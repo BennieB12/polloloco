@@ -14,12 +14,14 @@ class MovableObject extends DrawableObject {
   splashAnimation = false;
 
   startInterval(intervalFunc, intervalTime) {
+    console.log(`starting intervals for: ${this.constructor.name}`);
     const intervalId = setInterval(intervalFunc, intervalTime);
     this.intervals.push(intervalId);
     return intervalId;
   }
 
   clearAllIntervals() {
+    console.log(`Clearing intervals for: ${this.constructor.name}`);
     this.intervals.forEach((intervalId) => clearInterval(intervalId));
     this.intervals = [];
   }

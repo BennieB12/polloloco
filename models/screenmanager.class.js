@@ -4,15 +4,13 @@ class ScreenManager {
   startButtonVisible = true;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
 
+
+
   constructor(canvas, world) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.world = world;
-
     this.registerClickEvents();
-
-    this.GAMESTART_SOUND = GAMESTART_SOUND;
-    AudioManager.registerAudio(this.GAMESTART_SOUND);
   }
 
   playStartSound() {
@@ -37,11 +35,18 @@ class ScreenManager {
     image.onload = () => {
       const animateButton = () => {
         this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
-        this.drawUIButtons();
+        if (!this.world.gameStarted && this.startButtonVisible) {
+          this.drawStartButton();
+        }
+
+        if (!this.world.gameStarted && !this.startButtonVisible) {
+          this.drawRestartButton();
+        }
 
         if (!this.world.gameStarted) {
           requestAnimationFrame(animateButton);
         }
+        this.drawUIButtons();
       };
 
       setTimeout(() => {
@@ -57,52 +62,58 @@ class ScreenManager {
     };
   }
   showStartScreen() {
+    this.startButtonVisible = true;
     if (this.world.gameStarted) return;
+    if (!this.world.gameStarted) {
+      this.world.level.enemies.forEach((enemy) => {
+        enemy.stopAnimations && enemy.stopAnimations();
+      });
+    }
     this.playStartSound();
-    //  this.drawMuteButton();
     this.displayScreen("img/9_intro_outro_screens/start/startscreen_1.png", () => {
       this.stopStartSound();
     });
   }
-  showWinScreen() {
-    this.displayScreen(
-      "img/9_intro_outro_screens/win/win_2.png"
-    );
 
+  showWinScreen() {
+    this.startButtonVisible = false;
+    this.displayScreen("img/9_intro_outro_screens/win/win_2.png");
+    this.drawUIButtons();
     this.canvas.addEventListener("click", (event) => {
       if (this.isRestartButtonClicked(event)) {
         this.world.restartGame();
       }
     });
+
     setTimeout(() => {
       this.drawRestartButton();
     }, 200);
   }
 
   showLoseScreen() {
-    this.displayScreen(
-      "img/9_intro_outro_screens/game_over/file.png"
-    );
+    this.startButtonVisible = false;
+    this.displayScreen("img/9_intro_outro_screens/game_over/file.png");
+    this.drawUIButtons();
 
     this.canvas.addEventListener("click", (event) => {
       if (this.isRestartButtonClicked(event)) {
         this.world.restartGame();
       }
     });
+
     setTimeout(() => {
       this.drawRestartButton();
     }, 200);
   }
-  
+
   drawStartButton() {
     const buttonWidth = 150;
     const buttonHeight = 60;
     const x = (this.canvas.width - buttonWidth) / 2;
-    const y = this.canvas.height - buttonHeight - 350;
-    this.ctx.fillStyle = "rgb(255, 87, 34)";
+    const y = this.canvas.height - buttonHeight - 370;
+    this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
     this.ctx.roundRect(x, y, buttonWidth, buttonHeight, 15);
     this.ctx.fill();
-    this.ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
     this.ctx.shadowBlur = 10;
     this.ctx.shadowOffsetX = 0;
     this.ctx.shadowOffsetY = 5;
@@ -113,50 +124,38 @@ class ScreenManager {
     this.ctx.fillText("Start", x + buttonWidth / 2, y + buttonHeight / 2);
     this.ctx.shadowColor = "transparent";
   }
-  
+
   isStartButtonClicked(event) {
     const rect = this.canvas.getBoundingClientRect();
     const scaleX = this.canvas.width / rect.width;
     const scaleY = this.canvas.height / rect.height;
-    
+
     const clickX = (event.clientX - rect.left) * scaleX;
     const clickY = (event.clientY - rect.top) * scaleY;
     const buttonWidth = 150;
     const buttonHeight = 60;
     const x = (this.canvas.width - buttonWidth) / 2;
-    const y = this.canvas.height - buttonHeight - 350;
+    const y = this.canvas.height - buttonHeight - 370;
 
-    return (
-      clickX >= x &&
-      clickX <= x + buttonWidth &&
-      clickY >= y &&
-      clickY <= y + buttonHeight
-    );
+    return clickX >= x && clickX <= x + buttonWidth && clickY >= y && clickY <= y + buttonHeight;
   }
-
 
   drawRestartButton() {
     const buttonWidth = 150;
-    const buttonHeight = 60; 
+    const buttonHeight = 60;
     const x = (this.canvas.width - buttonWidth) / 2;
-    const y = this.canvas.height - buttonHeight - 50; 
-  
-    const colorValue = Math.floor(Math.abs(Math.sin(Date.now() / 500)) * 255);
-    this.ctx.fillStyle = `rgb(255, ${colorValue}, 0)`;
+    const y = this.canvas.height - buttonHeight - 370;
+    this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
     this.ctx.roundRect(x, y, buttonWidth, buttonHeight, 15);
     this.ctx.fill();
-  
-    this.ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
     this.ctx.shadowBlur = 10;
     this.ctx.shadowOffsetX = 0;
     this.ctx.shadowOffsetY = 5;
-  
     this.ctx.font = "bold 24px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.fillText("Restart", x + buttonWidth / 2, y + buttonHeight / 2);
-  
     this.ctx.shadowColor = "transparent";
   }
 
@@ -170,17 +169,10 @@ class ScreenManager {
     const buttonWidth = 150;
     const buttonHeight = 60;
     const x = (this.canvas.width - buttonWidth) / 2;
-    const y = this.canvas.height - buttonHeight - 50;
+    const y = this.canvas.height - buttonHeight - 370;
 
-    return (
-      clickX >= x &&
-      clickX <= x + buttonWidth &&
-      clickY >= y &&
-      clickY <= y + buttonHeight
-    );
+    return clickX >= x && clickX <= x + buttonWidth && clickY >= y && clickY <= y + buttonHeight;
   }
-
-
 
   drawUIButtons() {
     this.drawButton(
@@ -190,14 +182,10 @@ class ScreenManager {
       this.world.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(250, 150, 50, 1)"
     );
     this.drawButton(this.canvas.width - 70, 20, "⛶", "rgba(50, 50, 50, 1)");
-    
+
     if (this.world.gameStarted) {
       this.drawPauseButton();
       this.drawButton(this.canvas.width - 105, 20, "?", "rgba(50, 50, 50, 1)");
-
-    }
-    if (!this.world.gameStarted) {
-      this.drawStartButton();
     }
 
     if (this.controlPanelVisible) {
@@ -217,7 +205,6 @@ class ScreenManager {
     this.ctx.fillText(icon, x, y);
   }
 
-  
   drawControlPanel() {
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
     this.ctx.fillRect(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200);
@@ -233,7 +220,6 @@ class ScreenManager {
     this.ctx.fillText("⬅️ ➡️ Move", this.canvas.width / 2 - 130, this.canvas.height / 2 - 40);
     this.ctx.fillText("⬆️ or SPACE Jump", this.canvas.width / 2 - 130, this.canvas.height / 2 - 10);
     this.ctx.fillText("'D' for throw bottle ", this.canvas.width / 2 - 130, this.canvas.height / 2 + 20);
-    
 
     this.ctx.beginPath();
     this.ctx.arc(this.canvas.width / 2, this.canvas.height / 2 + 60, 20, 0, 2 * Math.PI);
@@ -253,7 +239,7 @@ class ScreenManager {
   drawMuteButton() {
     this.ctx.beginPath();
     this.ctx.arc(this.canvas.width - 35, 20, 15, 0, 2 * Math.PI);
-    this.ctx.fillStyle = this.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(150, 110, 50, 0.8)";
+    this.ctx.fillStyle = this.world.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(150, 110, 50, 0.8)";
     this.ctx.fill();
     this.ctx.font = "20px Arial";
     this.ctx.fillStyle = "white";
@@ -289,21 +275,11 @@ class ScreenManager {
       this.helpButton = { x: this.canvas.width - 105, y: 20 };
       this.pauseButton = { x: this.canvas.width - 140, y: 20 };
 
-      if (this.controlPanelVisible) {
-        this.handleControlPanelClick(this.clickX, this.clickY);
+      if (this.isInsideCircle(this.clickX, this.clickY, this.muteButton.x, this.muteButton.y, this.buttonRadius)) {
+        this.world.toggleMute();
+        return;
       }
-
-      if (this.isInsideCircle(this.clickX, this.clickY, this.pauseButton.x, this.pauseButton.y, this.buttonRadius)) {
-        this.world.togglePause();
-      }
-
-      if (this.isInsideCircle(this.clickX, this.clickY, this.helpButton.x, this.helpButton.y, this.buttonRadius)) {
-        this.toggleControlPanel();
-      } else if (
-        this.isInsideCircle(this.clickX, this.clickY, this.muteButton.x, this.muteButton.y, this.buttonRadius)
-      ) {
-        this.toggleMute();
-      } else if (
+      if (
         this.isInsideCircle(
           this.clickX,
           this.clickY,
@@ -313,6 +289,21 @@ class ScreenManager {
         )
       ) {
         this.toggleFullscreen();
+        return;
+      }
+
+      if (this.world.gameStarted) {
+        if (this.controlPanelVisible) {
+          this.handleControlPanelClick(this.clickX, this.clickY);
+        }
+
+        if (this.isInsideCircle(this.clickX, this.clickY, this.pauseButton.x, this.pauseButton.y, this.buttonRadius)) {
+          this.world.togglePause();
+        }
+
+        if (this.isInsideCircle(this.clickX, this.clickY, this.helpButton.x, this.helpButton.y, this.buttonRadius)) {
+          this.toggleControlPanel();
+        }
       }
     });
   }
@@ -323,26 +314,9 @@ class ScreenManager {
 
   toggleFullscreen() {
     if (!document.fullscreenElement) {
-      if (this.canvas.requestFullscreen) {
-        this.canvas.requestFullscreen();
-      } else if (this.canvas.webkitRequestFullscreen) {
-        this.canvas.webkitRequestFullscreen();
-      }
+      this.canvas.requestFullscreen();
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
-    }
-  }
-
-  toggleMute() {
-    this.world.isMuted = !this.world.isMuted;
-    if (this.world.isMuted) {
-      this.world.AudioManager.muteAll();
-    } else {
-      this.world.AudioManager.unmuteAll();
+      document.exitFullscreen();
     }
   }
 
@@ -360,7 +334,5 @@ class ScreenManager {
 
   toggleControlPanel() {
     this.controlPanelVisible = !this.controlPanelVisible;
-    this.drawUIButtons();
   }
-
 }

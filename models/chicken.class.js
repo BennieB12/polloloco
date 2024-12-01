@@ -32,7 +32,7 @@ class Chicken extends MovableObject {
    * @type {number}
    */
   animationSpeed = 7;
-
+  otherDirection = false;
   /**
    * Walking animation images.
    * @type {string[]}
@@ -70,16 +70,14 @@ class Chicken extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.x = x;
-    this.speed = 16 + Math.random() * 2;
+    this.speed = 8 + Math.random() * 2;
     this.setOffset(25, 25, 20, 20);
-    this.animate();
   }
 
   /**
    * Starts the `Chicken` animation by handling walking and playing the respective animations.
    */
   animate() {
-    this.clearAllIntervals();
     this.walk();
     this.startInterval(() => {
       if (!this.isDead()) {
@@ -87,9 +85,10 @@ class Chicken extends MovableObject {
       } else if (!this.deadAnimationPlayed) {
         this.playDeadAnimation();
       }
-    }, 1000 / 30);
+    }, 1000 / 60);
   }
 
+  
   /**
    * Handles the walking movement of the `Chicken`.
    */
@@ -149,12 +148,10 @@ class Chicken extends MovableObject {
     this.speed = 0;
     this.startInterval(() => {
       this.remove = true;
+      this.clearAllIntervals();
     }, 300);
   }
 
-  stopAnimations() {
-    this.clearAllIntervals();
-  }
   /**
    * Resets the `Chicken` to its initial state.
    */
@@ -163,23 +160,18 @@ class Chicken extends MovableObject {
  */
 reset() {
   this.clearAllIntervals();
-
-  this.x = Math.random() * 2900; // Zufällige Startposition im Level
+  this.energy = 20; 
+  this.remove = false;
+  this.x = 1000 + Math.random() * 200;
   this.y = 350;
-  this.speed = 16 + Math.random() * 2;
-
-  // Reset animations and state
-  this.currentImage = 0;
-  this.img = this.imageCache[this.IMAGES_WALKING[0]]; // Ursprüngliches Bild setzen
+  this.speed = 8 + Math.random() * 2;
   this.otherDirection = false;
   this.deadAnimationPlayed = false;
   this.isBlinking = false;
-
-  this.energy = 20; 
-  this.remove = false;
+  // this.img = this.imageCache[this.IMAGES_WALKING[0]];
+  // this.currentImage = 0;
+  this.animate();
  
-  this.loadImages(this.IMAGES_WALKING);
-  this.loadImages(this.IMAGES_DEAD);
 }
 
 }

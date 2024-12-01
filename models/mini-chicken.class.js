@@ -80,16 +80,15 @@ class Minichicken extends MovableObject {
     this.speed = speed;
     this.applyGravity();
     this.setOffset(20, 20, 20, 20);
+    // this.animate();
   }
 
   /**
    * Starts the `Minichicken` animation by handling jumping, walking, and playing the respective animations.
    */
   animate() {
-    this.clearAllIntervals();
-    this.jump();
     this.walk();
-
+    this.jump();
     this.startInterval(() => {
       if (!this.isDead()) {
         this.handleAnimation();
@@ -169,20 +168,19 @@ class Minichicken extends MovableObject {
     this.speed = 0;
     this.startInterval(() => {
       this.remove = true;
+      this.clearAllIntervals();
     }, 300);
-  }
-
-  stopAnimations() {
-    this.clearAllIntervals();
   }
 
   /**
    * Resets the `Minichicken` to its initial state.
    */
   reset() {
-    // this.clearAllIntervals();
     this.energy = 10;
+    this.speed =  4 + Math.random() * 2;
     this.remove = false;
+    this.otherDirection = false;
+    this.loadImage(this.IMAGES_WALKING[0]);
   }
 
   onGround() {

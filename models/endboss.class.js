@@ -85,6 +85,14 @@ class Endboss extends MovableObject {
       } else if (!this.deadAnimationPlayed) {
         this.playDeadAnimation();
       }
+      
+      if (this.isHurt()) {
+        this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
+        this.WALKING_SOUND.pause();
+        return;
+      }
+
+
     }, 1000 / 60);
   }
 
@@ -108,6 +116,7 @@ class Endboss extends MovableObject {
   handleAnimation() {
     if (!this.isJumping) {
       this.playAnimation(this.IMAGES_WALKING, 8);
+
     } else if (this.isJumping) {
       this.handleJumpAnimation();
     } else if (this.isHurt()) {
@@ -144,16 +153,18 @@ class Endboss extends MovableObject {
 }
 
   reset() {
-    this.energy = 100;
-    this.remove = false;
     this.isLiving = true;
-    this.isJumping = false;
     this.otherDirection = false;
     this.x = 2850;
     this.speed = 11;
+  this.y = this.groundLevel;
+  this.energy = 100
+  this.speedY = 0;
+  this.isJumping = false;
+  this.remove = false;
+  this.deadAnimationPlayed = false;
+  this.clearAllIntervals();
   }
-
-  
 
   isDead() {
     return this.energy <= 0;

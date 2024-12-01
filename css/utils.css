@@ -9,9 +9,3 @@
   align-items: center;
   justify-content: center;
 }
-
-.content-size {
-  width: 90vw;
-  max-width: 1000px;
-  height: auto;
-}

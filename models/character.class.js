@@ -161,7 +161,7 @@ class Character extends MovableObject {
       ...this.IMAGES_HURT,
     ]);
     this.applyGravity();
-    this.animate();
+    // this.animate();
     this.setOffset(10, 10, 30, 30);
   }
 
@@ -169,7 +169,7 @@ class Character extends MovableObject {
    * Starts the animation loop, handling movement and animations.
    */
   animate() {
-    setInterval(() => {
+    this.startInterval(() => {
       this.handleMovement();
       this.handleAnimation();
     }, 1000 / 30);
@@ -319,6 +319,7 @@ class Character extends MovableObject {
       this.playAnimation(this.IMAGES_DEAD, this.animationSpeed);
       this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 2]];
       this.WALKING_SOUND.pause();
+      this.clearAllIntervals();
     }
   }
 
@@ -415,9 +416,13 @@ class Character extends MovableObject {
   reset() {
     this.energy = 100;
     this.x = 80;
+    this.lastHit = 0;
+    this.standingTimer = 0;
     this.otherDirection = false;
+    this.y = this.groundLevel;
+    this.isJumping = false;
+    this.deadAnimationPlayed = false;
     this.resetBottles();
     this.resetCoins();
-    this.clearAllIntervals();
   }
 }

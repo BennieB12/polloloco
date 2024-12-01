@@ -42,94 +42,120 @@
       <h1>El Pollo Loco</h1>
       <img src="img/rassels.jpg" />
     </div>
-    <div id="content" class="center-absolute flex-center content-size">
-      <canvas id="canvas" class="content-size" width="720" height="480"></canvas>
-    </div>
-
-    <div class="buttonbox-walk btn-pos">
-      <div id="btnWalk" style="width: 140%; height: 140%;">
-        <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color: rgb(16, 16, 16); stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: rgb(240, 240, 240); stop-opacity: 1" />
-            </linearGradient>
-            <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color: rgb(240, 240, 240); stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: rgb(16, 16, 16); stop-opacity: 1" />
-            </linearGradient>
-            <linearGradient id="grad3" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color: rgb(168, 168, 168); stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: rgb(239, 239, 239); stop-opacity: 1" />
-            </linearGradient>
-          </defs>
-
-          <circle cx="50" cy="50" r="48" fill="url(#grad1)" />
-          <circle cx="50" cy="50" r="47" fill="url(#grad2)" stroke="rgb(168, 168, 168)" stroke-width="2px" />
-          <circle cx="50" cy="50" r="42" fill="url(#grad3)" />
-
-          <path
-            id="btnLeft"
-            d="M50,0 A50,50 0 0,0 50,100"
-            fill="transparent"
-            onclick="keyboard.LEFT = true"
-            onmouseup="keyboard.LEFT = false"
-            onmouseleave="keyboard.LEFT = false"
-          />
-
-          <path
-            id="btnRight"
-            d="M50,0 A50,50 0 0,1 50,100"
-            fill="transparent"
-            onclick="keyboard.RIGHT = true"
-            onmouseup="keyboard.RIGHT = false"
-            onmouseleave="keyboard.RIGHT = false"
-          />
-        </svg>
-      </div>
-    </div>
-
-    <div class="buttonbox-action btn-pos">
-      <div id="btnAction" style="width: 140%; height: 140%;">
-        <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="grad4" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color: rgb(16, 16, 16); stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: rgb(240, 240, 240); stop-opacity: 1" />
-            </linearGradient>
-            <linearGradient id="grad5" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color: rgb(240, 240, 240); stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: rgb(16, 16, 16); stop-opacity: 1" />
-            </linearGradient>
-            <linearGradient id="grad6" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color: rgb(168, 168, 168); stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: rgb(239, 239, 239); stop-opacity: 1" />
-            </linearGradient>
-          </defs>
-
-          <circle cx="50" cy="50" r="48" fill="url(#grad4)" />
-          <circle cx="50" cy="50" r="47" fill="url(#grad5)" stroke="rgb(168, 168, 168)" stroke-width="2px" />
-          <circle cx="50" cy="50" r="42" fill="url(#grad6)" />
+    <div id="content" class="center-absolute flex-center">
+      <canvas id="canvas" width="720" height="480"></canvas>
+      <div class="buttonbox-walk btn-pos">
+        <div id="btnWalk" style="width: 140%; height: 140%;">
+          <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     
-          <path
-            id="btnJump"
-            d="M50,0 A50,50 0 0,0 50,100"
-            fill="transparent"
-            onclick="keyboard.UP = true"
-            onmouseup="keyboard.UP = false"
-            onmouseleave="keyboard.UP = false"
-          />
-          <path
-            id="btnThrow"
-            d="M50,0 A50,50 0 0,1 50,100"
-            fill="transparent"
-            onclick="keyboard.D = true"
-            onmouseup="keyboard.D = false"
-            onmouseleave="keyboard.D = false"
-          />
-        </svg>
+            <circle cx="50" cy="50" r="48" fill="url(#grad1)" />
+            <circle cx="50" cy="50" r="47" fill="url(#grad2)" stroke="rgb(168, 168, 168)" stroke-width="2px" />
+            <circle cx="50" cy="50" r="42" fill="url(#grad3)" />
+            
+      
+            <path
+              id="btnLeft"
+              d="M50,0 A50,50 0 0,0 50,100"
+              fill="transparent"
+              onclick="keyboard.LEFT = true"
+              onmouseup="keyboard.LEFT = false"
+              onmouseleave="keyboard.LEFT = false"
+              style="pointer-events: all;"
+            />
+            <text
+              x="25"
+              y="55"
+              fill="white"
+              font-size="12"
+              font-family="Arial"
+              text-anchor="middle"
+              onclick="keyboard.LEFT = true"
+              onmouseup="keyboard.LEFT = false"
+              style="pointer-events: all; cursor: pointer;"
+            >⬅️</text>
+         
+            <path
+              id="btnRight"
+              d="M50,0 A50,50 0 0,1 50,100"
+              fill="transparent"
+              onclick="keyboard.RIGHT = true"
+              onmouseup="keyboard.RIGHT = false"
+              onmouseleave="keyboard.RIGHT = false"
+              style="pointer-events: all;"
+            />
+            <text
+              x="75"
+              y="55"
+              fill="white"
+              font-size="12"
+              font-family="Arial"
+              text-anchor="middle"
+              onclick="keyboard.RIGHT = true"
+              onmouseup="keyboard.RIGHT = false"
+              style="pointer-events: all; cursor: pointer;"
+            >➡️</text>
+          </svg>
+        </div>
       </div>
+      
+      
+      <div class="buttonbox-action btn-pos">
+        <div id="btnAction" style="width: 140%; height: 140%;">
+          <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    
+            <circle cx="50" cy="50" r="48" fill="url(#grad4)" />
+            <circle cx="50" cy="50" r="47" fill="url(#grad5)" stroke="rgb(168, 168, 168)" stroke-width="2px" />
+            <circle cx="50" cy="50" r="42" fill="url(#grad6)" />
+  
+            <path
+              id="btnJump"
+              d="M50,0 A50,50 0 0,0 50,100"
+              fill="transparent"
+              onclick="keyboard.UP = true"
+              onmouseup="keyboard.UP = false"
+              onmouseleave="keyboard.UP = false"
+              style="pointer-events: all;"
+            />
+            <text
+              x="25"
+              y="55"
+              fill="white"
+              font-size="12"
+              font-family="Arial"
+              text-anchor="middle"
+              onclick="keyboard.UP = true"
+              onmouseup="keyboard.UP = false"
+              style="pointer-events: all; cursor: pointer;"
+            >⬆️</text>
+            
+            <path
+              id="btnThrow"
+              d="M50,0 A50,50 0 0,1 50,100"
+              fill="transparent"
+              onclick="keyboard.D = true"
+              onmouseup="keyboard.D = false"
+              onmouseleave="keyboard.D = false"
+              style="pointer-events: all;"
+            />
+            <text
+              x="75"
+              y="55"
+              fill="white"
+              font-size="12"
+              font-family="Arial"
+              text-anchor="middle"
+              onclick="keyboard.D = true"
+              onmouseup="keyboard.D = false"
+              style="pointer-events: all; cursor: pointer;"
+            >🧴</text>
+          </svg>
+        </div>
+      </div>
+      
+      
     </div>
+
+    
     <footer class="flex-center">
       <a href="impressum.html">Impressum</a>
       <a href="datenschutz.html">Datenschutz</a>
