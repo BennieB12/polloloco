@@ -161,7 +161,6 @@ class Character extends MovableObject {
       ...this.IMAGES_HURT,
     ]);
     this.applyGravity();
-    // this.animate();
     this.setOffset(10, 10, 30, 30);
   }
 
@@ -198,32 +197,31 @@ class Character extends MovableObject {
   /**
    * Handles character animations based on the current state (e.g., idle, moving, hurt).
    */
-  handleAnimation() {
-    if (this.isDead()) {
-      this.playDeadAnimation();
-      return;
-    }
-    if (this.isHurt()) {
-      this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
-      this.WALKING_SOUND.pause();
-      return;
-    }
-    if (this.isJumping || (this.isJumping && this.move())) {
-      this.playAnimation(this.IMAGES_JUMPING, 6);
-      this.WALKING_SOUND.pause();
-      // this.IMAGES_STAND.pause();
-      return;
-    }
-
-    if (this.move()) {
-      this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
-      this.playWalkingSound();
-    } else if (this.longIdle()) {
-      this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
-    } else {
-      this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
-    }
+handleAnimation() {
+  if (this.isDead()) {
+    this.playDeadAnimation();
+    return;
   }
+  if (this.isHurt()) {
+    this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
+    this.WALKING_SOUND.pause();
+    return;
+  }
+  if (this.isJumping) { // Priorisiere die Sprunganimation
+    this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
+    this.WALKING_SOUND.pause();
+    return;
+  }
+  if (this.move()) {
+    this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
+    this.playWalkingSound();
+  } else if (this.longIdle()) {
+    this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
+  } else {
+    this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
+  }
+}
+
 
   /**
    * Handles the throwing action for bottles.
@@ -416,13 +414,11 @@ class Character extends MovableObject {
   reset() {
     this.energy = 100;
     this.x = 80;
-    this.lastHit = 0;
+    // this.lastHit = 0;
     this.standingTimer = 0;
     this.otherDirection = false;
     this.y = this.groundLevel;
     this.isJumping = false;
     this.deadAnimationPlayed = false;
-    this.resetBottles();
-    this.resetCoins();
   }
 }

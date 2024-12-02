@@ -9,7 +9,7 @@ const level1 = new Level(
     new Minichicken(1100 + Math.random() * 2000,  4 + Math.random() * 2),
     new Minichicken(1400 + Math.random() * 1000,  4 + Math.random() * 2),
     new Minichicken(1500,  4 + Math.random() * 2),
-    // // new Endboss()
+    new Endboss()
   ],
   [
     new Cloud("img/5_background/layers/4_clouds/1.png", 0, 0),

@@ -1,7 +1,8 @@
 class ScreenManager {
   isPlayingSound = false;
   controlPanelVisible = false;
-  startButtonVisible = true;
+  startButtonVisible = false;
+  restartButtonvisible = false;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
 
 
@@ -63,6 +64,7 @@ class ScreenManager {
   }
   showStartScreen() {
     this.startButtonVisible = true;
+    this.restartButtonvisible = false;
     if (this.world.gameStarted) return;
     if (!this.world.gameStarted) {
       this.world.level.enemies.forEach((enemy) => {
@@ -77,6 +79,7 @@ class ScreenManager {
 
   showWinScreen() {
     this.startButtonVisible = false;
+    this.restartButtonvisible = true;
     this.displayScreen("img/9_intro_outro_screens/win/win_2.png");
     this.drawUIButtons();
     this.canvas.addEventListener("click", (event) => {
@@ -92,6 +95,7 @@ class ScreenManager {
 
   showLoseScreen() {
     this.startButtonVisible = false;
+        this.restartButtonvisible = true;
     this.displayScreen("img/9_intro_outro_screens/game_over/file.png");
     this.drawUIButtons();
 

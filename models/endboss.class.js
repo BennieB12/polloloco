@@ -64,37 +64,32 @@ class Endboss extends MovableObject {
     this.speed = 11;
     this.applyGravity();
     this.setOffset(40, 40, 60, 60);
-    this.animate();
   }
 
- updateStatusBar() {
-  if (this.statusBar) {
-    this.statusBar.setPercentage(this.energy);
+  updateStatusBar() {
+    if (this.statusBar) {
+      this.statusBar.setPercentage(this.energy);
+    }
   }
-}
-
 
   animate() {
-    // this.clearAllIntervals();
     this.jump();
     this.walk();
 
     this.startInterval(() => {
-      if (!this.isDead()) {
-        this.handleAnimation();
-      } else if (!this.deadAnimationPlayed) {
+      if (this.isDead() && !this.deadAnimationPlayed) {
         this.playDeadAnimation();
-      }
-      
-      if (this.isHurt()) {
+      } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
-        this.WALKING_SOUND.pause();
-        return;
+      } else if (!this.isJumping) {
+        this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
+      } else if (this.isJumping) {
+        this.handleJumpAnimation();
       }
-
-
-    }, 1000 / 60);
+    }, 1000 / 30);
   }
+
+  
 
   walk() {
     this.startInterval(() => {
@@ -116,7 +111,6 @@ class Endboss extends MovableObject {
   handleAnimation() {
     if (!this.isJumping) {
       this.playAnimation(this.IMAGES_WALKING, 8);
-
     } else if (this.isJumping) {
       this.handleJumpAnimation();
     } else if (this.isHurt()) {
@@ -133,40 +127,18 @@ class Endboss extends MovableObject {
       this.deadAnimationPlayed = true;
       this.speed = 0;
       this.currentImage = 0;
-      this.startInterval(() => {
+  
+      const deadInterval = this.startInterval(() => {
         if (this.currentImage < this.IMAGES_DEAD.length) {
           this.img = this.imageCache[this.IMAGES_DEAD[this.currentImage]];
           this.currentImage++;
         } else {
           this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
-          setTimeout(() => {
-            this.die();
-          }, 1000);
+          clearInterval(deadInterval);
+          this.isLiving = false;
+          this.clearAllIntervals(deadInterval);
         }
       }, 1000 / 60);
     }
-  }
-
-  die() {
-    this.isLiving = false;
-    //  this.remove = true;
-}
-
-  reset() {
-    this.isLiving = true;
-    this.otherDirection = false;
-    this.x = 2850;
-    this.speed = 11;
-  this.y = this.groundLevel;
-  this.energy = 100
-  this.speedY = 0;
-  this.isJumping = false;
-  this.remove = false;
-  this.deadAnimationPlayed = false;
-  this.clearAllIntervals();
-  }
-
-  isDead() {
-    return this.energy <= 0;
   }
 }

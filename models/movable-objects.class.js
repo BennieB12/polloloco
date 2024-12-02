@@ -14,14 +14,14 @@ class MovableObject extends DrawableObject {
   splashAnimation = false;
 
   startInterval(intervalFunc, intervalTime) {
-    console.log(`starting intervals for: ${this.constructor.name}`);
+    // console.log(`starting intervals for: ${this.constructor.name}`);
     const intervalId = setInterval(intervalFunc, intervalTime);
     this.intervals.push(intervalId);
     return intervalId;
   }
 
   clearAllIntervals() {
-    console.log(`Clearing intervals for: ${this.constructor.name}`);
+    // console.log(`Clearing intervals for: ${this.constructor.name}`);
     this.intervals.forEach((intervalId) => clearInterval(intervalId));
     this.intervals = [];
   }
@@ -68,38 +68,37 @@ class MovableObject extends DrawableObject {
 
 
   getDamage() {
-    if (!this.isHurt()) {
-      let damage = 0;
+    if (this.isHurt()) {
+      return;
+    }
   
-      if (this instanceof Endboss || this instanceof Character) {
-        damage = 20;
-      } else if (this instanceof Chicken || this instanceof Minichicken) {
-        damage = 10;
-      }
-  
-      this.reduceEnergy(damage);
+    if (this instanceof Endboss || this instanceof Character) {
+      this.reduceEnergy(20);
+      this.isHurt()
       this.updateLastHit();
-      this.isHurt();
-
-      if (this instanceof Character) {
-        this.world.statusBarHealth.setpercentage(this.energy);
-      } else if (this instanceof Endboss) {
-        this.statusBar.setpercentage(this.energy);
-      } else if (this instanceof Chicken || this instanceof Minichicken) {
-        this.blinkRed();
-      }
+    } else if (this instanceof Chicken || this instanceof Minichicken) {
+      this.reduceEnergy(10);
+      // this.isJumping = true;
+    }
+  
+    if (this instanceof Character) {
+      this.world.statusBarHealth.setpercentage(this.energy);
+    } else if (this instanceof Endboss) {
+      this.statusBar.setpercentage(this.energy);
+    } else if (this instanceof Chicken || this instanceof Minichicken) {
+      this.blinkRed();
     }
   }
   
+  
 
   reduceEnergy(amount) {
-    this.energy -= amount;
+    this.energy = Math.max(0, this.energy - amount);
   }
 
   isHurt() {
-    let timePassed = new Date().getTime() - this.lastHit;
-    timePassed = timePassed / 1000;
-    return timePassed < 0.5;
+    const timePassed = (new Date().getTime() - this.lastHit) / 1000;
+    return timePassed < 0.4;
   }
 
   updateLastHit() {

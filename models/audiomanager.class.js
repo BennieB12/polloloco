@@ -21,6 +21,6 @@ class AudioManager {
   }
 }
 
-GAMESTART_SOUND = new Audio("audio/start.mp3");
-AudioManager.registerAudio(GAMESTART_SOUND);
+// GAMESTART_SOUND = new Audio("audio/start.mp3");
+// AudioManager.registerAudio(GAMESTART_SOUND);
   

@@ -9,3 +9,12 @@
   align-items: center;
   justify-content: center;
 }
+
+
+.d-block {
+  display: flex;
+}
+
+.d-none {
+  display: none;
+}

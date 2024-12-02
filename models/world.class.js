@@ -71,7 +71,7 @@ class World {
       this.addToMap(this.character);
       this.drawObjects();
       this.drawBars();
-      // this.checkVisibility();
+      this.checkVisibility();
       this.ctx.translate(-this.camera_x, 0);
     }
 
@@ -160,33 +160,32 @@ class World {
 
   startGame() {
     if (this.gameStarted && !this.gameOver) return;
-    this.gameStarted = true;
     this.gameOver = false;
+    this.gameStarted = true;
     this.startScreenDrawn = false;
     this.clearBoard();
-    this.clearAllIntervalsForObjects();
     this.draw();
-    this.getEndboss();
     this.run();
-    this.character.standingTimer = 0;
-    this.character.animate();
+    this.clearAllIntervalsForObjects();
     this.level.replaceObjects();
+    this.getEndboss();
     this.level.enemies.forEach((enemy) => {
       enemy.animate();
     });
+    this.character.animate();
   }
-
+  
   getEndboss() {
     return this.level.enemies.find((enemy) => enemy instanceof Endboss);
   }
-
+  
   clearAllIntervalsForObjects() {
-
     this.level.enemies.forEach((enemy) => {
       enemy.clearAllIntervals();
-    this.character.clearAllIntervals();
     });
+    this.character.clearAllIntervals();
   }
+  
   reset() {
     this.character.reset();
     this.throwableObjects = [];
@@ -194,15 +193,15 @@ class World {
     this.statusBarCoin.reset();
     this.statusBarBottle.reset();
     this.statusBarEnemy.reset();
-  
-
-    
+    this.character.resetBottles();
+    this.character.resetCoins();
   }
+
 
   restartGame() {
     this.reset();
     this.startGame();
-}
+  }
 
   run() {
     if (!this.gameStarted || this.gameOver) return;
@@ -224,7 +223,9 @@ class World {
 
   checkCollision() {
     this.level.enemies.forEach((enemy) => {
-      this.handleEnemyCollision(enemy);
+      if (Math.abs(enemy.x - this.character.x) < 300) {
+        this.handleEnemyCollision(enemy);
+      }
 
       if (enemy instanceof Endboss) {
         enemy.statusBar = this.statusBarEnemy;
@@ -239,6 +240,7 @@ class World {
       )
     );
   }
+
 
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {

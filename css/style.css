@@ -48,6 +48,32 @@ h1 {
   height: auto;
 }
 
+#message {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 20px;
+  animation: glowing 1.5s infinite ease-in-out;
+}
+
+@keyframes glowing {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 255, 255, 0.5);
+    color: white;
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 1);
+    color: #ff0;
+  }
+  100% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 255, 255, 0.5);
+    color: white;
+  }
+}
+
 canvas {
   width: 80vw;
   height: auto;
