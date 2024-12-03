@@ -47,7 +47,6 @@
   }
 }
 @media (max-width: 1280px) {
-
   .buttonbox-walk {
     left: -27%;
   }
@@ -62,9 +61,7 @@
   }
 }
 
-
 @media (max-width: 950px) {
-
   .buttonbox-walk {
     left: -28%;
   }
@@ -76,12 +73,12 @@
   #fullscreenBtn {
     right: -20%;
     padding: 12px 12px;
+  }
 }
 
 @media (max-width: 680px) {
   #fullscreenBtn {
     right: -20%;
     padding: 8px;
-}
-}
+  }
 }

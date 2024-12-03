@@ -116,6 +116,11 @@ class Chicken extends MovableObject {
     }, blinkTime);
   }
 
+  /**
+   * Draws a red circle behind the chicken from the center of the object.
+   * @param {CanvasRenderingContext2D} ctx - The Chicken context.
+   */
+
   draw(ctx) {
     ctx.save();
   
@@ -152,9 +157,6 @@ class Chicken extends MovableObject {
     }, 300);
   }
 
-  /**
-   * Resets the `Chicken` to its initial state.
-   */
 /**
  * Resets the `Chicken` to its initial state.
  */
@@ -168,8 +170,6 @@ reset() {
   this.otherDirection = false;
   this.deadAnimationPlayed = false;
   this.isBlinking = false;
-  // this.img = this.imageCache[this.IMAGES_WALKING[0]];
-  // this.currentImage = 0;
   this.animate();
  
 }

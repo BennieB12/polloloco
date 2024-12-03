@@ -136,7 +136,6 @@ class DrawableObject {
   drawFrame() {
     this.hitboxWidth = this.width * 0.5;
     this.hitboxHeight = this.height * 0.6;
-  
     this.hitboxX = this.x + (this.width - this.hitboxWidth) / 2 + this.offset.left / 2;
     this.hitboxY = this.y + (this.height - this.hitboxHeight) / 2 + this.offset.top / 2;
   }

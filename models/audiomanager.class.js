@@ -1,4 +1,4 @@
-class AudioManager {
+class SoundManager {
   GAMESTART_SOUND = new Audio("audio/start.mp3");
   audioElements = [];
 

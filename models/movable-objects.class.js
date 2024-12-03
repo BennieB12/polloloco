@@ -3,43 +3,19 @@
  * Extends the `DrawableObject` class.
  */
 class MovableObject extends DrawableObject {
-  /** @type {boolean} Indicates if the object is facing the other direction. */
+
   otherDirection = false;
-
-  /** @type {number} The vertical speed of the object. */
   speedY = 3;
-
-  /** @type {number} Index of the current animation image. */
   currentImage = 0;
-
-  /** @type {number} Acceleration rate for vertical movement. */
   accelaration = 1;
-
-  /** @type {boolean} Indicates if the object is currently jumping. */
   isJumping = false;
-
-  /** @type {number} Speed of the animation cycle. */
   animationSpeed = 5;
-
-  /** @type {number} The ground level position for the object. */
   groundLevel = 320;
-
-  /** @type {number} The maximum height the object can jump. */
   jumpHeight = 12 + Math.random() * 10;
-
-  /** @type {number[]} Array of active interval IDs. */
   intervals = [];
-
-  /** @type {boolean} Whether the object should be removed from the game. */
   remove = false;
-
-  /** @type {boolean} Whether the death animation has already been played. */
   deadAnimationPlayed = false;
-
-  /** @type {number} Timer for standing or idle state. */
   standingTimer = 0;
-
-  /** @type {boolean} Indicates if the splash animation is active. */
   splashAnimation = false;
 
   /**
@@ -49,7 +25,7 @@ class MovableObject extends DrawableObject {
    * @returns {number} The ID of the created interval.
    */
   startInterval(intervalFunc, intervalTime) {
-    const intervalId = setInterval(intervalFunc, intervalTime);
+    let intervalId = setInterval(intervalFunc, intervalTime);
     this.intervals.push(intervalId);
     return intervalId;
   }
@@ -119,14 +95,12 @@ class MovableObject extends DrawableObject {
    */
   getDamage() {
     if (this.isHurt()) return;
-
     if (this instanceof Endboss || this instanceof Character) {
       this.reduceEnergy(20);
       this.updateLastHit();
     } else if (this instanceof Chicken || this instanceof Minichicken) {
       this.reduceEnergy(10);
     }
-
     if (this instanceof Character) {
       this.world.statusBarHealth.setpercentage(this.energy);
     } else if (this instanceof Endboss) {
@@ -149,7 +123,7 @@ class MovableObject extends DrawableObject {
    * @returns {boolean} `true` if the object is hurt, `false` otherwise.
    */
   isHurt() {
-    const timePassed = (new Date().getTime() - this.lastHit) / 1000;
+    let timePassed = (new Date().getTime() - this.lastHit) / 1000;
     return timePassed < 0.4;
   }
 
