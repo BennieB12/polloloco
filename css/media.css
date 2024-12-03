@@ -18,9 +18,9 @@
 
   canvas,
   #content {
-    width: 80vw;
+    width: 90vw;
     height: auto;
-    top: 40%;
+    /* top: 40%; */
   }
 
   .buttonbox-walk,
@@ -56,11 +56,6 @@
     display: none;
   }
 
-  canvas,
-  #content {
-    width: 75vw;
-    top: 45%;
-  }
 
 }
 
@@ -73,10 +68,7 @@
   right: -17%;
 }
 
-canvas,
-#content {
-  width: 70vw;
-}
+
 }
 
 

@@ -3,9 +3,9 @@ class ScreenManager {
   controlPanelVisible = false;
   startButtonVisible = false;
   restartButtonvisible = false;
+  impressumPanelVisible = false;
+  policyPanelVisible = false;
   GAMESTART_SOUND = new Audio("audio/start.mp3");
-
-
 
   constructor(canvas, world) {
     this.canvas = canvas;
@@ -38,6 +38,8 @@ class ScreenManager {
         this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
         if (!this.world.gameStarted && this.startButtonVisible) {
           this.drawStartButton();
+          this.drawImpressumButton();
+          this.drawPolicyButton();
         }
 
         if (!this.world.gameStarted && !this.startButtonVisible) {
@@ -62,15 +64,13 @@ class ScreenManager {
       });
     };
   }
+
   showStartScreen() {
     this.startButtonVisible = true;
     this.restartButtonvisible = false;
-    if (this.world.gameStarted) return;
-    if (!this.world.gameStarted) {
-      this.world.level.enemies.forEach((enemy) => {
-        enemy.stopAnimations && enemy.stopAnimations();
-      });
-    }
+    this.world.level.enemies.forEach((enemy) => {
+      enemy.stopAnimations && enemy.stopAnimations();
+    });
     this.playStartSound();
     this.displayScreen("img/9_intro_outro_screens/start/startscreen_1.png", () => {
       this.stopStartSound();
@@ -80,34 +80,45 @@ class ScreenManager {
   showWinScreen() {
     this.startButtonVisible = false;
     this.restartButtonvisible = true;
+    this.world.ctx.globalAlpha = 0.95;
     this.displayScreen("img/9_intro_outro_screens/win/win_2.png");
     this.drawUIButtons();
     this.canvas.addEventListener("click", (event) => {
       if (this.isRestartButtonClicked(event)) {
-        this.world.restartGame();
+        this.world.reset();
       }
     });
-
     setTimeout(() => {
       this.drawRestartButton();
     }, 200);
   }
 
   showLoseScreen() {
+    this.world.ctx.globalAlpha = 0.95;
     this.startButtonVisible = false;
-        this.restartButtonvisible = true;
+    this.restartButtonvisible = true;
     this.displayScreen("img/9_intro_outro_screens/game_over/file.png");
     this.drawUIButtons();
-
     this.canvas.addEventListener("click", (event) => {
       if (this.isRestartButtonClicked(event)) {
-        this.world.restartGame();
+        this.world.reset();
       }
     });
-
     setTimeout(() => {
       this.drawRestartButton();
-    }, 200);
+    }, 1000);
+  }
+
+  drawButton(x, y, icon, color) {
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, 15, 0, 2 * Math.PI);
+    this.ctx.fillStyle = color;
+    this.ctx.fill();
+    this.ctx.font = "15px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText(icon, x, y);
   }
 
   drawStartButton() {
@@ -179,17 +190,18 @@ class ScreenManager {
   }
 
   drawUIButtons() {
-    this.drawButton(
-      this.canvas.width - 35,
-      20,
-      "🔊",
-      this.world.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(250, 150, 50, 1)"
-    );
-    this.drawButton(this.canvas.width - 70, 20, "⛶", "rgba(50, 50, 50, 1)");
+    this.drawMuteButton();
+
+    if (this.impressumPanelVisible) {
+      this.drawImpressumPanel();
+    }
+    if (this.policyPanelVisible) {
+      this.drawPolicyPanel();
+    }
 
     if (this.world.gameStarted) {
       this.drawPauseButton();
-      this.drawButton(this.canvas.width - 105, 20, "?", "rgba(50, 50, 50, 1)");
+      this.drawHelpButton();
     }
 
     if (this.controlPanelVisible) {
@@ -197,16 +209,86 @@ class ScreenManager {
     }
   }
 
-  drawButton(x, y, icon, color) {
+  drawPauseButton() {
+    this.drawButton(this.canvas.width - 105, 20, this.world.isPaused ? "▶" : "⏸", "rgba(50, 50, 50, 1)");
+  }
+
+  drawImpressumButton() {
+    this.drawButton(this.canvas.width - 140, 20, "ℹ️", "rgba(50, 50, 50, 1)");
+  }
+
+  drawPolicyButton() {
+    this.drawButton(this.canvas.width - 180, 20, "D", "rgba(50, 50, 50, 1)");
+  }
+
+  drawMuteButton() {
     this.ctx.beginPath();
-    this.ctx.arc(x, y, 15, 0, 2 * Math.PI);
-    this.ctx.fillStyle = color;
+    this.ctx.arc(this.canvas.width - 35, 20, 15, 0, 2 * Math.PI);
+    this.ctx.fillStyle = this.world.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(150, 110, 50, 0.8)";
     this.ctx.fill();
-    this.ctx.font = "15px Arial";
+    this.ctx.font = "20px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
-    this.ctx.fillText(icon, x, y);
+    this.ctx.fillText("🔊", this.canvas.width - 35, 20);
+  }
+
+  drawHelpButton() {
+    this.drawButton( this.canvas.width - 70, 20, "?", "rgba(50, 50, 50, 1)");
+  }
+
+  drawImpressumPanel() {
+    this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    this.ctx.fillRect(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200);
+
+    this.ctx.strokeStyle = "white";
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200);
+
+    this.ctx.font = "18px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "left";
+    // this.ctx.fillText("Imprint:", this.canvas.width / 2 - 130, this.canvas.height / 2 - 70);
+    // this.ctx.fillText("Benjamin Kloss", this.canvas.width / 2 - 130, this.canvas.height / 2 - 40);
+    // this.ctx.fillText("Sebastianusstraße 9", this.canvas.width / 2 - 130, this.canvas.height / 2 - 10);
+    // this.ctx.fillText("41460 Neuss", this.canvas.width / 2 - 130, this.canvas.height / 2 + 20);
+
+    this.ctx.beginPath();
+    this.ctx.arc(this.canvas.width / 2, this.canvas.height / 2 + 60, 20, 0, 2 * Math.PI);
+    this.ctx.fillStyle = "red";
+    this.ctx.fill();
+    this.ctx.font = "16px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("X", this.canvas.width / 2, this.canvas.height / 2 + 60);
+  }
+
+  drawPolicyPanel() {
+    this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    this.ctx.fillRect(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200);
+
+    this.ctx.strokeStyle = "white";
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200);
+
+    this.ctx.font = "18px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "left";
+    // this.ctx.fillText("Imprint:", this.canvas.width / 2 - 130, this.canvas.height / 2 - 70);
+    // this.ctx.fillText("Benjamin Kloss", this.canvas.width / 2 - 130, this.canvas.height / 2 - 40);
+    // this.ctx.fillText("Sebastianusstraße 9", this.canvas.width / 2 - 130, this.canvas.height / 2 - 10);
+    // this.ctx.fillText("41460 Neuss", this.canvas.width / 2 - 130, this.canvas.height / 2 + 20);
+
+    this.ctx.beginPath();
+    this.ctx.arc(this.canvas.width / 2, this.canvas.height / 2 + 60, 20, 0, 2 * Math.PI);
+    this.ctx.fillStyle = "red";
+    this.ctx.fill();
+    this.ctx.font = "16px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("X", this.canvas.width / 2, this.canvas.height / 2 + 60);
   }
 
   drawControlPanel() {
@@ -236,34 +318,6 @@ class ScreenManager {
     this.ctx.fillText("X", this.canvas.width / 2, this.canvas.height / 2 + 60);
   }
 
-  drawPauseButton() {
-    this.drawButton(this.canvas.width - 140, 20, this.world.isPaused ? "▶" : "⏸", "rgba(50, 50, 50, 1)");
-  }
-
-  drawMuteButton() {
-    this.ctx.beginPath();
-    this.ctx.arc(this.canvas.width - 35, 20, 15, 0, 2 * Math.PI);
-    this.ctx.fillStyle = this.world.isMuted ? "rgba(50, 50, 50, 1)" : "rgba(150, 110, 50, 0.8)";
-    this.ctx.fill();
-    this.ctx.font = "20px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.fillText("🔊", this.canvas.width - 35, 20);
-  }
-
-  drawFullscreenButton() {
-    this.ctx.beginPath();
-    this.ctx.arc(this.canvas.width - 70, 20, 15, 0, 2 * Math.PI);
-    this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
-    this.ctx.fill();
-    this.ctx.font = "20px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.fillText("⛶", this.canvas.width - 70, 20);
-  }
-
   registerClickEvents() {
     this.canvas.addEventListener("click", (event) => {
       this.rect = this.canvas.getBoundingClientRect();
@@ -275,25 +329,31 @@ class ScreenManager {
 
       this.buttonRadius = 15;
       this.muteButton = { x: this.canvas.width - 35, y: 20 };
-      this.fullscreenButton = { x: this.canvas.width - 70, y: 20 };
-      this.helpButton = { x: this.canvas.width - 105, y: 20 };
-      this.pauseButton = { x: this.canvas.width - 140, y: 20 };
+      this.helpButton = { x: this.canvas.width - 70, y: 20 };
+      this.pauseButton = { x: this.canvas.width - 105, y: 20 };
+      this.impressumButton = { x: this.canvas.width - 140, y: 20 };
+      this.policyButton = { x: this.canvas.width - 180, y: 20 };
 
       if (this.isInsideCircle(this.clickX, this.clickY, this.muteButton.x, this.muteButton.y, this.buttonRadius)) {
         this.world.toggleMute();
-        return;
       }
+
       if (
-        this.isInsideCircle(
-          this.clickX,
-          this.clickY,
-          this.fullscreenButton.x,
-          this.fullscreenButton.y,
-          this.buttonRadius
-        )
+        this.isInsideCircle(this.clickX, this.clickY, this.impressumButton.x, this.impressumButton.y, this.buttonRadius)
       ) {
-        this.toggleFullscreen();
-        return;
+        this.toggleImpressumPanel();
+      }
+      if (this.impressumPanelVisible) {
+        this.handleImpressumPanelClicked(this.clickX, this.clickY);
+      }
+
+      if (
+        this.isInsideCircle(this.clickX, this.clickY, this.policyButton.x, this.policyButton.y, this.buttonRadius)
+      ) {
+        this.togglePolicyPanel();
+      }
+      if (this.policyPanelVisible) {
+        this.handlePolicyPanelClicked(this.clickX, this.clickY);
       }
 
       if (this.world.gameStarted) {
@@ -312,16 +372,39 @@ class ScreenManager {
     });
   }
 
-  isInsideCircle(clickX, clickY, centerX, centerY, radius) {
-    return Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2) <= radius;
+  handleImpressumPanelClicked(clickX, clickY) {
+    const panelX = this.canvas.width / 2 - 150;
+    const panelY = this.canvas.height / 2 - 100;
+    const buttonX = panelX + 150;
+    const buttonY = panelY + 160;
+    const buttonRadius = 15;
+
+    if (this.isInsideCircle(clickX, clickY, buttonX, buttonY, buttonRadius)) {
+      this.toggleImpressumPanel();
+    }
   }
 
-  toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      this.canvas.requestFullscreen();
-    } else {
-      document.exitFullscreen();
+  handlePolicyPanelClicked(clickX, clickY) {
+    const panelX = this.canvas.width / 2 - 150;
+    const panelY = this.canvas.height / 2 - 100;
+    const buttonX = panelX + 150;
+    const buttonY = panelY + 160;
+    const buttonRadius = 15;
+
+    if (this.isInsideCircle(clickX, clickY, buttonX, buttonY, buttonRadius)) {
+      this.togglePolicyPanel();
     }
+  }
+
+  toggleImpressumPanel() {
+    this.impressumPanelVisible = !this.impressumPanelVisible;
+  }
+  togglePolicyPanel() {
+    this.policyPanelVisible = !this.policyPanelVisible;
+  }
+
+  isInsideCircle(clickX, clickY, centerX, centerY, radius) {
+    return Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2) <= radius;
   }
 
   handleControlPanelClick(clickX, clickY) {

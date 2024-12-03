@@ -13,7 +13,6 @@ class World {
   throwableObjects = [];
   gameOver = false;
   gameStarted = false;
-  startScreenDrawn = false;
   enemyHit = false;
   isMuted = false;
   isPaused = false;
@@ -23,13 +22,16 @@ class World {
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.setWorld();
-    this.screenManager.showStartScreen();
+    this.setScreens();
     this.run();
     this.draw();
   }
 
   setWorld() {
     this.character.world = this;
+  }
+
+  setScreens() {
     this.screenManager = new ScreenManager(canvas, this);
   }
 
@@ -41,30 +43,24 @@ class World {
     }
   }
 
-  draw() {
-    if (this.gameOver) {
-      this.ctx.save();
-      this.clearBoard();
-      this.ctx.globalAlpha = 0.95;
-      this.ctx.translate(this.camera_x, 0);
-      this.addObjectsToMap(this.level.backgroundObjects);
-      this.ctx.translate(-this.camera_x, 0);
-      this.ctx.restore();
-      return;
-    }
+    run() {
+    if (!this.gameStarted && this.gameOver) return;
+    this.checkCollision();
+    this.character.handleThrow();
+    this.checkGameOver();
+    requestAnimationFrame(this.run.bind(this));
+  }
 
+  draw() {
     this.clearBoard();
 
+    if (this.gameOver) {
+      this.freezesreen();
+    }
     if (this.isPaused) {
-      this.ctx.font = "bold 50px Arial";
-      this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-      this.ctx.textAlign = "center";
-      this.ctx.fillText("PAUSED", this.canvas.width / 2, this.canvas.height / 2);
-    } else if (!this.gameStarted) {
-      if (!this.startScreenDrawn) {
-        this.screenManager.showStartScreen();
-        this.startScreenDrawn = true;
-      }
+      this.pauseScreen();
+    } else if (!this.gameStarted && !this.gameOver) {
+      this.titleScreen();
     } else {
       this.ctx.translate(this.camera_x, 0);
       this.addObjectsToMap(this.level.backgroundObjects);
@@ -80,6 +76,32 @@ class World {
     requestAnimationFrame(() => this.draw());
   }
 
+  pauseScreen() {
+    this.ctx.font = "bold 50px Arial";
+    this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    this.ctx.textAlign = "center";
+    this.ctx.fillText("PAUSED", this.canvas.width / 2, this.canvas.height / 2);
+    return;
+  }
+
+  freezesreen() {
+  this.ctx.save();
+  this.clearBoard();
+  this.ctx.globalAlpha = 0.95;
+  this.ctx.translate(this.camera_x, 0);
+  this.addObjectsToMap(this.level.backgroundObjects);
+  this.ctx.translate(-this.camera_x, 0);
+  this.ctx.restore();
+  return;
+  }
+
+  titleScreen() {
+    if (!this.startScreenDrawn) {
+      this.screenManager.showStartScreen();
+    }
+    return;
+  }
+
   clearBoard() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
@@ -91,8 +113,6 @@ class World {
         enemy.clearAllIntervals();
       });
     } else {
-      this.draw();
-      this.run();
       this.character.standingTimer = 0;
       this.level.enemies.forEach((enemy) => {
         enemy.animate && enemy.animate();
@@ -159,35 +179,35 @@ class World {
   }
 
   startGame() {
-    if (this.gameStarted && !this.gameOver) return;
-    this.gameOver = false;
-    this.gameStarted = true;
-    this.startScreenDrawn = false;
+    if (this.gameStarted || this.gameOver) return;
     this.clearBoard();
-    this.draw();
+    this.gameStarted = true;
     this.run();
+    this.draw();
     this.clearAllIntervalsForObjects();
-    this.level.replaceObjects();
     this.getEndboss();
     this.level.enemies.forEach((enemy) => {
       enemy.animate();
     });
     this.character.animate();
   }
-  
+
   getEndboss() {
     return this.level.enemies.find((enemy) => enemy instanceof Endboss);
   }
-  
+
   clearAllIntervalsForObjects() {
     this.level.enemies.forEach((enemy) => {
       enemy.clearAllIntervals();
     });
     this.character.clearAllIntervals();
   }
-  
+
   reset() {
+    this.world = null;
+    this.gameOver = false;
     this.character.reset();
+    this.level.replaceObjects();
     this.throwableObjects = [];
     this.statusBarHealth.reset();
     this.statusBarCoin.reset();
@@ -195,30 +215,18 @@ class World {
     this.statusBarEnemy.reset();
     this.character.resetBottles();
     this.character.resetCoins();
-  }
-
-
-  restartGame() {
-    this.reset();
+    this.ctx.globalAlpha = 1;
+    this.level.enemies.forEach((enemy) => {
+      if (enemy.animate) enemy.clearAllIntervals();
+    });
+    this.level.enemies.forEach((enemy) => {
+      if (enemy.animate) enemy.animate();
+    });
     this.startGame();
   }
 
-  run() {
-    if (!this.gameStarted || this.gameOver) return;
-
-    this.checkCollision();
-    this.character.handleThrow();
-    this.checkGameOver();
-
-    requestAnimationFrame(this.run.bind(this));
-  }
-
   checkVisibility() {
-    if (this.character.x >= 1800 && this.getEndboss().isLiving) {
-      this.statusBarEnemy.visible = true;
-    } else {
-      this.statusBarEnemy.visible = false;
-    }
+    this.statusBarEnemy.visible = this.character.x >= 1800 && this.getEndboss().isLiving;
   }
 
   checkCollision() {
@@ -241,7 +249,6 @@ class World {
     );
   }
 
-
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {
       if (type === "coin") {
@@ -255,24 +262,38 @@ class World {
   checkGameOver() {
     if (this.gameOver) return;
 
-    const endboss = this.getEndboss();
-
-    if (this.character.energy <= 0) {
-      setTimeout(() => {
-        this.gameOver = true;
-        this.gameStarted = false;
-        this.isPaused = false;
-        this.screenManager.showLoseScreen();
-      }, 1000);
-    } else if (endboss && !endboss.isLiving) {
-      setTimeout(() => {
-        this.gameOver = true;
-        this.gameStarted = false;
-        this.isPaused = false;
-        this.screenManager.showWinScreen();
-      }, 1000);
+    if (this.character.energy <= 0 || !this.getEndboss().isLiving) {
+      this.triggerEndGame(() => {
+        if (!this.gameOver) {
+          if (this.character.energy <= 0) {
+            this.screenManager.showLoseScreen();
+          } else if (!this.getEndboss().isLiving) {
+            this.screenManager.showWinScreen();
+          }
+        }
+      });
     }
   }
+
+  triggerEndGame(callback) {
+    setTimeout(() => {
+      callback();
+      this.endgame();
+    }, 1000);
+  }
+
+  endgame() {
+    this.clearAllIntervalsForObjects();
+    this.gameOver = true;
+    this.gameStarted = false;
+  }
+  /**
+   * Handles collision between a throwable object (bottle) and an enemy.
+   * @param {Object} bottle - The throwable bottle object.
+   * @param {number} bottleIndex - The index of the throwable bottle.
+   * @param {Object} enemy - The enemy object.
+   * @param {number} enemyIndex - The index of the enemy.
+   */
 
   handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex) {
     if (bottle.isColliding(enemy)) {
@@ -285,6 +306,11 @@ class World {
       enemy.getDamage();
     }
   }
+
+  /**
+   * Handles collision between the character and an enemy.
+   * @param {Object} enemy - The enemy object.
+   */
 
   handleEnemyCollision(enemy) {
     if (this.character.isColliding(enemy)) {

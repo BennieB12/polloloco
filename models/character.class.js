@@ -3,83 +3,20 @@
  * Inherits from `MovableObject`.
  */
 class Character extends MovableObject {
-  /**
-   * The height of the character.
-   * @type {number}
-   */
   height = 100;
-
-  /**
-   * Indicates if the jump animation is currently playing.
-   * @type {boolean}
-   */
   jumpAnimationPlayed = false;
-
   groundLevel = 320;
-  /**
-   * The width of the character.
-   * @type {number}
-   */
   width = 60;
-
-  /**
-   * The speed of the character's movement.
-   * @type {number}
-   */
   speed = 6;
-
-  /**
-   * The energy level of the character.
-   * @type {number}
-   */
   energy = 100;
-
-  /**
-   * The speed at which animations play.
-   * @type {number}
-   */
   animationSpeed = 5;
-
-  /**
-   * The timestamp of the last time the character was hit.
-   * @type {number}
-   */
   lastHit = 0;
-
-  /**
-   * Indicates if the walking sound is currently playing.
-   * @type {boolean}
-   */
   isPlayingSound = false;
-
-  /**
-   * Indicates if the character is throwing a bottle.
-   * @type {boolean}
-   */
   isThrowing = false;
-
-  /**
-   * Indicates if the dead animation has been played.
-   * @type {boolean}
-   */
   deadAnimationPlayed = false;
-
-  /**
-   * Timer for how long the character has been standing idle.
-   * @type {number}
-   */
   standingTimer = 0;
-
-  /**
-   * Reference to the world object, used for interactions with the game environment.
-   * @type {object}
-   */
   world;
 
-  /**
-   * The sound played when the character walks.
-   * @type {Audio}
-   */
   WALKING_SOUND = new Audio("audio/walk_right.mp3");
 
   IMAGES_WALKING = [
@@ -207,7 +144,7 @@ handleAnimation() {
     this.WALKING_SOUND.pause();
     return;
   }
-  if (this.isJumping) { // Priorisiere die Sprunganimation
+  if (this.isJumping) {
     this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
     this.WALKING_SOUND.pause();
     return;
@@ -412,13 +349,13 @@ handleAnimation() {
   }
 
   reset() {
+    this.clearAllIntervals();
     this.energy = 100;
     this.x = 80;
-    // this.lastHit = 0;
     this.standingTimer = 0;
     this.otherDirection = false;
-    this.y = this.groundLevel;
     this.isJumping = false;
     this.deadAnimationPlayed = false;
+    this.animate(); 
   }
 }

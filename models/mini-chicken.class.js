@@ -31,7 +31,7 @@ class Minichicken extends MovableObject {
    * Ground level for the `Minichicken`.
    * @type {number}
    */
-   groundLevel = 360;
+  groundLevel = 360;
 
   /**
    * Walking animation images.
@@ -80,11 +80,10 @@ class Minichicken extends MovableObject {
     this.speed = speed;
     this.applyGravity();
     this.setOffset(20, 20, 20, 20);
-    // this.animate();
   }
 
   /**
-   * Starts the `Minichicken` animation by handling jumping, walking, and playing the respective animations.
+   * Starts the animation loop for the `Minichicken`, including walking and jumping animations.
    */
   animate() {
     this.walk();
@@ -99,14 +98,14 @@ class Minichicken extends MovableObject {
   }
 
   /**
-   * Handles the walking animation of the `Minichicken`.
+   * Plays the walking animation for the `Minichicken`.
    */
   handleAnimation() {
     this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
   }
 
   /**
-   * Handles the walking movement of the `Minichicken`.
+   * Handles the movement of the `Minichicken` by walking left.
    */
   walk() {
     this.startInterval(() => {
@@ -116,32 +115,38 @@ class Minichicken extends MovableObject {
     }, 100);
   }
 
+  /**
+   * Handles the red blinking effect when the `Minichicken` is hurt.
+   */
   blinkRed() {
     let blinkTime = 300;
     this.isBlinking = true;
-    
     setTimeout(() => {
       this.isBlinking = false;
     }, blinkTime);
   }
 
+  /**
+   * Draws the `Minichicken` on the canvas.
+   * Applies the red blinking effect when applicable.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     ctx.save();
     this.ColorFilter(ctx);
     if (this.isBlinking) {
       ctx.globalCompositeOperation = 'source-atop';
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-  
+
       const radius = Math.min(this.width, this.height) / 3;
       const centerX = this.x + this.width / 2;
       const centerY = this.y + this.height / 2;
-  
+
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
       ctx.fill();
       ctx.globalCompositeOperation = 'source-over';
     }
-  
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     ctx.restore();
   }
@@ -159,7 +164,8 @@ class Minichicken extends MovableObject {
   }
 
   /**
-   * Plays the dead animation for the `Minichicken` and marks it for removal.
+   * Plays the dead animation for the `Minichicken`, stops its movement, 
+   * and marks it for removal after a delay.
    */
   playDeadAnimation() {
     this.playAnimation(this.IMAGES_DEAD);
@@ -173,20 +179,11 @@ class Minichicken extends MovableObject {
   }
 
   /**
-   * Resets the `Minichicken` to its initial state.
+   * Handles the logic for when the `Minichicken` lands on the ground.
    */
-  reset() {
-    this.energy = 10;
-    this.speed =  4 + Math.random() * 2;
-    this.remove = false;
-    this.otherDirection = false;
-    this.loadImage(this.IMAGES_WALKING[0]);
-  }
-
   onGround() {
     this.isJumping = false;
     this.y = this.groundLevel;
     this.speedY = 0;
   }
 }
-

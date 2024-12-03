@@ -50,6 +50,9 @@ class Endboss extends MovableObject {
     "img/4_enemie_boss_chicken/2_alert/G12.png",
   ];
 
+   /**
+   * Initializes the end boss, setting position, animations, and behaviors.
+   */
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImages([
@@ -61,21 +64,26 @@ class Endboss extends MovableObject {
       ...this.IMAGES_HURT,
     ]);
     this.x = 2850;
-    this.speed = 11;
+    this.speed = 16;
     this.applyGravity();
     this.setOffset(40, 40, 60, 60);
   }
 
+  /**
+   * Updates the end boss's status bar based on its energy.
+   */
   updateStatusBar() {
     if (this.statusBar) {
       this.statusBar.setPercentage(this.energy);
     }
   }
 
+  /**
+   * Manages all animations for the end boss, including walking, jumping, and dying.
+   */
   animate() {
     this.jump();
     this.walk();
-
     this.startInterval(() => {
       if (this.isDead() && !this.deadAnimationPlayed) {
         this.playDeadAnimation();
@@ -89,8 +97,9 @@ class Endboss extends MovableObject {
     }, 1000 / 30);
   }
 
-  
-
+  /**
+   * Handles walking behavior for the end boss.
+   */
   walk() {
     this.startInterval(() => {
       this.moveLeft();
@@ -99,6 +108,9 @@ class Endboss extends MovableObject {
     }, 100);
   }
 
+  /**
+   * Manages the end boss's jump behavior.
+   */
   jump() {
     this.startInterval(() => {
       if (!this.deadAnimationPlayed) {
@@ -122,21 +134,25 @@ class Endboss extends MovableObject {
     this.playAnimation(this.IMAGES_ATTACK, 6);
   }
 
+
+  /**
+   * Plays the death animation for the end boss and marks it as no longer living.
+   */
   playDeadAnimation() {
     if (!this.deadAnimationPlayed) {
       this.deadAnimationPlayed = true;
       this.speed = 0;
       this.currentImage = 0;
-  
-      const deadInterval = this.startInterval(() => {
+
+      this.startInterval(() => {
         if (this.currentImage < this.IMAGES_DEAD.length) {
           this.img = this.imageCache[this.IMAGES_DEAD[this.currentImage]];
           this.currentImage++;
         } else {
           this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
-          clearInterval(deadInterval);
           this.isLiving = false;
-          this.clearAllIntervals(deadInterval);
+          clearInterval();
+          this.clearAllIntervals();
         }
       }, 1000 / 60);
     }

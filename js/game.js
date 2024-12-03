@@ -1,13 +1,30 @@
+
 let canvas;
 let world;
 let keyboard = new Keyboard();
 
+/**
+ * @function init
+ * @description Initializes the canvas element and creates a new World instance for the game.
+ */
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas);
 }
+
+
+
+/**
+ * @event DOMContentLoaded
+ * @description Waits for the DOM to be fully loaded before initializing the game and setting up event listeners.
+ * Handles orientation changes, full-screen toggling, and keyboard and touch events for user interaction.
+ */
 document.addEventListener("DOMContentLoaded", function () {
 
+  /**
+   * @event orientationchange
+   * @description Shows or hides a message when the device is in landscape or portrait mode.
+   */
   window.addEventListener("orientationchange", () => {
     if (window.innerWidth > window.innerHeight) {
       displayOrientationMessage();
@@ -16,18 +33,30 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  /**
+   * @function displayOrientationMessage
+   * @description Displays the message when the device is in landscape mode.
+   */
   function displayOrientationMessage() {
     let orientationMessage = document.getElementById("message");
     orientationMessage.classList.remove('d-none');
     orientationMessage.classList.add('d-block');
   }
 
+  /**
+   * @function hideOrientationMessage
+   * @description Hides the orientation message when the device is in portrait mode.
+   */
   function hideOrientationMessage() {
     let orientationMessage = document.getElementById("message");
     orientationMessage.classList.remove('d-block');
     orientationMessage.classList.add('d-none');
   }
 
+  /**
+   * @event keydown
+   * @description Listens for the "Escape" key to exit fullscreen mode, or the "Enter" key to toggle fullscreen.
+   */
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       if (document.fullscreenElement) {
@@ -36,72 +65,63 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+// Get the fullscreen button element
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+// Add event listener to toggle fullscreen when the button is clicked
+fullscreenBtn.addEventListener("click", toggleFullScreen);
+
+function toggleFullScreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch((err) => {
+      console.error(`Error attempting to enable fullscreen mode: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+  /**
+   * @event keydown
+   * @description Listens for keydown events to track user input for movement and actions.
+   */
   window.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       toggleFullScreen();
     }
   });
 
+  /**
+   * @event keyup
+   * @description Listens for keyup events to stop user input for movement and actions.
+   */
   document.addEventListener("keyup", (e) => {
-    if (e.keyCode === 38) {
-      keyboard.UP = false;
-    }
-
-    if (e.keyCode === 40) {
-      keyboard.DOWN = false;
-    }
-
-    if (e.keyCode === 37) {
-      keyboard.LEFT = false;
-    }
-
-    if (e.keyCode === 39) {
-      keyboard.RIGHT = false;
-    }
-
-    if (e.keyCode === 32) {
-      keyboard.SPACE = false;
-    }
-
-    if (e.keyCode === 68) {
-      keyboard.D = false;
-    }
-
-    if (e.keyCode === 27) {
-      keyboard.ESC = false;
-    }
+    if (e.keyCode === 38) keyboard.UP = false;
+    if (e.keyCode === 40) keyboard.DOWN = false;
+    if (e.keyCode === 37) keyboard.LEFT = false;
+    if (e.keyCode === 39) keyboard.RIGHT = false;
+    if (e.keyCode === 32) keyboard.SPACE = false;
+    if (e.keyCode === 68) keyboard.D = false;
+    if (e.keyCode === 27) keyboard.ESC = false;
   });
 
+  /**
+   * @event keydown
+   * @description Listens for keydown events to track user input for movement and actions.
+   */
   document.addEventListener("keydown", (e) => {
-    if (e.keyCode === 38) {
-      keyboard.UP = true;
-    }
-
-    if (e.keyCode === 40) {
-      keyboard.DOWN = true;
-    }
-
-    if (e.keyCode === 37) {
-      keyboard.LEFT = true;
-    }
-
-    if (e.keyCode === 39) {
-      keyboard.RIGHT = true;
-    }
-
-    if (e.keyCode === 32) {
-      keyboard.SPACE = true;
-    }
-
-    if (e.keyCode === 68) {
-      keyboard.D = true;
-    }
-
-    if (e.keyCode === 27) {
-      keyboard.ESC = true;
-    }
+    if (e.keyCode === 38) keyboard.UP = true;
+    if (e.keyCode === 40) keyboard.DOWN = true;
+    if (e.keyCode === 37) keyboard.LEFT = true;
+    if (e.keyCode === 39) keyboard.RIGHT = true;
+    if (e.keyCode === 32) keyboard.SPACE = true;
+    if (e.keyCode === 68) keyboard.D = true;
+    if (e.keyCode === 27) keyboard.ESC = true;
   });
 
+  /**
+   * @event touchstart
+   * @description Tracks touch events for movement and actions, similar to keyboard inputs.
+   */
   document.getElementById("btnLeft").addEventListener("touchstart", (e) => {
     e.preventDefault();
     keyboard.LEFT = true;

@@ -135,3 +135,29 @@ footer a {
 footer a:hover {
   opacity: 80%;
 }
+
+#fullscreenBtn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  left: 100px;
+  transition: background-color 0.3s ease;
+}
+
+#fullscreenBtn:hover {
+  background-color: #45a049;
+}
+
+#fullscreenBtn:active {
+  background-color: #388e3c;
+}
+

@@ -10,15 +10,4 @@ class Cloud extends MovableObject {
       this.x = x + Math.random() * 100;
       this.y = y + Math.random() * 50;
   }
-
-//   startMoving() {
-//     this.startInterval(() => {
-//           this.moveLeft();
-//       }, 100);
-//   }
-
-//   reset() {
-//     this.clearAllIntervals();
-//   }
-
 }
