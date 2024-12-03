@@ -18,17 +18,17 @@
 
   canvas,
   #content {
-    width: 90vw;
     height: auto;
-    /* top: 40%; */
+    width: 60vw;
+    top: 46%;
   }
 
   .buttonbox-walk,
   .buttonbox-action {
-    width: 9vw;
-    height: 9vh;
+    width: 13vw;
+    height: 16vh;
     position: absolute;
-    z-index: 1000;
+    z-index: 4;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -39,61 +39,33 @@
   }
 
   .buttonbox-walk {
-    left: -15%;
+    left: -25%;
   }
 
   .buttonbox-action {
-    right: -15%;
+    right: -25%;
   }
 }
-
 @media (max-width: 1280px) {
-  #background-object {
-    width: 100%;
+
+  .buttonbox-walk {
+    left: -27%;
   }
 
-  .headline {
-    display: none;
+  .buttonbox-action {
+    right: -27%;
   }
-
-
-}
-
-@media (max-width: 1040px) {
-.buttonbox-walk {
-  left: -17%;
-}
-
-.buttonbox-action {
-  right: -17%;
-}
-
-
 }
 
 
 @media (max-width: 950px) {
-  canvas,
-  #content {
-    width: 60vw;
-    top: 45%;
-  }
 
   .buttonbox-walk {
-    left: -19%;
-  }
-  
-  .buttonbox-action {
-    right: -19%;
+    left: -28%;
   }
 
-}
-
-@media (max-width: 780px) {
-  .buttonbox-walk,
   .buttonbox-action {
-    width: 8vw;
-    height: 8vh;
-}
-}
+    right: -28%;
+  }
 
+}

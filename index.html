@@ -34,7 +34,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png" />
     <title>El Pollo Loco</title>
   </head>
-  <body  onload="init()">
+  <body onload="init()">
     <img id="background-object" src="/img/background.png" /><img />
 
     <div class="headline center-absolute">
@@ -43,75 +43,82 @@
       <img src="img/rassels.jpg" />
     </div>
 
-    <div id="message" class="d-none">
-     rotate device
+    <div id="orientation-overlay">
+      <p>
+        Bitte drehen Sie Ihr Gerät in die <strong>horizontale</strong> Ausrichtung.
+      </p>
     </div>
 
     <div id="content" class="center-absolute flex-center">
-      <canvas id="canvas" width="720" height="480"></canvas>
-      <div class="buttonbox-walk btn-pos">
-        <div id="btnWalk" style="width: 140%; height: 140%;">
-          <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    
-            <circle cx="50" cy="50" r="48" fill="url(#grad1)" />
-            <circle cx="50" cy="50" r="47" fill="url(#grad2)" stroke="rgb(168, 168, 168)" stroke-width="2px" />
-            <circle cx="50" cy="50" r="42" fill="url(#grad3)" />
-            
-      
-            <path
-              id="btnLeft"
-              d="M50,0 A50,50 0 0,0 50,100"
-              fill="transparent"
-              onclick="keyboard.LEFT = true"
-              onmouseup="keyboard.LEFT = false"
-              onmouseleave="keyboard.LEFT = false"
-              style="pointer-events: all;"
-            />
-            <text
-              x="25"
-              y="55"
-              fill="white"
-              font-size="12"
-              font-family="Arial"
-              text-anchor="middle"
-              onclick="keyboard.LEFT = true"
-              onmouseup="keyboard.LEFT = false"
-              style="pointer-events: all; cursor: pointer;"
-            >⬅️</text>
-         
-            <path
-              id="btnRight"
-              d="M50,0 A50,50 0 0,1 50,100"
-              fill="transparent"
-              onclick="keyboard.RIGHT = true"
-              onmouseup="keyboard.RIGHT = false"
-              onmouseleave="keyboard.RIGHT = false"
-              style="pointer-events: all;"
-            />
-            <text
-              x="75"
-              y="55"
-              fill="white"
-              font-size="12"
-              font-family="Arial"
-              text-anchor="middle"
-              onclick="keyboard.RIGHT = true"
-              onmouseup="keyboard.RIGHT = false"
-              style="pointer-events: all; cursor: pointer;"
-            >➡️</text>
-          </svg>
+      <div id="canvas-container" style="position: relative; display: inline-block">
+        <canvas id="canvas" width="720" height="480"></canvas>
+        <div class="fullscreen-button btn-pos">
+          <button id="fullscreenBtn">⛶</button>
+        </div>
+        <div class="buttonbox-walk btn-pos">
+          <div id="btnWalk" style="width: 140%; height: 140%">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="48" fill="url(#grad1)" />
+              <circle cx="50" cy="50" r="47" fill="url(#grad2)" stroke="rgb(168, 168, 168)" stroke-width="2px" />
+              <circle cx="50" cy="50" r="42" fill="url(#grad3)" />
+
+              <path
+                id="btnLeft"
+                d="M50,0 A50,50 0 0,0 50,100"
+                fill="transparent"
+                onclick="keyboard.LEFT = true"
+                onmouseup="keyboard.LEFT = false"
+                onmouseleave="keyboard.LEFT = false"
+                style="pointer-events: all"
+              />
+              <text
+                x="25"
+                y="55"
+                fill="white"
+                font-size="12"
+                font-family="Arial"
+                text-anchor="middle"
+                onclick="keyboard.LEFT = true"
+                onmouseup="keyboard.LEFT = false"
+                style="pointer-events: all; cursor: pointer"
+              >
+                ⬅️
+              </text>
+
+              <path
+                id="btnRight"
+                d="M50,0 A50,50 0 0,1 50,100"
+                fill="transparent"
+                onclick="keyboard.RIGHT = true"
+                onmouseup="keyboard.RIGHT = false"
+                onmouseleave="keyboard.RIGHT = false"
+                style="pointer-events: all"
+              />
+              <text
+                x="75"
+                y="55"
+                fill="white"
+                font-size="12"
+                font-family="Arial"
+                text-anchor="middle"
+                onclick="keyboard.RIGHT = true"
+                onmouseup="keyboard.RIGHT = false"
+                style="pointer-events: all; cursor: pointer"
+              >
+                ➡️
+              </text>
+            </svg>
+          </div>
         </div>
       </div>
-      
-      
+
       <div class="buttonbox-action btn-pos">
-        <div id="btnAction" style="width: 140%; height: 140%;">
+        <div id="btnAction" style="width: 140%; height: 140%">
           <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    
             <circle cx="50" cy="50" r="48" fill="url(#grad4)" />
             <circle cx="50" cy="50" r="47" fill="url(#grad5)" stroke="rgb(168, 168, 168)" stroke-width="2px" />
             <circle cx="50" cy="50" r="42" fill="url(#grad6)" />
-  
+
             <path
               id="btnJump"
               d="M50,0 A50,50 0 0,0 50,100"
@@ -119,7 +126,7 @@
               onclick="keyboard.UP = true"
               onmouseup="keyboard.UP = false"
               onmouseleave="keyboard.UP = false"
-              style="pointer-events: all;"
+              style="pointer-events: all"
             />
             <text
               x="25"
@@ -130,9 +137,11 @@
               text-anchor="middle"
               onclick="keyboard.UP = true"
               onmouseup="keyboard.UP = false"
-              style="pointer-events: all; cursor: pointer;"
-            >⬆️</text>
-            
+              style="pointer-events: all; cursor: pointer"
+            >
+              ⬆️
+            </text>
+
             <path
               id="btnThrow"
               d="M50,0 A50,50 0 0,1 50,100"
@@ -140,7 +149,7 @@
               onclick="keyboard.D = true"
               onmouseup="keyboard.D = false"
               onmouseleave="keyboard.D = false"
-              style="pointer-events: all;"
+              style="pointer-events: all"
             />
             <text
               x="75"
@@ -151,24 +160,21 @@
               text-anchor="middle"
               onclick="keyboard.D = true"
               onmouseup="keyboard.D = false"
-              style="pointer-events: all; cursor: pointer;"
-            >🧴</text>
+              style="pointer-events: all; cursor: pointer"
+            >
+              🧴
+            </text>
           </svg>
         </div>
       </div>
     </div>
-    <div class="fullscreen-button btn-pos">
-      <button id="fullscreenBtn">⛶</button>
-    </div>
 
-    
-    <footer class="flex-center">
-    </footer>
+    <footer class="flex-center"></footer>
 
     <div id="cookie-bar" class="cookie-bar">
       <p>
-        Diese Website verwendet Cookies, um Ihnen eine bessere Benutzererfahrung zu bieten. 
-        Wenn Sie diese Website weiterhin nutzen, stimmen Sie der Verwendung von Cookies zu.
+        Diese Website verwendet Cookies, um Ihnen eine bessere Benutzererfahrung zu bieten. Wenn Sie diese Website
+        weiterhin nutzen, stimmen Sie der Verwendung von Cookies zu.
         <button id="accept-cookies" class="cookie-button">Zustimmen</button>
       </p>
     </div>

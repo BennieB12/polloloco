@@ -8,11 +8,21 @@ let keyboard = new Keyboard();
  * @description Initializes the canvas element and creates a new World instance for the game.
  */
 function init() {
+  checkOrientation();
   canvas = document.getElementById("canvas");
   world = new World(canvas);
+  window.addEventListener("resize", checkOrientation);
+  window.addEventListener("orientationchange", checkOrientation);
 }
 
-
+function checkOrientation() {
+  const overlay = document.getElementById("orientation-overlay");
+  if (window.innerWidth < window.innerHeight) {
+    overlay.classList.add("visible");
+  } else {
+    overlay.classList.remove("visible");
+  }
+}
 
 /**
  * @event DOMContentLoaded
@@ -21,37 +31,7 @@ function init() {
  */
 document.addEventListener("DOMContentLoaded", function () {
 
-  /**
-   * @event orientationchange
-   * @description Shows or hides a message when the device is in landscape or portrait mode.
-   */
-  window.addEventListener("orientationchange", () => {
-    if (window.innerWidth > window.innerHeight) {
-      displayOrientationMessage();
-    } else {
-      hideOrientationMessage();
-    }
-  });
 
-  /**
-   * @function displayOrientationMessage
-   * @description Displays the message when the device is in landscape mode.
-   */
-  function displayOrientationMessage() {
-    let orientationMessage = document.getElementById("message");
-    orientationMessage.classList.remove('d-none');
-    orientationMessage.classList.add('d-block');
-  }
-
-  /**
-   * @function hideOrientationMessage
-   * @description Hides the orientation message when the device is in portrait mode.
-   */
-  function hideOrientationMessage() {
-    let orientationMessage = document.getElementById("message");
-    orientationMessage.classList.remove('d-block');
-    orientationMessage.classList.add('d-none');
-  }
 
   /**
    * @event keydown
