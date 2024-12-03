@@ -1,4 +1,3 @@
-
 let canvas;
 let world;
 let keyboard = new Keyboard();
@@ -15,6 +14,9 @@ function init() {
   window.addEventListener("orientationchange", checkOrientation);
 }
 
+/**
+ * @description Checks the current orientation of the device and shows the overlay or not.
+ */
 function checkOrientation() {
   const overlay = document.getElementById("orientation-overlay");
   if (window.innerWidth < window.innerHeight) {
@@ -30,9 +32,6 @@ function checkOrientation() {
  * Handles orientation changes, full-screen toggling, and keyboard and touch events for user interaction.
  */
 document.addEventListener("DOMContentLoaded", function () {
-
-
-
   /**
    * @event keydown
    * @description Listens for the "Escape" key to exit fullscreen mode, or the "Enter" key to toggle fullscreen.
@@ -45,22 +44,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-// Get the fullscreen button element
-const fullscreenBtn = document.getElementById("fullscreenBtn");
-
-// Add event listener to toggle fullscreen when the button is clicked
-fullscreenBtn.addEventListener("click", toggleFullScreen);
-
-
-function toggleFullScreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch((err) => {
-      console.error(`Error attempting to enable fullscreen mode: ${err.message}`);
-    });
-  } else {
-    document.exitFullscreen();
+  const fullscreenBtn = document.getElementById("fullscreenBtn");
+  fullscreenBtn.addEventListener("click", toggleFullScreen);
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error(`Error attempting to enable fullscreen mode: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
   }
-}
   /**
    * @event keydown
    * @description Listens for keydown events to track user input for movement and actions.

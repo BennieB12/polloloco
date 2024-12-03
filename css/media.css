@@ -55,6 +55,11 @@
   .buttonbox-action {
     right: -27%;
   }
+
+  #fullscreenBtn {
+    right: -20%;
+    padding: 20px;
+  }
 }
 
 
@@ -68,4 +73,15 @@
     right: -28%;
   }
 
+  #fullscreenBtn {
+    right: -20%;
+    padding: 12px 12px;
+}
+
+@media (max-width: 680px) {
+  #fullscreenBtn {
+    right: -20%;
+    padding: 8px;
+}
+}
 }
