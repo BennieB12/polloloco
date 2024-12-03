@@ -65,6 +65,41 @@ h1 {
   font-size: 20px;
 }
 
+
+@keyframes rotatePhone {
+  0% {
+    transform: rotate(-90deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-90deg);
+  }
+}
+
+@keyframes pulseText {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.rotate {
+  transform-origin: 100px 100px;
+  animation: rotatePhone 2s infinite ease-in-out;
+}
+
+.animated-text {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  fill: #007BFF;
+  text-anchor: middle;
+  animation: pulseText 1.5s infinite ease-in-out;
+}
+
 #orientation-overlay.visible {
   display: flex;
 }

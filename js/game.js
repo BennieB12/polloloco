@@ -51,6 +51,7 @@ const fullscreenBtn = document.getElementById("fullscreenBtn");
 // Add event listener to toggle fullscreen when the button is clicked
 fullscreenBtn.addEventListener("click", toggleFullScreen);
 
+
 function toggleFullScreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch((err) => {
