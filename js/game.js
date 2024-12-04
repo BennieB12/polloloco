@@ -1,6 +1,8 @@
 let canvas;
 let world;
+let isMuted = false;
 let keyboard = new Keyboard();
+let soundManager = new SoundManager();
 
 /**
  * @function init
@@ -25,6 +27,37 @@ function checkOrientation() {
     overlay.classList.remove("visible");
   }
 }
+
+function toggleSound() {
+  isMuted = !isMuted;
+  updateSoundButton();
+
+}
+
+function updateSoundButton() {
+  const soundButton = document.getElementById("soundBtn");
+  if (isMuted) {
+    soundButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+        <path d="M3 9v6h4l5 5V4l-5 5H3z"/>
+        <path d="M15 9C16.5 9 18 10.5 18 12C18 13.5 16.5 15 15 15" stroke="black" stroke-width="2"/>
+        <path d="M17 7C19 7 20 8.5 20 10C20 11.5 19 13 17 13" stroke="black" stroke-width="2"/>
+        <path d="M3 3L21 21" stroke="black" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    `;
+  } else {
+    soundButton.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+        <path class="sound-wave" d="M3 9v6h4l5 5V4l-5 5H3z"/>
+        <path class="sound-effect" d="M15 9C16.5 9 18 10.5 18 12C18 13.5 16.5 15 15 15" stroke="black" stroke-width="2"/>
+        <path class="sound-effect-2" d="M17 7C19 7 20 8.5 20 10C20 11.5 19 13 17 13" stroke="black" stroke-width="2"/>
+      </svg>
+    `;
+  }
+}
+window.onload = function() {
+  updateSoundButton();
+};
 
 /**
  * @event DOMContentLoaded

@@ -229,6 +229,8 @@ class World {
     this.getEndboss();
     this.startIntervalsForEnemies();
     this.character.animate();
+    this.screenManager.startButtonVisible = false;
+    this.screenManager.closeAllPanels(); 
   }
 
   /**
@@ -374,13 +376,6 @@ class World {
     this.clearAllIntervalsForObjects();
     this.gameOver = true;
     this.gameStarted = false;
-  }
-
-  /**
-   * Toggles audio mute state.
-   */
-  toggleMute() {
-    this.isMuted ? this.audioManager.unmuteAll() : this.audioManager.muteAll();
   }
 
   /**

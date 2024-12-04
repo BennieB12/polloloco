@@ -155,18 +155,8 @@ footer {
   flex-direction: row;
 }
 
-footer a {
-  margin: 10px;
-  text-decoration: none;
-  font-size: clamp(18px, 4vw, 44px);
-  color: rgb(233, 96, 42);
-}
-
-footer a:hover {
-  opacity: 80%;
-}
-
-#fullscreenBtn {
+#fullscreenBtn,
+#soundBtn {
   position: absolute;
   z-index: 4;
   top: 0%;
@@ -183,21 +173,73 @@ footer a:hover {
   transition: all 0.3s ease, transform 0.2s;
 }
 
-#fullscreenBtn:hover {
+#soundBtn {
+  right: - 7%;
+  padding: 7px 7px;
+}
+
+#fullscreenBtn:hover,
+#soundBtn:hover {
   background: linear-gradient(135deg, #ff5722, #e64a19);
   transform: scale(1.1);
   box-shadow: 0px 6px 12px rgba(255, 87, 34, 0.6), 0px 0px 20px rgba(255, 152, 0, 0.8);
 }
 
-#fullscreenBtn:active {
+#fullscreenBtn:active,
+#soundBtn:active {
   transform: scale(0.95);
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
   background: linear-gradient(135deg, #e64a19, #d84315);
 }
 
-#fullscreenBtn:focus {
+#fullscreenBtn:focus,
+#soundBtn:focus {
   outline: none;
   box-shadow: 0px 0px 10px 3px rgba(255, 152, 0, 0.8);
+}
+
+.sound-wave {
+  animation: fadein 0.5s ease-in-out forwards;
+}
+.sound-effect, .sound-effect-2 {
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes pulse {
+  0% {
+    stroke-dasharray: 0;
+  }
+  50% {
+    stroke-dasharray: 10;
+  }
+  100% {
+    stroke-dasharray: 20;
+  }
+}
+
+.mute-line {
+  animation: crossfade 0.5s ease-in-out forwards;
+}
+@keyframes crossfade {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 

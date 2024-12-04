@@ -16,8 +16,8 @@
     <script src="models/coin.class.js"></script>
     <script src="models/bottle.class.js"></script>
     <script src="models/cloud.class.js"></script>
-    <script src="models/screenmanager.class.js"></script>
     <script src="models/audiomanager.class.js"></script>
+    <script src="models/screenmanager.class.js"></script>
     <script src="models/world.class.js"></script>
     <script src="models/status-bar-health.class.js"></script>
     <script src="models/status-bar-enemy.class.js"></script>
@@ -59,6 +59,14 @@
       <canvas id="canvas" width="720" height="480"></canvas>
       <div class="fullscreen-button btn-pos">
         <button id="fullscreenBtn">⛶</button>
+        <div class="sound-button btn-pos">
+          <button id="soundBtn" onclick="toggleSound()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+              <path class="sound-wave" d="M3 9v6h4l5 5V4l-5 5H3z"/>
+              <path class="sound-effect" d="M15 9C16.5 9 18 10.5 18 12C18 13.5 16.5 15 15 15" stroke="black" stroke-width="2"/>
+              <path class="sound-effect-2" d="M17 7C19 7 20 8.5 20 10C20 11.5 19 13 17 13" stroke="black" stroke-width="2"/>
+            </svg>
+          </button>
       </div>
       <div class="buttonbox-walk btn-pos">
         <div id="btnWalk" style="width: 140%; height: 140%">
