@@ -30,6 +30,7 @@ class ThrowableObject extends MovableObject {
   y;
   groundLevel = 375;
   rotationInterval = null;
+  soundManager = new SoundManager();
 
   ROTATE_IMAGES = [
     "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
@@ -120,7 +121,7 @@ class ThrowableObject extends MovableObject {
         if (!this.splashAnimation) {
           this.playAnimation(this.ROTATE_IMAGES, 1);
         }
-      }, 1000 / 60);
+      }, 1000 / 30);
     }
   }
 
@@ -131,6 +132,7 @@ class ThrowableObject extends MovableObject {
   playSplashAnimation() {
     this.currentImage = 0;
     const splashInterval = setInterval(() => {
+      this.soundManager.playSound("SPLASH_SOUND");
       if (this.currentImage < this.SPLASH_IMAGES.length * this.animationSpeed) {
         this.playAnimation(this.SPLASH_IMAGES, this.animationSpeed);
       } else {

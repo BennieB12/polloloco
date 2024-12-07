@@ -1,8 +1,6 @@
 let canvas;
 let world;
-let isMuted = false;
 let keyboard = new Keyboard();
-let soundManager = new SoundManager();
 
 /**
  * @function init
@@ -12,8 +10,63 @@ function init() {
   checkOrientation();
   canvas = document.getElementById("canvas");
   world = new World(canvas);
-  window.addEventListener("resize", checkOrientation);
-  window.addEventListener("orientationchange", checkOrientation);
+  checkMute();
+  applySavedVolume();
+  
+}
+
+
+window.addEventListener("resize", checkOrientation);
+
+
+function applySavedVolume() {
+  const savedVolume = localStorage.getItem("globalVolume");
+  const volume = savedVolume !== null ? parseFloat(savedVolume) : 1;
+  world.soundManager.setVolume(volume);
+  const volumeSlider = document.getElementById("volumeSlider");
+  if (volumeSlider) {
+    volumeSlider.value = volume;
+  }
+}
+
+function checkMute() {
+  const savedMuteStatus = localStorage.getItem("isMuted");
+  if (savedMuteStatus !== null) {
+    world.soundManager.isMuted = savedMuteStatus === "true";
+    const soundIcon = document.getElementById("soundIcon");
+    if (world.soundManager.isMuted) {
+      soundIcon.textContent = "🔇";
+      world.soundManager.muteAll();
+    } else {
+      soundIcon.textContent = "🔊";
+      world.soundManager.unmuteAll();
+    }
+  }
+}
+/**
+ * connected to the world and enables to go back to homescreen
+ */
+function reloadCanvas() {
+  world.home();
+}
+
+
+/**
+ * Connected to World and MuteButton to toggle Sound and Buttontext.
+ */
+function toggleSound() {
+  world.soundManager.isMuted = !world.soundManager.isMuted;
+  const soundIcon = document.getElementById("soundIcon");
+
+  if (world.soundManager.isMuted) {
+    soundIcon.textContent = "🔇";
+    world.soundManager.muteAll();
+  } else {
+    soundIcon.textContent = "🔊";
+    world.soundManager.unmuteAll();
+  }
+
+  localStorage.setItem("isMuted", world.soundManager.isMuted);
 }
 
 /**
@@ -28,36 +81,17 @@ function checkOrientation() {
   }
 }
 
-function toggleSound() {
-  isMuted = !isMuted;
-  updateSoundButton();
 
-}
+/**
+ * @description Passt die Lautstärke basierend auf dem Sliderwert an.
+ * @param {number} value - Der neue Lautstärkewert von 0 bis 1.
+ */
+function adjustVolume(value) {
+  const volume = parseFloat(value);
+  world.soundManager.setVolume(volume);
 
-function updateSoundButton() {
-  const soundButton = document.getElementById("soundBtn");
-  if (isMuted) {
-    soundButton.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-        <path d="M3 9v6h4l5 5V4l-5 5H3z"/>
-        <path d="M15 9C16.5 9 18 10.5 18 12C18 13.5 16.5 15 15 15" stroke="black" stroke-width="2"/>
-        <path d="M17 7C19 7 20 8.5 20 10C20 11.5 19 13 17 13" stroke="black" stroke-width="2"/>
-        <path d="M3 3L21 21" stroke="black" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    `;
-  } else {
-    soundButton.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-        <path class="sound-wave" d="M3 9v6h4l5 5V4l-5 5H3z"/>
-        <path class="sound-effect" d="M15 9C16.5 9 18 10.5 18 12C18 13.5 16.5 15 15 15" stroke="black" stroke-width="2"/>
-        <path class="sound-effect-2" d="M17 7C19 7 20 8.5 20 10C20 11.5 19 13 17 13" stroke="black" stroke-width="2"/>
-      </svg>
-    `;
-  }
+  localStorage.setItem("globalVolume", volume);
 }
-window.onload = function() {
-  updateSoundButton();
-};
 
 /**
  * @event DOMContentLoaded
@@ -65,6 +99,15 @@ window.onload = function() {
  * Handles orientation changes, full-screen toggling, and keyboard and touch events for user interaction.
  */
 document.addEventListener("DOMContentLoaded", function () {
+  /**
+   * @event keydown
+   * @description Listens for keydown events to track user input for movement and actions.
+  */
+ window.addEventListener("keydown", (event) => {
+   if (event.key === "Enter") {
+     toggleFullScreen();
+    }
+  });
   /**
    * @event keydown
    * @description Listens for the "Escape" key to exit fullscreen mode, or the "Enter" key to toggle fullscreen.
@@ -81,22 +124,11 @@ document.addEventListener("DOMContentLoaded", function () {
   fullscreenBtn.addEventListener("click", toggleFullScreen);
   function toggleFullScreen() {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.error(`Error attempting to enable fullscreen mode: ${err.message}`);
-      });
+      document.documentElement.requestFullscreen();
     } else {
       document.exitFullscreen();
     }
   }
-  /**
-   * @event keydown
-   * @description Listens for keydown events to track user input for movement and actions.
-   */
-  window.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      toggleFullScreen();
-    }
-  });
 
   /**
    * @event keyup
@@ -130,55 +162,103 @@ document.addEventListener("DOMContentLoaded", function () {
    * @event touchstart
    * @description Tracks touch events for movement and actions, similar to keyboard inputs.
    */
-  document.getElementById("btnLeft").addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    keyboard.LEFT = true;
-  });
-  document.getElementById("btnLeft").addEventListener("touchend", (e) => {
-    e.preventDefault();
-    keyboard.LEFT = false;
-  });
-  document.getElementById("btnLeft").addEventListener("touchcancel", (e) => {
-    e.preventDefault();
-    keyboard.LEFT = false;
-  });
-
-  document.getElementById("btnRight").addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    keyboard.RIGHT = true;
-  });
-  document.getElementById("btnRight").addEventListener("touchend", (e) => {
-    e.preventDefault();
-    keyboard.RIGHT = false;
-  });
-  document.getElementById("btnRight").addEventListener("touchcancel", (e) => {
-    e.preventDefault();
-    keyboard.RIGHT = false;
-  });
-
-  document.getElementById("btnJump").addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    keyboard.UP = true;
-  });
-  document.getElementById("btnJump").addEventListener("touchend", (e) => {
-    e.preventDefault();
-    keyboard.UP = false;
-  });
-  document.getElementById("btnJump").addEventListener("touchcancel", (e) => {
-    e.preventDefault();
-    keyboard.UP = false;
-  });
-
-  document.getElementById("btnThrow").addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    keyboard.D = true;
-  });
-  document.getElementById("btnThrow").addEventListener("touchend", (e) => {
-    e.preventDefault();
-    keyboard.D = false;
-  });
-  document.getElementById("btnThrow").addEventListener("touchcancel", (e) => {
-    e.preventDefault();
-    keyboard.D = false;
-  });
+  document.getElementById("btnLeft").addEventListener(
+    "touchstart",
+    (e) => {
+      e.preventDefault();
+      keyboard.LEFT = true;
+    },
+    { passive: false }
+  );
+  document.getElementById("btnLeft").addEventListener(
+    "touchend",
+    (e) => {
+      e.preventDefault();
+      keyboard.LEFT = false;
+    },
+    { passive: false }
+  );
+  document.getElementById("btnLeft").addEventListener(
+    "touchcancel",
+    (e) => {
+      e.preventDefault();
+      keyboard.LEFT = false;
+    },
+    { passive: false }
+  );
+  
+  document.getElementById("btnRight").addEventListener(
+    "touchstart",
+    (e) => {
+      e.preventDefault();
+      keyboard.RIGHT = true;
+    },
+    { passive: false }
+  );
+  document.getElementById("btnRight").addEventListener(
+    "touchend",
+    (e) => {
+      e.preventDefault();
+      keyboard.RIGHT = false;
+    },
+    { passive: false }
+  );
+  document.getElementById("btnRight").addEventListener(
+    "touchcancel",
+    (e) => {
+      e.preventDefault();
+      keyboard.RIGHT = false;
+    },
+    { passive: false }
+  );
+  
+  document.getElementById("btnJump").addEventListener(
+    "touchstart",
+    (e) => {
+      e.preventDefault();
+      keyboard.UP = true;
+    },
+    { passive: false }
+  );
+  document.getElementById("btnJump").addEventListener(
+    "touchend",
+    (e) => {
+      e.preventDefault();
+      keyboard.UP = false;
+    },
+    { passive: false }
+  );
+  document.getElementById("btnJump").addEventListener(
+    "touchcancel",
+    (e) => {
+      e.preventDefault();
+      keyboard.UP = false;
+    },
+    { passive: false }
+  );
+  
+  document.getElementById("btnThrow").addEventListener(
+    "touchstart",
+    (e) => {
+      e.preventDefault();
+      keyboard.D = true;
+    },
+    { passive: false }
+  );
+  document.getElementById("btnThrow").addEventListener(
+    "touchend",
+    (e) => {
+      e.preventDefault();
+      keyboard.D = false;
+    },
+    { passive: false }
+  );
+  document.getElementById("btnThrow").addEventListener(
+    "touchcancel",
+    (e) => {
+      e.preventDefault();
+      keyboard.D = false;
+    },
+    { passive: false }
+  );
 });

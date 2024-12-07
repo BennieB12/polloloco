@@ -33,6 +33,7 @@ class Minichicken extends MovableObject {
    */
   groundLevel = 360;
 
+
   /**
    * Walking animation images.
    * @type {string[]}
@@ -67,6 +68,8 @@ class Minichicken extends MovableObject {
    */
   remove = false;
 
+  soundManager = new SoundManager();
+
   /**
    * Creates an instance of `Minichicken`.
    * @param {number} x - The initial horizontal position.
@@ -91,8 +94,11 @@ class Minichicken extends MovableObject {
     this.startInterval(() => {
       if (!this.isDead()) {
         this.handleAnimation();
+
       } else if (!this.deadAnimationPlayed) {
+        this.soundManager.playSound("MC_DEAD_SOUND");
         this.playDeadAnimation();
+   
       }
     }, 1000 / 60);
   }
@@ -168,6 +174,9 @@ class Minichicken extends MovableObject {
    * and marks it for removal after a delay.
    */
   playDeadAnimation() {
+    setTimeout(() => {
+       this.soundManager.stopSound("MC_DEAD_SOUND");
+    }, 200);
     this.playAnimation(this.IMAGES_DEAD);
     this.deadAnimationPlayed = true;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
@@ -175,6 +184,7 @@ class Minichicken extends MovableObject {
     this.startInterval(() => {
       this.remove = true;
       this.clearAllIntervals();
+      // this.soundManager.stopSound("MC_DEAD_SOUND");
     }, 300);
   }
 

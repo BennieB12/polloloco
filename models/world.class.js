@@ -12,8 +12,8 @@ class World {
   throwableObjects = [];
   gameOver = false;
   gameStarted = false;
-  isMuted = false;
   isPaused = false;
+  soundManager = new SoundManager();
 
   /**
    * Creates an instance of the World class.
@@ -25,7 +25,6 @@ class World {
     this.keyboard = keyboard;
     this.setWorld();
     this.setScreens();
-    this.setSounds();
     this.run();
     this.draw();
   }
@@ -41,21 +40,13 @@ class World {
    * Initializes screen management.
    */
   setScreens() {
-    this.screenManager = new ScreenManager(canvas, this);
-  }
-
-    /**
-   * Initializes sound management.
-   */
-  setSounds() {
-    this.soundManager = new SoundManager();
+    this.screenManager = new ScreenManager(canvas, this, this.soundManager);
   }
 
   /**
    * Main game loop.
    */
   run() {
-    if (!this.gameStarted && this.gameOver) return;
     this.checkCollision();
     this.character.handleThrow();
     this.checkGameOver();
@@ -67,15 +58,17 @@ class World {
    */
   draw() {
     this.clearBoard();
-    if (this.gameOver) {
-      this.freezesreen();
+    if (!this.gameStarted && !this.gameOver) {
+      this.titleScreen();
+    }
+    if (this.gameStarted) {
+      this.drawGame();
     }
     if (this.isPaused) {
       this.pauseScreen();
-    } else if (!this.gameStarted && !this.gameOver) {
-      this.titleScreen();
-    } else {
-      this.drawGame();
+    }
+    if (this.gameOver) {
+      this.freezescreen();
     }
     this.screenManager.drawUIButtons();
     requestAnimationFrame(() => this.draw());
@@ -84,7 +77,7 @@ class World {
   /**
    * Freezes the screen during game over.
    */
-  freezesreen() {
+  freezescreen() {
     this.ctx.save();
     this.clearBoard();
     this.ctx.globalAlpha = 0.95;
@@ -151,10 +144,16 @@ class World {
    * Draws all game objects, including enemies and collectibles.
    */
   drawObjects() {
-    this.level.enemies = this.level.enemies.filter(function(enemy) { return !enemy.remove });
-    this.throwableObjects = this.throwableObjects.filter(function(object) { return !object.remove });
+    this.level.enemies = this.level.enemies.filter(function (enemy) {
+      return !enemy.remove;
+    });
+    this.throwableObjects = this.throwableObjects.filter(function (object) {
+      return !object.remove;
+    });
     this.addObjectsToMap(this.level.clouds);
-    var regularEnemies = this.level.enemies.filter(function(enemy) { return !(enemy instanceof Endboss) });
+    var regularEnemies = this.level.enemies.filter(function (enemy) {
+      return !(enemy instanceof Endboss);
+    });
     this.addObjectsToMap(regularEnemies);
     var endboss = this.getEndboss();
     if (endboss) {
@@ -164,7 +163,7 @@ class World {
     this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.throwableObjects);
   }
-  
+
   /**
    * Adds objects to the map for rendering.
    * @param {Array} objects - List of objects to add.
@@ -220,40 +219,58 @@ class World {
    * Starts the game if not already started or over.
    */
   startGame() {
-    if (this.gameStarted || this.gameOver) return;
-    this.clearBoard();
     this.gameStarted = true;
-    this.run();
-    this.draw();
+    this.gameOver = false;
+    this.isPaused = false;
+    this.screenManager.startButtonVisible = false;
+    this.clearBoard();
     this.clearAllIntervalsForObjects();
     this.getEndboss();
     this.startIntervalsForEnemies();
     this.character.animate();
-    this.screenManager.startButtonVisible = false;
-    this.screenManager.closeAllPanels(); 
+    this.screenManager.closeAllPanels();
+    // this.soundManager.playSound("BACKGROUND_SOUND");
   }
 
   /**
    * Resets the game to its initial state.
    */
   reset() {
-    this.world = null;
     this.gameOver = false;
-    this.character.reset();
-    this.level.replaceObjects();
+    this.world = null;
     this.throwableObjects = [];
     this.statusBarHealth.reset();
     this.statusBarCoin.reset();
     this.statusBarBottle.reset();
     this.statusBarEnemy.reset();
+    this.level.replaceObjects();
+    this.character.reset();
     this.character.resetBottles();
     this.character.resetCoins();
     this.ctx.globalAlpha = 1;
-    this.level.enemies.forEach((enemy) => {
-      if (enemy.animate) enemy.clearAllIntervals();
-    });
-    this.startIntervalsForEnemies();
     this.startGame();
+  }
+
+  home() {
+    this.gameOver = false;
+    this.gameStarted = false;
+    this.world = null;
+    this.throwableObjects = [];
+    this.statusBarHealth.reset();
+    this.statusBarCoin.reset();
+    this.statusBarBottle.reset();
+    this.statusBarEnemy.reset();
+    this.level.replaceObjects();
+    this.character.reset();
+    this.character.resetBottles();
+    this.character.resetCoins();
+    this.ctx.globalAlpha = 1;
+    this.screenManager.controlPanelVisible = false;
+    this.screenManager.startButtonVisible = false;
+    this.screenManager.restartButtonvisible = false;
+    this.screenManager.impressumPanelVisible = false;
+    this.screenManager.policyPanelVisible = false;
+    this.screenManager.showStartScreen();
   }
 
   /**
@@ -302,7 +319,14 @@ class World {
    * Checks visibility of the enemy status bar.
    */
   checkVisibility() {
-    this.statusBarEnemy.visible = this.character.x >= 1800 && this.getEndboss().isLiving;
+    if (this.character.x >= 1800 && this.getEndboss().isLiving) {
+      this.statusBarEnemy.visible = true;
+      if (this.getEndboss().isJumping) {
+        // this.soundManager.playSound("ENDBOSS_ATTACK_SOUND");
+      }
+    } else if (this.character.x < 1800) {
+      this.statusBarEnemy.visible = false;
+    }
   }
 
   /**
@@ -320,7 +344,6 @@ class World {
     });
     this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
     this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
-
     this.throwableObjects.forEach((bottle, bottleIndex) => this.level.enemies.forEach((enemy, enemyIndex) => this.handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex)));
   }
 
@@ -333,8 +356,16 @@ class World {
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {
       if (type === "coin") {
+        // this.soundManager.playSound("COIN_SOUND");
+        setTimeout(() => {
+          // this.soundManager.stopSound("COIN_SOUND");
+        }, 200);
         this.character.collectCoin(index);
       } else if (type === "bottle") {
+        // this.soundManager.playSound("GET_BOTTLE_SOUND");
+        setTimeout(() => {
+          // this.soundManager.stopSound("GET_BOTTLE_SOUND");
+        }, 200);
         this.character.collectBottle(index);
       }
     }
@@ -346,36 +377,19 @@ class World {
   checkGameOver() {
     if (this.gameOver) return;
     if (this.character.energy <= 0 || !this.getEndboss().isLiving) {
-      this.triggerEndGame(() => {
-        if (!this.gameOver) {
-          if (this.character.energy <= 0) {
-            this.screenManager.showLoseScreen();
-          } else if (!this.getEndboss().isLiving) {
-            this.screenManager.showWinScreen();
-          }
-        }
-      });
+      this.gameOver = true;
+      this.gameStarted = false;
+
+      if (this.character.energy <= 0) {
+        setTimeout(() => {
+          this.screenManager.showLoseScreen();
+        }, 1000);
+      } else if (!this.getEndboss().isLiving) {
+        setTimeout(() => {
+          this.screenManager.showWinScreen();
+        }, 1000);
+      }
     }
-  }
-
-  /**
-   * Triggers the end of the game with a delay.
-   * @param {Function} callback - The callback to execute after the delay.
-   */
-  triggerEndGame(callback) {
-    setTimeout(() => {
-      callback();
-      this.endgame();
-    }, 1000);
-  }
-
-  /**
-   * Ends the game by clearing all intervals and updating the state.
-   */
-  endgame() {
-    this.clearAllIntervalsForObjects();
-    this.gameOver = true;
-    this.gameStarted = false;
   }
 
   /**
@@ -384,6 +398,7 @@ class World {
   togglePause() {
     this.isPaused = !this.isPaused;
     this.isPaused ? this.level.enemies.forEach((enemy) => enemy.clearAllIntervals()) : this.startIntervalsForEnemies();
+    this.isPaused ? this.character.clearAllIntervals() : this.character.animate();
     this.character.standingTimer = 0;
     this.screenManager.drawUIButtons();
   }

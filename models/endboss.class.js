@@ -8,6 +8,7 @@ class Endboss extends MovableObject {
   remove = false;
   statusBar;
   isLiving = true;
+  soundManager = new SoundManager();
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -86,9 +87,13 @@ class Endboss extends MovableObject {
     this.walk();
     this.startInterval(() => {
       if (this.isDead() && !this.deadAnimationPlayed) {
+        // this.soundManager.stopSound("ENDBOSS_HURT_SOUND");
+        this.soundManager.playSound("DEAD_ENDBOSS_SOUND");
         this.playDeadAnimation();
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
+        this.soundManager.playSound("ENDBOSS_HURT_SOUND");
+        this.soundManager.stopSound("ENDBOSS_ATTACK_SOUND");
       } else if (!this.isJumping) {
         this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
       } else if (this.isJumping) {
@@ -133,6 +138,7 @@ class Endboss extends MovableObject {
   handleJumpAnimation() {
     this.playAnimation(this.IMAGES_ATTACK, 6);
   }
+
 
 
   /**

@@ -20,12 +20,12 @@ class Chicken extends MovableObject {
    * @type {number}
    */
   width = 60;
-
+  soundManager = new SoundManager();
   /**
    * Initial energy of the `Chicken`.
    * @type {number}
    */
-  energy = 20;
+  energy = 10;
 
   /**
    * Animation speed for the walking cycle.
@@ -147,6 +147,10 @@ class Chicken extends MovableObject {
    * Plays the dead animation for the `Chicken` and marks it for removal.
    */
   playDeadAnimation() {
+    this.soundManager.playSound("DEAD_CHICKEN_SOUND");
+    setTimeout(() => {
+      this.soundManager.stopSound("MC_DEAD_SOUND");
+    }, 200);
     this.playAnimation(this.IMAGES_DEAD);
     this.deadAnimationPlayed = true;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
@@ -154,6 +158,7 @@ class Chicken extends MovableObject {
     this.startInterval(() => {
       this.remove = true;
       this.clearAllIntervals();
+      // this.soundManager.stopSound("DEAD_CHICKEN_SOUND");
     }, 300);
   }
 

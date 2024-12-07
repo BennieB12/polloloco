@@ -3,20 +3,20 @@
  * Extends the `DrawableObject` class.
  */
 class MovableObject extends DrawableObject {
-
   otherDirection = false;
-  speedY = 3;
+  speedY = 1;
   currentImage = 0;
   accelaration = 1;
   isJumping = false;
   animationSpeed = 5;
-  groundLevel = 320;
+  groundLevel = 325;
   jumpHeight = 12 + Math.random() * 10;
   intervals = [];
   remove = false;
   deadAnimationPlayed = false;
   standingTimer = 0;
   splashAnimation = false;
+  soundManager = new SoundManager();
 
   /**
    * Starts a new interval and stores its ID.
@@ -44,7 +44,6 @@ class MovableObject extends DrawableObject {
   applyGravity() {
     if (this.aboveGround() || this.speedY > 0) {
       this.setAcceleration();
-      this.isJumping = true;
     } else {
       this.onGround();
     }
@@ -161,9 +160,9 @@ class MovableObject extends DrawableObject {
    * @param {number} [speedY=20] - The speed of the jump.
    */
   jump(speedY = 20) {
-    this.speedY = speedY;
-    this.isJumping = true;
-    this.standingTimer = 0;
+      this.speedY = speedY;
+      this.isJumping = true;
+      this.standingTimer = 0;
   }
 
   /**

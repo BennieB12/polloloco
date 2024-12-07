@@ -4,7 +4,7 @@ class ScreenManager {
   restartButtonvisible = false;
   impressumPanelVisible = false;
   policyPanelVisible = false;
-  GAMESTART_SOUND = new Audio("audio/start.mp3");
+  soundManager = new SoundManager();
 
   constructor(canvas, world) {
     this.canvas = canvas;
@@ -44,8 +44,6 @@ class ScreenManager {
     };
   }
 
-
-
   /**
    * Displays the start screen of the game.
    * It handles the start screen setup, stops animations for all enemies, 
@@ -53,7 +51,6 @@ class ScreenManager {
    */
   showStartScreen() {
     this.handleStartScreen();
-    this.world.level.enemies.forEach((enemy) => enemy.stopAnimations && enemy.stopAnimations());
     this.displayScreen("img/9_intro_outro_screens/start/startscreen_1.png", "Start", () => this.world.startGame());
   }
   
@@ -63,6 +60,8 @@ class ScreenManager {
    * Once clicked, it triggers the game reset.
    */
   showWinScreen() {
+    // this.soundManager.stopSound("BACKGROUND_SOUND");
+    // this.soundManager.playSound("GAME_WIN_SOUND");
     this.handleEndScreen();
     this.displayScreen("img/9_intro_outro_screens/win/win_2.png", "Restart", () => this.world.reset());
   }
@@ -73,6 +72,8 @@ class ScreenManager {
    * Once clicked, it triggers the game reset.
    */
   showLoseScreen() {
+    // this.soundManager.stopSound("BACKGROUND_SOUND");
+    // this.soundManager.playSound("GAME_OVER_SOUND");
     this.handleEndScreen();
     this.displayScreen("img/9_intro_outro_screens/game_over/file.png", "Restart", () => this.world.reset());
   }
@@ -89,10 +90,10 @@ class ScreenManager {
   /**
    * Handles the setup for the end screens (win or lose).
    * Makes the restart button visible and adjusts the screen opacity.
-   */
-  handleEndScreen() {
-    this.restartButtonvisible = true;
-    this.world.ctx.globalAlpha = 0.95;
+  */
+ handleEndScreen() {
+  this.startButtonVisible = false;
+   this.restartButtonvisible = true;
     return;
   }
   /**
@@ -118,7 +119,6 @@ class ScreenManager {
   drawPolicyButton() { this.drawButton(this.canvas.width - 700, 20, "D", "rgba(50, 50, 50, 1)"); }
   drawHelpButton() { this.drawButton(this.canvas.width - 35, 20, "?", "rgba(50, 50, 50, 1)"); }
 
-
   startRestartbtn(text) {
     const buttonWidth = 150, buttonHeight = 60;
     const x = (this.canvas.width - buttonWidth) / 2, y = this.canvas.height - buttonHeight - 370;
@@ -142,10 +142,14 @@ class ScreenManager {
     const clickX = (event.clientX - left) * scaleX, clickY = (event.clientY - top) * scaleY;
     const buttonWidth = 150, buttonHeight = 60;
     const x = (this.canvas.width - buttonWidth) / 2, y = this.canvas.height - buttonHeight - 370;
+    this.soundManager.playSound("MENUBUTTON_SOUND");
     return clickX >= x && clickX <= x + buttonWidth && clickY >= y && clickY <= y + buttonHeight;
   }
 
-  isStartButtonClicked(event) { return this.isButtonClicked(event); }
+  isStartButtonClicked(event) {
+    this.soundManager.playSound("START_SOUND");
+     return this.isButtonClicked(event);
+     }
   isRestartButtonClicked(event) { return this.isButtonClicked(event); }
 
   /**
@@ -217,7 +221,7 @@ isInsideCircle(clickX, clickY, centerX, centerY, radius) {
  * @param {number} height - The height of the rectangle.
  */
 drawBackground(x, y, width, height) {
-  this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+  this.ctx.fillStyle = "rgba(0, 0, 0, 1.0)";
   this.ctx.fillRect(x, y, width, height);
   this.ctx.strokeStyle = "white";
   this.ctx.lineWidth = 2;
@@ -425,6 +429,7 @@ drawControlPanel() {
   toggleControlPanel() {
     this.controlPanelVisible = !this.controlPanelVisible;
     this.controlPanelVisible ? this.world.level.enemies.forEach((enemy) => enemy.clearAllIntervals()) : this.world.startIntervalsForEnemies();
+    this.controlPanelVisible ? this.world.character.clearAllIntervals() : this.world.character.animate();
   }
 
   /**

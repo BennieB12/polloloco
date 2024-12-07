@@ -16,8 +16,7 @@ class Character extends MovableObject {
   deadAnimationPlayed = false;
   standingTimer = 0;
   world;
-
-  WALKING_SOUND = new Audio("audio/walk_right.mp3");
+  soundManager = new SoundManager();
 
   IMAGES_WALKING = [
     "img/2_character_pepe/2_walk/W-21.png",
@@ -50,11 +49,7 @@ class Character extends MovableObject {
     "img/2_character_pepe/5_dead/D-57.png",
   ];
 
-  IMAGES_HURT = [
-    "img/2_character_pepe/4_hurt/H-41.png",
-    "img/2_character_pepe/4_hurt/H-42.png",
-    "img/2_character_pepe/4_hurt/H-43.png",
-  ];
+  IMAGES_HURT = ["img/2_character_pepe/4_hurt/H-41.png", "img/2_character_pepe/4_hurt/H-42.png", "img/2_character_pepe/4_hurt/H-43.png"];
 
   IMAGES_STAND = [
     "img/2_character_pepe/1_idle/idle/I-1.png",
@@ -89,14 +84,7 @@ class Character extends MovableObject {
    */
   constructor() {
     super().loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
-    this.loadImages([
-      ...this.IMAGES_STAND,
-      ...this.IMAGES_STAND_LONG,
-      ...this.IMAGES_WALKING,
-      ...this.IMAGES_JUMPING,
-      ...this.IMAGES_DEAD,
-      ...this.IMAGES_HURT,
-    ]);
+    this.loadImages([...this.IMAGES_STAND, ...this.IMAGES_STAND_LONG, ...this.IMAGES_WALKING, ...this.IMAGES_JUMPING, ...this.IMAGES_DEAD, ...this.IMAGES_HURT]);
     this.applyGravity();
     this.setOffset(10, 10, 30, 30);
   }
@@ -116,7 +104,6 @@ class Character extends MovableObject {
    */
   handleMovement() {
     if (this.isDead()) {
-      this.WALKING_SOUND.pause();
       return;
     }
     this.handleDirection();
@@ -134,31 +121,33 @@ class Character extends MovableObject {
   /**
    * Handles character animations based on the current state (e.g., idle, moving, hurt).
    */
-handleAnimation() {
-  if (this.isDead()) {
-    this.playDeadAnimation();
-    return;
-  }
-  if (this.isHurt()) {
-    this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
-    this.WALKING_SOUND.pause();
-    return;
-  }
-  if (this.isJumping) {
-    this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
-    this.WALKING_SOUND.pause();
-    return;
-  }
-  if (this.move()) {
-    this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
-    this.playWalkingSound();
-  } else if (this.longIdle()) {
-    this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
-  } else {
-    this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
-  }
-}
-
+  // handleAnimation() {
+  //   if (this.isDead()) {
+  //     this.playDeadAnimation();
+  //     this.stopSound();
+  //     this.deadSound();
+  //     return;
+  //   }
+  //   if (this.isHurt()) {
+  //     this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
+  //     this.hurtSound();
+  //     return;
+  //   }
+  //   if (this.isJumping) {
+  //     this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
+  //     return;
+  //   }
+  //   if (this.move()) {
+  //     this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
+  //     this.moveSound();
+  //   } else if (this.longIdle()) {
+  //     this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
+  //     this.idleSound();
+  //   } else {
+  //     this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
+  //     this.longIdleSound();
+  //   }
+  // }
 
   /**
    * Handles the throwing action for bottles.
@@ -176,17 +165,12 @@ handleAnimation() {
    * Handles character direction and movement sounds.
    */
   handleDirection() {
-    this.WALKING_SOUND.pause();
     if (this.canMoveRight()) {
       this.moveRight();
       this.otherDirection = false;
-      this.playWalkingSound();
     } else if (this.canMoveLeft()) {
       this.moveLeft();
       this.otherDirection = true;
-      this.playWalkingSound();
-    } else {
-      this.noSound();
     }
   }
 
@@ -195,8 +179,79 @@ handleAnimation() {
    */
   handleJump() {
     if ((this.world.keyboard.SPACE || this.world.keyboard.UP) && !this.isJumping && !this.aboveGround()) {
+      // this.soundManager.playExclusiveSound("JUMP_SOUND");
       this.jump();
     }
+  }
+  
+  handleAnimation() {
+    if (this.isDead()) {
+      this.playDeadAnimation();
+      // this.soundManager.playExclusiveSound("DEAD_SOUND");
+      return;
+    }
+    if (this.isHurt()) {
+      this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
+      // this.soundManager.playExclusiveSound("HURT_SOUND");
+      return;
+    }
+    if (this.isJumping) {
+      this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
+      // this.soundManager.playExclusiveSound("JUMP_SOUND");
+      return;
+    }
+    if (this.move()) {
+      this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
+      // this.soundManager.playExclusiveSound("WALKING_SOUND");
+    } else if (this.longIdle()) {
+      this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
+    //   this.soundManager.playExclusiveSound("LONGIDLE_SOUND");
+    } else {
+      this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
+      // this.soundManager.playExclusiveSound("IDLE_SOUND");
+    }
+  }
+  
+  // hurtSound() {
+  //   // this.soundManager.stopSound("IDLE_SOUND");
+  //   // this.soundManager.stopSound("WALKING_SOUND");
+  //   // this.soundManager.stopSound("LONGIDLE_SOUND");
+  //   this.soundManager.playSound("HURT_SOUND");
+  //   return;
+  // }
+
+  // moveSound() {
+  //   // this.soundManager.stopSound("IDLE_SOUND");
+  //   // this.soundManager.stopSound("LONGIDLE_SOUND");
+  //   this.soundManager.playSound("WALKING_SOUND");
+  //   return;
+  // }
+
+  // idleSound() {
+  //   // this.soundManager.stopSound("IDLE_SOUND");
+  //   this.soundManager.playSound("LONGIDLE_SOUND");
+  //   return;
+  // }
+
+  longIdleSound() {
+    this.soundManager.playSound("IDLE_SOUND");
+    if( this.soundManager.playSound("IDLE_SOUND"))
+    this.soundManager.stopSound("WALKING_SOUND");
+    this.soundManager.stopSound("HURT_SOUND");
+    this.soundManager.stopSound("JUMP_SOUND");
+    return;
+  }
+
+  deadSound() {
+    this.soundManager.playSound("DEAD_SOUND");
+  }
+
+  stopSound() {
+    // this.soundManager.stopSound("WALKING_SOUND");
+    // this.soundManager.stopSound("HURT_SOUND");
+    // this.soundManager.stopSound("JUMP_SOUND");
+    // this.soundManager.stopSound("IDLE_SOUND");
+    this.soundManager.stopSound("LONGIDLE_SOUND");
   }
 
   /**
@@ -226,9 +281,12 @@ handleAnimation() {
    * @param {number} index - The index of the coin to collect in the level's coin array.
    */
   collectCoin(index) {
+
     this.world.level.coins.splice(index, 1);
     if (this.collectedCoins < 5) this.collectedCoins++;
     this.world.statusBarCoin.setpercentage(this.collectedCoins * 20);
+      
+
   }
 
   /**
@@ -253,18 +311,7 @@ handleAnimation() {
       this.deadAnimationPlayed = true;
       this.playAnimation(this.IMAGES_DEAD, this.animationSpeed);
       this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 2]];
-      this.WALKING_SOUND.pause();
       this.clearAllIntervals();
-    }
-  }
-
-  /**
-   * Plays the walking sound if no sound is currently playing.
-   */
-  playWalkingSound() {
-    if (this.noSound()) {
-      this.WALKING_SOUND.play();
-      this.isPlayingSound = true;
     }
   }
 
@@ -317,14 +364,6 @@ handleAnimation() {
   }
 
   /**
-   * Checks if no sound is currently playing for the character.
-   * @returns {boolean} - True if the `isPlayingSound` flag is false, otherwise false.
-   */
-  noSound() {
-    return !this.isPlayingSound;
-  }
-
-  /**
    * Checks if the character is currently moving.
    * @returns {boolean} - True if either the RIGHT or LEFT key is pressed, otherwise false.
    */
@@ -356,6 +395,6 @@ handleAnimation() {
     this.otherDirection = false;
     this.isJumping = false;
     this.deadAnimationPlayed = false;
-    this.animate(); 
+    this.animate();
   }
 }
