@@ -3,31 +3,18 @@ class Endboss extends MovableObject {
   width = 90;
   energy = 100;
   animationSpeed = 8;
-  groundLevel = 250;
+  otherDirection = false;
+  y = 250;
   deadAnimationPlayed = false;
   remove = false;
   statusBar;
-  isLiving = true;
   soundManager = new SoundManager();
 
-  IMAGES_WALKING = [
-    "img/4_enemie_boss_chicken/1_walk/G1.png",
-    "img/4_enemie_boss_chicken/1_walk/G2.png",
-    "img/4_enemie_boss_chicken/1_walk/G3.png",
-    "img/4_enemie_boss_chicken/1_walk/G4.png",
-  ];
+  IMAGES_WALKING = ["img/4_enemie_boss_chicken/1_walk/G1.png", "img/4_enemie_boss_chicken/1_walk/G2.png", "img/4_enemie_boss_chicken/1_walk/G3.png", "img/4_enemie_boss_chicken/1_walk/G4.png"];
 
-  IMAGES_HURT = [
-    "img/4_enemie_boss_chicken/4_hurt/G21.png",
-    "img/4_enemie_boss_chicken/4_hurt/G22.png",
-    "img/4_enemie_boss_chicken/4_hurt/G23.png",
-  ];
+  IMAGES_HURT = ["img/4_enemie_boss_chicken/4_hurt/G21.png", "img/4_enemie_boss_chicken/4_hurt/G22.png", "img/4_enemie_boss_chicken/4_hurt/G23.png"];
 
-  IMAGES_DEAD = [
-    "img/4_enemie_boss_chicken/5_dead/G24.png",
-    "img/4_enemie_boss_chicken/5_dead/G25.png",
-    "img/4_enemie_boss_chicken/5_dead/G26.png",
-  ];
+  IMAGES_DEAD = ["img/4_enemie_boss_chicken/5_dead/G24.png", "img/4_enemie_boss_chicken/5_dead/G25.png", "img/4_enemie_boss_chicken/5_dead/G26.png"];
 
   IMAGES_ATTACK = [
     "img/4_enemie_boss_chicken/3_attack/G13.png",
@@ -51,25 +38,18 @@ class Endboss extends MovableObject {
     "img/4_enemie_boss_chicken/2_alert/G12.png",
   ];
 
-   /**
+  /**
    * Initializes the end boss, setting position, animations, and behaviors.
    */
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
-    this.loadImages([
-      ...this.IMAGES_WALKING,
-      ...this.IMAGES_DEAD,
-      ...this.IMAGES_ALERT,
-      ...this.IMAGES_ATTACK,
-      ...this.IMAGES_WALKING,
-      ...this.IMAGES_HURT,
-    ]);
+    this.loadImages([...this.IMAGES_WALKING, ...this.IMAGES_DEAD, ...this.IMAGES_ALERT, ...this.IMAGES_ATTACK, ...this.IMAGES_WALKING, ...this.IMAGES_HURT]);
     this.x = 2850;
-    this.speed = 16;
-    this.applyGravity();
+    this.speed = 14;
     this.setOffset(40, 40, 60, 60);
   }
 
+  // this.soundManager.playSound("ENDBOSS_ATTACK_SOUND");
   /**
    * Updates the end boss's status bar based on its energy.
    */
@@ -83,28 +63,32 @@ class Endboss extends MovableObject {
    * Manages all animations for the end boss, including walking, jumping, and dying.
    */
   animate() {
-    this.jump();
     this.walk();
+    // this.attack();
     this.startInterval(() => {
       if (this.isDead() && !this.deadAnimationPlayed) {
-        // this.soundManager.stopSound("ENDBOSS_HURT_SOUND");
         this.soundManager.playSound("DEAD_ENDBOSS_SOUND");
+        setTimeout(() => {
+          this.soundManager.stopSound("DEAD_ENDBOSS_SOUND");
+        }, 1000);
         this.playDeadAnimation();
-      } else if (this.isHurt()) {
+      }
+      if (this.isHurt()) {
+        if (this.energy >= 20) this.soundManager.playSound("ENDBOSS_HURT_SOUND");
         this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
-        this.soundManager.playSound("ENDBOSS_HURT_SOUND");
-        this.soundManager.stopSound("ENDBOSS_ATTACK_SOUND");
-      } else if (!this.isJumping) {
+        setTimeout(() => {
+          this.soundManager.stopSound("ENDBOSS_HURT_SOUND");
+        }, 300);
+      }
+      if (this.speed >= 8) {
+        this.playAnimation(this.IMAGES_ATTACK, this.animationSpeed);
+      }
+      else if (this.speed < 8) {
         this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
-      } else if (this.isJumping) {
-        this.handleJumpAnimation();
       }
     }, 1000 / 30);
   }
 
-  /**
-   * Handles walking behavior for the end boss.
-   */
   walk() {
     this.startInterval(() => {
       this.moveLeft();
@@ -113,32 +97,10 @@ class Endboss extends MovableObject {
     }, 100);
   }
 
-  /**
-   * Manages the end boss's jump behavior.
-   */
-  jump() {
-    this.startInterval(() => {
-      if (!this.deadAnimationPlayed) {
-        this.jumpHeight = 20;
-        super.jump(this.jumpHeight);
-      }
-    }, 1500 + Math.random() * 500);
+  removeM() {
+    if(this.remove = true)
+      this.soundManager.stopSound("ENDBOSS_ATTACK_SOUND");
   }
-
-  handleAnimation() {
-    if (!this.isJumping) {
-      this.playAnimation(this.IMAGES_WALKING, 8);
-    } else if (this.isJumping) {
-      this.handleJumpAnimation();
-    } else if (this.isHurt()) {
-      this.playAnimation(this.IMAGES_HURT, 8);
-    }
-  }
-
-  handleJumpAnimation() {
-    this.playAnimation(this.IMAGES_ATTACK, 6);
-  }
-
 
 
   /**
@@ -156,11 +118,23 @@ class Endboss extends MovableObject {
           this.currentImage++;
         } else {
           this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
-          this.isLiving = false;
-          clearInterval();
           this.clearAllIntervals();
         }
-      }, 1000 / 60);
+      }, 300);
+      setTimeout(() => {
+        this.remove = true;
+      }, 1000);
     }
+  }
+
+  reset() {
+    this.clearAllIntervals();
+    this.remove = false;
+    this.energy = 100;
+    this.x = 2850;
+    this.speed = 16;
+    this.otherDirection = false;
+    this.deadAnimationPlayed = false;
+    this.animate();
   }
 }

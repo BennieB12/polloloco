@@ -132,12 +132,15 @@ class ThrowableObject extends MovableObject {
   playSplashAnimation() {
     this.currentImage = 0;
     const splashInterval = setInterval(() => {
-      this.soundManager.playSound("SPLASH_SOUND");
       if (this.currentImage < this.SPLASH_IMAGES.length * this.animationSpeed) {
         this.playAnimation(this.SPLASH_IMAGES, this.animationSpeed);
+        this.soundManager.playSound("SPLASH_SOUND");
+        setTimeout(() => {
+          this.soundManager.stopSound("SPLASH_SOUND");
+        }, 200);
       } else {
-        clearInterval(splashInterval);
         this.remove = true;
+        clearInterval(splashInterval);
       }
     }, 10);
   }

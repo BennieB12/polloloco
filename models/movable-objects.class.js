@@ -160,8 +160,8 @@ class MovableObject extends DrawableObject {
    * @param {number} [speedY=20] - The speed of the jump.
    */
   jump(speedY = 20) {
+    this.isJumping = true;
       this.speedY = speedY;
-      this.isJumping = true;
       this.standingTimer = 0;
   }
 

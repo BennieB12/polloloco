@@ -97,8 +97,11 @@ class Minichicken extends MovableObject {
 
       } else if (!this.deadAnimationPlayed) {
         this.soundManager.playSound("MC_DEAD_SOUND");
+        setTimeout(() => {
+          this.soundManager.stopSound("MC_DEAD_SOUND");
+
+        }, 200);
         this.playDeadAnimation();
-   
       }
     }, 1000 / 60);
   }
@@ -174,9 +177,6 @@ class Minichicken extends MovableObject {
    * and marks it for removal after a delay.
    */
   playDeadAnimation() {
-    setTimeout(() => {
-       this.soundManager.stopSound("MC_DEAD_SOUND");
-    }, 200);
     this.playAnimation(this.IMAGES_DEAD);
     this.deadAnimationPlayed = true;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
@@ -184,7 +184,6 @@ class Minichicken extends MovableObject {
     this.startInterval(() => {
       this.remove = true;
       this.clearAllIntervals();
-      // this.soundManager.stopSound("MC_DEAD_SOUND");
     }, 300);
   }
 
@@ -195,5 +194,18 @@ class Minichicken extends MovableObject {
     this.isJumping = false;
     this.y = this.groundLevel;
     this.speedY = 0;
+  }
+
+  reset() {
+    this.remove = false;
+    this.energy = 10; 
+    this.x = 1000 + Math.random() * 1200;
+    this.speed = 8 + Math.random() * 2;
+    this.isJumping = false;
+    this.otherDirection = false;
+    this.deadAnimationPlayed = false;
+    this.isBlinking = false;
+    this.clearAllIntervals();
+    this.animate();
   }
 }

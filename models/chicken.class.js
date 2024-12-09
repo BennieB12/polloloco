@@ -70,7 +70,8 @@ class Chicken extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.x = x;
-    this.speed = 10 + Math.random() * 2;
+    this.remove = false;
+    this.speed = 5 + Math.random() * 2;
     this.setOffset(25, 25, 20, 20);
   }
 
@@ -80,12 +81,18 @@ class Chicken extends MovableObject {
   animate() {
     this.walk();
     this.startInterval(() => {
+      this.moveLeft();
       if (!this.isDead()) {
         this.handleAnimation();
       } else if (!this.deadAnimationPlayed) {
+        this.soundManager.playSound("DEAD_CHICKEN_SOUND");
+        setTimeout(() => {
+          this.soundManager.stopSound("DEAD_CHICKEN_SOUND");
+
+        }, 200);
         this.playDeadAnimation();
       }
-    }, 1000 / 60);
+    }, 1000 / 30);
   }
 
   
@@ -94,7 +101,6 @@ class Chicken extends MovableObject {
    */
   walk() {
     this.startInterval(() => {
-      this.moveLeft();
       this.checkLevelBegin();
       this.checkLevelEnd();
     }, 100);
@@ -147,18 +153,14 @@ class Chicken extends MovableObject {
    * Plays the dead animation for the `Chicken` and marks it for removal.
    */
   playDeadAnimation() {
-    this.soundManager.playSound("DEAD_CHICKEN_SOUND");
-    setTimeout(() => {
-      this.soundManager.stopSound("MC_DEAD_SOUND");
-    }, 200);
     this.playAnimation(this.IMAGES_DEAD);
     this.deadAnimationPlayed = true;
+
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
     this.speed = 0;
     this.startInterval(() => {
       this.remove = true;
       this.clearAllIntervals();
-      // this.soundManager.stopSound("DEAD_CHICKEN_SOUND");
     }, 300);
   }
 
@@ -166,17 +168,14 @@ class Chicken extends MovableObject {
  * Resets the `Chicken` to its initial state.
  */
 reset() {
-  this.clearAllIntervals();
-  this.energy = 20; 
   this.remove = false;
-  this.x = 1000 + Math.random() * 200;
-  this.y = 350;
-  this.speed = 8 + Math.random() * 2;
+  this.energy = 10; 
+  this.x = 1000 + Math.random() * 1500;
+  this.speed = 5 + Math.random() * 2;
   this.otherDirection = false;
   this.deadAnimationPlayed = false;
   this.isBlinking = false;
+  this.clearAllIntervals(); 
   this.animate();
- 
 }
-
 }

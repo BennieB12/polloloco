@@ -14,87 +14,124 @@ class ScreenManager {
   }
 
   /**
-   * Displays a screen with the specified image and optional button behavior.
-   * @param {string} imageSrc - Path to the image to display.
-   * @param {string} buttonLabel - Label for the button ("Start" or "Restart").
-   * @param {Function} buttonAction - Action to perform when the button is clicked.
+   * Displays the start screen of the game.
+   * Sets up the start screen and handles interactions.
    */
-  displayScreen(imageSrc, buttonLabel, buttonAction) {
+  showStartScreen() {
+    this.handleStartScreen();
+
     const image = new Image();
-    image.src = imageSrc;
+    image.src = "img/9_intro_outro_screens/start/startscreen_1.png";
 
     image.onload = () => {
-      const animateButton = () => {
+      const animateStartScreen = () => {
         this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
-        this.startRestartbtn(buttonLabel);
+        this.startRestartbtn("Start");
         this.drawUIButtons();
 
         if (!this.world.gameStarted) {
-          requestAnimationFrame(animateButton);
+          requestAnimationFrame(animateStartScreen);
         }
       };
 
-      setTimeout(animateButton, 200);
+      setTimeout(animateStartScreen, 100);
+      this.canvas.addEventListener("click", (event) => {
+        if (this.isStartButtonClicked(event)) {
+          this.world.startGame();
+          this.soundManager.stopSound("GAMESTART_SOUND");
+        }
+      });
+    };
+  }
+  /**
+   * Displays the win screen of the game.
+   * Sets up the win screen and handles interactions.
+   */
+  showWinScreen() {
+    this.handleEndScreen();
+
+    const image = new Image();
+    image.src = "img/9_intro_outro_screens/win/win_1.png";
+
+    image.onload = () => {
+      const animateWinScreen = () => {
+        this.ctx.drawImage(image, 180, 150, this.canvas.width / 2, this.canvas.height / 3);
+
+        this.startRestartbtn("Restart");
+        this.drawUIButtons();
+
+        if (!this.world.gameStarted) {
+          requestAnimationFrame(animateWinScreen);
+        }
+      };
+      this.soundManager.stopAllSounds();
+      setTimeout(animateWinScreen, 1200);
+      this.soundManager.playSound("GAME_WIN_SOUND");
+        this.canvas.addEventListener("click", (event) => {
+          if (this.isRestartButtonClicked(event)) {
+            this.world.reset();
+            this.soundManager.stopSound("GAME_WIN_SOUND");
+            
+
+          }
+        });
+      };
+    }
+  
+  /**
+   * Displays the lose screen of the game.
+   * Sets up the lose screen and handles interactions.
+   */
+  showLoseScreen() {
+    this.handleEndScreen();
+
+    const image = new Image();
+    image.src = "img/9_intro_outro_screens/game_over/file.png";
+
+    image.onload = () => {
+      const animateLoseScreen = () => {
+        this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
+        this.startRestartbtn("Restart");
+        this.drawUIButtons();
+
+        if (!this.world.gameStarted) {
+          requestAnimationFrame(animateLoseScreen);
+        }
+      };
+
+      setTimeout(animateLoseScreen, 1200);
+      this.soundManager.stopAllSounds();
+
+      this.soundManager.playSound("GAME_OVER_SOUND");
 
       this.canvas.addEventListener("click", (event) => {
-        if ((buttonLabel === "Start" && this.isStartButtonClicked(event)) || (buttonLabel === "Restart" && this.isRestartButtonClicked(event))) {
-          buttonAction();
+        if (this.isRestartButtonClicked(event)) {
+          this.world.reset();
+          this.soundManager.stopSound("GAME_OVER_SOUND");
+
         }
       });
     };
   }
 
-  /**
-   * Displays the start screen of the game.
-   * It handles the start screen setup, stops animations for all enemies, 
-   * and displays the start image. Once clicked, it triggers the start of the game.
-   */
-  showStartScreen() {
-    this.handleStartScreen();
-    this.displayScreen("img/9_intro_outro_screens/start/startscreen_1.png", "Start", () => this.world.startGame());
-  }
-  
-  /**
-   * Displays the win screen when the game is won.
-   * It handles the end screen setup and displays the win image. 
-   * Once clicked, it triggers the game reset.
-   */
-  showWinScreen() {
-    // this.soundManager.stopSound("BACKGROUND_SOUND");
-    // this.soundManager.playSound("GAME_WIN_SOUND");
-    this.handleEndScreen();
-    this.displayScreen("img/9_intro_outro_screens/win/win_2.png", "Restart", () => this.world.reset());
-  }
-  
-  /**
-   * Displays the lose screen when the game is lost.
-   * It handles the end screen setup and displays the game over image. 
-   * Once clicked, it triggers the game reset.
-   */
-  showLoseScreen() {
-    // this.soundManager.stopSound("BACKGROUND_SOUND");
-    // this.soundManager.playSound("GAME_OVER_SOUND");
-    this.handleEndScreen();
-    this.displayScreen("img/9_intro_outro_screens/game_over/file.png", "Restart", () => this.world.reset());
-  }
-  
+
   /**
    * Handles the setup for the start screen, making the start button visible and the restart button hidden.
    */
   handleStartScreen() {
     this.startButtonVisible = true;
     this.restartButtonVisible = false;
-    return;
+    // this.closeAllPanels();
   }
-  
+
   /**
    * Handles the setup for the end screens (win or lose).
    * Makes the restart button visible and adjusts the screen opacity.
-  */
- handleEndScreen() {
-  this.startButtonVisible = false;
-   this.restartButtonvisible = true;
-    return;
+   */
+  handleEndScreen() {
+    this.startButtonVisible = false;
+    this.restartButtonVisible = true;
+    this.closeAllPanels();
   }
   /**
    * Draws a circular button on the canvas.
@@ -114,14 +151,24 @@ class ScreenManager {
     this.ctx.fillText(icon, x, y);
   }
 
-  drawPauseButton() { this.drawButton(this.canvas.width - 70, 20, this.world.isPaused ? "▶" : "⏸", "rgba(50, 50, 50, 1)"); }
-  drawImpressumButton() { this.drawButton(this.canvas.width - 665, 20, "ℹ️", "rgba(50, 50, 50, 1)"); }
-  drawPolicyButton() { this.drawButton(this.canvas.width - 700, 20, "D", "rgba(50, 50, 50, 1)"); }
-  drawHelpButton() { this.drawButton(this.canvas.width - 35, 20, "?", "rgba(50, 50, 50, 1)"); }
+  drawPauseButton() {
+    this.drawButton(this.canvas.width - 70, 20, this.world.isPaused ? "▶" : "⏸", "rgba(50, 50, 50, 1)");
+  }
+  drawImpressumButton() {
+    this.drawButton(this.canvas.width - 665, 20, "ℹ️", "rgba(50, 50, 50, 1)");
+  }
+  drawPolicyButton() {
+    this.drawButton(this.canvas.width - 700, 20, "D", "rgba(50, 50, 50, 1)");
+  }
+  drawHelpButton() {
+    this.drawButton(this.canvas.width - 35, 20, "?", "rgba(50, 50, 50, 1)");
+  }
 
   startRestartbtn(text) {
-    const buttonWidth = 150, buttonHeight = 60;
-    const x = (this.canvas.width - buttonWidth) / 2, y = this.canvas.height - buttonHeight - 370;
+    const buttonWidth = 150,
+      buttonHeight = 60;
+    const x = (this.canvas.width - buttonWidth) / 2,
+      y = this.canvas.height - buttonHeight - 370;
     this.ctx.fillStyle = "rgba(50, 50, 50, 1)";
     this.ctx.roundRect(x, y, buttonWidth, buttonHeight, 15);
     this.ctx.fill();
@@ -138,19 +185,23 @@ class ScreenManager {
 
   isButtonClicked(event) {
     const { left, top } = this.canvas.getBoundingClientRect();
-    const scaleX = this.canvas.width / this.rect.width, scaleY = this.canvas.height / this.rect.height;
-    const clickX = (event.clientX - left) * scaleX, clickY = (event.clientY - top) * scaleY;
-    const buttonWidth = 150, buttonHeight = 60;
-    const x = (this.canvas.width - buttonWidth) / 2, y = this.canvas.height - buttonHeight - 370;
-    this.soundManager.playSound("MENUBUTTON_SOUND");
+    const scaleX = this.canvas.width / this.rect.width,
+      scaleY = this.canvas.height / this.rect.height;
+    const clickX = (event.clientX - left) * scaleX,
+      clickY = (event.clientY - top) * scaleY;
+    const buttonWidth = 150,
+      buttonHeight = 60;
+    const x = (this.canvas.width - buttonWidth) / 2,
+      y = this.canvas.height - buttonHeight - 370;
     return clickX >= x && clickX <= x + buttonWidth && clickY >= y && clickY <= y + buttonHeight;
   }
 
   isStartButtonClicked(event) {
-    this.soundManager.playSound("START_SOUND");
-     return this.isButtonClicked(event);
-     }
-  isRestartButtonClicked(event) { return this.isButtonClicked(event); }
+    return this.isButtonClicked(event);
+  }
+  isRestartButtonClicked(event) {
+    return this.isButtonClicked(event);
+  }
 
   /**
    * Draws the UI buttons on the screen.
@@ -169,19 +220,19 @@ class ScreenManager {
     if (this.controlPanelVisible) this.drawControlPanel();
   }
 
-/**
- * Checks if a given point (clickX, clickY) is inside a circle defined by its center (centerX, centerY) and radius.
- * 
- * @param {number} clickX - The X-coordinate of the click event.
- * @param {number} clickY - The Y-coordinate of the click event.
- * @param {number} centerX - The X-coordinate of the center of the circle.
- * @param {number} centerY - The Y-coordinate of the center of the circle.
- * @param {number} radius - The radius of the circle.
- * @returns {boolean} True if the click is inside the circle, otherwise false.
- */
-isInsideCircle(clickX, clickY, centerX, centerY, radius) {
-  return Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2) <= radius;
-}
+  /**
+   * Checks if a given point (clickX, clickY) is inside a circle defined by its center (centerX, centerY) and radius.
+   *
+   * @param {number} clickX - The X-coordinate of the click event.
+   * @param {number} clickY - The Y-coordinate of the click event.
+   * @param {number} centerX - The X-coordinate of the center of the circle.
+   * @param {number} centerY - The Y-coordinate of the center of the circle.
+   * @param {number} radius - The radius of the circle.
+   * @returns {boolean} True if the click is inside the circle, otherwise false.
+   */
+  isInsideCircle(clickX, clickY, centerX, centerY, radius) {
+    return Math.sqrt((clickX - centerX) ** 2 + (clickY - centerY) ** 2) <= radius;
+  }
 
   /**
    * Registers click events on the canvas to handle button interactions.
@@ -195,7 +246,6 @@ isInsideCircle(clickX, clickY, centerX, centerY, radius) {
     });
   }
 
-   
   /**
    * Draws a panel (e.g., impressum, policy) on the canvas.
    * @param {number} x - X position of the panel.
@@ -212,103 +262,103 @@ isInsideCircle(clickX, clickY, centerX, centerY, radius) {
     this.drawLabel(x, y, width, label);
   }
 
-/**
- * Draws a background rectangle with a semi-transparent black color and a white border.
- * 
- * @param {number} x - The X-coordinate of the top-left corner of the rectangle.
- * @param {number} y - The Y-coordinate of the top-left corner of the rectangle.
- * @param {number} width - The width of the rectangle.
- * @param {number} height - The height of the rectangle.
- */
-drawBackground(x, y, width, height) {
-  this.ctx.fillStyle = "rgba(0, 0, 0, 1.0)";
-  this.ctx.fillRect(x, y, width, height);
-  this.ctx.strokeStyle = "white";
-  this.ctx.lineWidth = 2;
-  this.ctx.strokeRect(x, y, width, height);
-}
-
-/**
- * Draws multi-line text content on the canvas at the specified position.
- * Each line of the content is drawn with a vertical spacing of 30px.
- * 
- * @param {number} x - The X-coordinate of the text's starting position.
- * @param {number} y - The Y-coordinate of the text's starting position.
- * @param {Array<string>} content - An array of strings representing the lines of text to be drawn.
- */
-drawTextContent(x, y, content) {
-  if (content) {
-    this.ctx.font = "18px Arial";
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "left";
-    let textY = y + 30;
-    content.forEach((line, index) => this.ctx.fillText(line, x + 20, textY + index * 30));
+  /**
+   * Draws a background rectangle with a semi-transparent black color and a white border.
+   *
+   * @param {number} x - The X-coordinate of the top-left corner of the rectangle.
+   * @param {number} y - The Y-coordinate of the top-left corner of the rectangle.
+   * @param {number} width - The width of the rectangle.
+   * @param {number} height - The height of the rectangle.
+   */
+  drawBackground(x, y, width, height) {
+    this.ctx.fillStyle = "rgba(0, 0, 0, 1.0)";
+    this.ctx.fillRect(x, y, width, height);
+    this.ctx.strokeStyle = "white";
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(x, y, width, height);
   }
-}
 
-/**
- * Draws a close button as a red circle with a white "X" in the center.
- * The button is positioned relative to the given X and Y coordinates.
- * 
- * @param {number} x - The X-coordinate of the top-left corner of the button's area.
- * @param {number} y - The Y-coordinate of the top-left corner of the button's area.
- * @param {number} width - The width of the button area.
- * @param {number} height - The height of the button area.
- */
-drawCloseButton(x, y, width, height) {
-  this.ctx.beginPath();
-  this.ctx.arc(x + width / 2, y + height / 2 + 60, 20, 0, 2 * Math.PI);
-  this.ctx.fillStyle = "red";
-  this.ctx.fill();
-  this.ctx.font = "16px Arial";
-  this.ctx.fillStyle = "white";
-  this.ctx.textAlign = "center";
-  this.ctx.textBaseline = "middle";
-  this.ctx.fillText("X", x + width / 2, y + height / 2 + 60);
-}
+  /**
+   * Draws multi-line text content on the canvas at the specified position.
+   * Each line of the content is drawn with a vertical spacing of 30px.
+   *
+   * @param {number} x - The X-coordinate of the text's starting position.
+   * @param {number} y - The Y-coordinate of the text's starting position.
+   * @param {Array<string>} content - An array of strings representing the lines of text to be drawn.
+   */
+  drawTextContent(x, y, content) {
+    if (content) {
+      this.ctx.font = "18px Arial";
+      this.ctx.fillStyle = "white";
+      this.ctx.textAlign = "left";
+      let textY = y + 30;
+      content.forEach((line, index) => this.ctx.fillText(line, x + 20, textY + index * 30));
+    }
+  }
 
-/**
- * Draws a label centered above the specified position.
- * 
- * @param {number} x - The X-coordinate where the label should be centered.
- * @param {number} y - The Y-coordinate where the label should be positioned.
- * @param {number} width - The width of the area where the label should be drawn.
- * @param {string} label - The label text to be drawn.
- */
-drawLabel(x, y, width, label) {
-  if (label) {
-    this.ctx.font = "22px Arial";
+  /**
+   * Draws a close button as a red circle with a white "X" in the center.
+   * The button is positioned relative to the given X and Y coordinates.
+   *
+   * @param {number} x - The X-coordinate of the top-left corner of the button's area.
+   * @param {number} y - The Y-coordinate of the top-left corner of the button's area.
+   * @param {number} width - The width of the button area.
+   * @param {number} height - The height of the button area.
+   */
+  drawCloseButton(x, y, width, height) {
+    this.ctx.beginPath();
+    this.ctx.arc(x + width / 2, y + height / 2 + 60, 20, 0, 2 * Math.PI);
+    this.ctx.fillStyle = "red";
+    this.ctx.fill();
+    this.ctx.font = "16px Arial";
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "center";
-    this.ctx.fillText(label, x + width / 2, y - 20);
+    this.ctx.textBaseline = "middle";
+    this.ctx.fillText("X", x + width / 2, y + height / 2 + 60);
   }
-}
 
-/**
- * Draws the Impressum panel with predefined content.
- * The panel includes the title "Imprint" and the contact information for Benjamin Kloss.
- */
-drawImpressumPanel() {
-  this.drawPanel(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200, ["Imprint:", "Benjamin Kloss", "Sebastianusstraße 9", "41460 Neuss"], "Imprint");
-}
+  /**
+   * Draws a label centered above the specified position.
+   *
+   * @param {number} x - The X-coordinate where the label should be centered.
+   * @param {number} y - The Y-coordinate where the label should be positioned.
+   * @param {number} width - The width of the area where the label should be drawn.
+   * @param {string} label - The label text to be drawn.
+   */
+  drawLabel(x, y, width, label) {
+    if (label) {
+      this.ctx.font = "22px Arial";
+      this.ctx.fillStyle = "white";
+      this.ctx.textAlign = "center";
+      this.ctx.fillText(label, x + width / 2, y - 20);
+    }
+  }
 
-/**
- * Draws the Privacy Policy panel with predefined content.
- * The panel includes the title "Privacy Policy".
- */
-drawPolicyPanel() {
-  this.drawPanel(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200, ["Privacy Policy"], "Privacy Policy");
-}
+  /**
+   * Draws the Impressum panel with predefined content.
+   * The panel includes the title "Imprint" and the contact information for Benjamin Kloss.
+   */
+  drawImpressumPanel() {
+    this.drawPanel(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200, ["Imprint:", "Benjamin Kloss", "Sebastianusstraße 9", "41460 Neuss"], "Imprint");
+  }
 
-/**
- * Draws the Control panel with predefined content for game controls.
- * The panel includes the title "Controls" and instructions for moving and jumping.
- */
-drawControlPanel() {
-  this.drawPanel(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200, ["controls:", "⬅️ ➡️ Move", "⬆️ or SPACE Jump", "'D' for throw bottle"], "Controls");
-}
+  /**
+   * Draws the Privacy Policy panel with predefined content.
+   * The panel includes the title "Privacy Policy".
+   */
+  drawPolicyPanel() {
+    this.drawPanel(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200, ["Privacy Policy"], "Privacy Policy");
+  }
 
-      /**
+  /**
+   * Draws the Control panel with predefined content for game controls.
+   * The panel includes the title "Controls" and instructions for moving and jumping.
+   */
+  drawControlPanel() {
+    this.drawPanel(this.canvas.width / 2 - 150, this.canvas.height / 2 - 100, 300, 200, ["controls:", "⬅️ ➡️ Move", "⬆️ or SPACE Jump", "'D' for throw bottle"], "Controls");
+  }
+
+  /**
    * Calculates the click position on the canvas based on the mouse event.
    * Converts the click coordinates to account for the canvas size and scale.
    *
@@ -354,16 +404,20 @@ drawControlPanel() {
   handleMenu() {
     if (this.isInsideCircle(this.clickX, this.clickY, this.buttons.impressum.x, this.buttons.impressum.y, this.buttonRadius)) {
       this.toggleImpressumPanel();
+      this.soundManager.playSound("START_SOUND");
     }
     if (this.impressumPanelVisible) {
       this.handleImpressumPanelClicked(this.clickX, this.clickY);
+      this.soundManager.playSound("START_SOUND");
     }
 
     if (this.isInsideCircle(this.clickX, this.clickY, this.buttons.policy.x, this.buttons.policy.y, this.buttonRadius)) {
       this.togglePolicyPanel();
+      this.soundManager.playSound("START_SOUND");
     }
     if (this.policyPanelVisible) {
       this.handlePolicyPanelClicked(this.clickX, this.clickY);
+      this.soundManager.playSound("START_SOUND");
     }
   }
 
@@ -374,14 +428,17 @@ drawControlPanel() {
   handleGameMenu() {
     if (this.controlPanelVisible) {
       this.handleControlPanelClick(this.clickX, this.clickY);
+      this.soundManager.playSound("START_SOUND");
     }
 
     if (this.isInsideCircle(this.clickX, this.clickY, this.buttons.pause.x, this.buttons.pause.y, this.buttonRadius)) {
       this.world.togglePause();
+      this.soundManager.playSound("START_SOUND");
     }
 
     if (this.isInsideCircle(this.clickX, this.clickY, this.buttons.help.x, this.buttons.help.y, this.buttonRadius)) {
       this.toggleControlPanel();
+      this.soundManager.playSound("START_SOUND");
     }
   }
 
@@ -391,6 +448,7 @@ drawControlPanel() {
   closeAllPanels() {
     this.impressumPanelVisible = false;
     this.policyPanelVisible = false;
+    this.controlPanelVisible = false;
   }
 
   /**
@@ -428,8 +486,7 @@ drawControlPanel() {
    */
   toggleControlPanel() {
     this.controlPanelVisible = !this.controlPanelVisible;
-    this.controlPanelVisible ? this.world.level.enemies.forEach((enemy) => enemy.clearAllIntervals()) : this.world.startIntervalsForEnemies();
-    this.controlPanelVisible ? this.world.character.clearAllIntervals() : this.world.character.animate();
+    this.world.togglePause();
   }
 
   /**

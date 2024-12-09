@@ -13,6 +13,7 @@ class World {
   gameOver = false;
   gameStarted = false;
   isPaused = false;
+  soundPlayed = false;
   soundManager = new SoundManager();
 
   /**
@@ -47,6 +48,9 @@ class World {
    * Main game loop.
    */
   run() {
+    if (this.gameOver) {
+      return;
+    }
     this.checkCollision();
     this.character.handleThrow();
     this.checkGameOver();
@@ -57,18 +61,21 @@ class World {
    * Draws the game state on the canvas.
    */
   draw() {
-    this.clearBoard();
+    if (!this.gameOver) {
+      this.clearBoard();
+    }
+    if (this.gameOver && !this.gameStarted) {
+      this.freezescreen();
+    }
+
     if (!this.gameStarted && !this.gameOver) {
       this.titleScreen();
     }
-    if (this.gameStarted) {
+    if (this.gameStarted && !this.gameOver) {
       this.drawGame();
     }
-    if (this.isPaused) {
+    if (this.isPaused && this.gameStarted) {
       this.pauseScreen();
-    }
-    if (this.gameOver) {
-      this.freezescreen();
     }
     this.screenManager.drawUIButtons();
     requestAnimationFrame(() => this.draw());
@@ -144,24 +151,31 @@ class World {
    * Draws all game objects, including enemies and collectibles.
    */
   drawObjects() {
-    this.level.enemies = this.level.enemies.filter(function (enemy) {
-      return !enemy.remove;
+    this.level.coins.forEach((coin) => {
+      if (!coin.remove) {
+        this.addToMap(coin);
+      }
+    });
+    this.level.bottles.forEach((bottle) => {
+      if (!bottle.remove) {
+        this.addToMap(bottle);
+      }
     });
     this.throwableObjects = this.throwableObjects.filter(function (object) {
       return !object.remove;
     });
+
     this.addObjectsToMap(this.level.clouds);
-    var regularEnemies = this.level.enemies.filter(function (enemy) {
-      return !(enemy instanceof Endboss);
-    });
-    this.addObjectsToMap(regularEnemies);
-    var endboss = this.getEndboss();
-    if (endboss) {
-      this.addToMap(endboss);
-    }
-    this.addObjectsToMap(this.level.coins);
-    this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.throwableObjects);
+    this.drawEnemys();
+  }
+
+  drawEnemys() {
+    this.level.enemies.forEach((enemy) => {
+      if (!enemy.remove) {
+        this.addToMap(enemy);
+      }
+    });
   }
 
   /**
@@ -212,7 +226,6 @@ class World {
     this.level.enemies.forEach((enemy) => {
       enemy.clearAllIntervals();
     });
-    this.character.clearAllIntervals();
   }
 
   /**
@@ -223,47 +236,53 @@ class World {
     this.gameOver = false;
     this.isPaused = false;
     this.screenManager.startButtonVisible = false;
-    this.clearBoard();
     this.clearAllIntervalsForObjects();
-    this.getEndboss();
-    this.startIntervalsForEnemies();
+    this.clearBoard();
+    this.character.clearAllIntervals();
     this.character.animate();
+    this.startIntervalsForEnemies();
     this.screenManager.closeAllPanels();
-    // this.soundManager.playSound("BACKGROUND_SOUND");
+    this.soundManager.playSound("BACKGROUND_SOUND");
   }
 
   /**
    * Resets the game to its initial state.
    */
   reset() {
+    this.gameStarted = true;
     this.gameOver = false;
+    this.isPaused = false;
+    this.soundPlayed = false;
+    this.soundManager.playSound("BACKGROUND_SOUND");
     this.world = null;
-    this.throwableObjects = [];
+    this.setWorld();
+    this.setScreens();
+    this.clearAllIntervalsForObjects();
+    this.clearBoard();
+    this.level.resetLevel();
+    this.ctx.globalAlpha = 1;
+    this.character.reset();
     this.statusBarHealth.reset();
     this.statusBarCoin.reset();
     this.statusBarBottle.reset();
     this.statusBarEnemy.reset();
-    this.level.replaceObjects();
-    this.character.reset();
-    this.character.resetBottles();
-    this.character.resetCoins();
-    this.ctx.globalAlpha = 1;
-    this.startGame();
+    this.run();
   }
 
   home() {
     this.gameOver = false;
     this.gameStarted = false;
+    this.isPaused = false;
+    this.soundPlayed = false;
     this.world = null;
-    this.throwableObjects = [];
-    this.statusBarHealth.reset();
-    this.statusBarCoin.reset();
-    this.statusBarBottle.reset();
-    this.statusBarEnemy.reset();
-    this.level.replaceObjects();
+    this.setWorld();
+    this.setScreens();
+    this.clearAllIntervalsForObjects();
+    this.clearBoard();
+    this.removeAllObjects();
+    this.level.resetLevel();
     this.character.reset();
-    this.character.resetBottles();
-    this.character.resetCoins();
+    this.character.clearAllIntervals();
     this.ctx.globalAlpha = 1;
     this.screenManager.controlPanelVisible = false;
     this.screenManager.startButtonVisible = false;
@@ -271,14 +290,11 @@ class World {
     this.screenManager.impressumPanelVisible = false;
     this.screenManager.policyPanelVisible = false;
     this.screenManager.showStartScreen();
-  }
-
-  /**
-   * Gets the end boss from the level.
-   * @returns {Object} The end boss object.
-   */
-  getEndboss() {
-    return this.level.enemies.find((enemy) => enemy instanceof Endboss);
+    this.statusBarHealth.reset();
+    this.statusBarCoin.reset();
+    this.statusBarBottle.reset();
+    this.statusBarEnemy.reset();
+    this.soundManager.stopAllSounds();
   }
 
   /**
@@ -315,36 +331,43 @@ class World {
     }
   }
 
-  /**
-   * Checks visibility of the enemy status bar.
-   */
-  checkVisibility() {
-    if (this.character.x >= 1800 && this.getEndboss().isLiving) {
-      this.statusBarEnemy.visible = true;
-      if (this.getEndboss().isJumping) {
-        // this.soundManager.playSound("ENDBOSS_ATTACK_SOUND");
-      }
-    } else if (this.character.x < 1800) {
-      this.statusBarEnemy.visible = false;
+/**
+ * Checks visibility of the enemy status bar.
+ */
+checkVisibility() {
+  if (this.character.x >= 1800 && this.level.enemies.find((enemy) => enemy instanceof Endboss).energy >= 0) {
+    this.statusBarEnemy.visible = true;
+
+    if (!this.soundPlayed) {
+      this.soundManager.playSound("ENDBOSS_START_SOUND");
+      this.soundPlayed = true;
     }
+  } else if (this.character.x < 1800) {
+    this.statusBarEnemy.visible = false;
   }
+}
 
   /**
    * Checks collisions between objects.
    */
   checkCollision() {
     this.level.enemies.forEach((enemy) => {
-      if (Math.abs(enemy.x - this.character.x) < 300) {
+      if (!enemy.remove && Math.abs(enemy.x - this.character.x) < 300) {
         this.handleEnemyCollision(enemy);
       }
-
       if (enemy instanceof Endboss) {
         enemy.statusBar = this.statusBarEnemy;
       }
     });
     this.level.coins.forEach((coin, index) => this.checkCollect(index, coin, "coin"));
     this.level.bottles.forEach((bottle, index) => this.checkCollect(index, bottle, "bottle"));
-    this.throwableObjects.forEach((bottle, bottleIndex) => this.level.enemies.forEach((enemy, enemyIndex) => this.handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex)));
+    this.throwableObjects.forEach((bottle, bottleIndex) =>
+      this.level.enemies.forEach((enemy, enemyIndex) => {
+        if (!enemy.remove) {
+          this.handleThrowableCollision(bottle, bottleIndex, enemy, enemyIndex);
+        }
+      })
+    );
   }
 
   /**
@@ -356,16 +379,8 @@ class World {
   checkCollect(index, item, type) {
     if (this.character.isColliding(item)) {
       if (type === "coin") {
-        // this.soundManager.playSound("COIN_SOUND");
-        setTimeout(() => {
-          // this.soundManager.stopSound("COIN_SOUND");
-        }, 200);
         this.character.collectCoin(index);
       } else if (type === "bottle") {
-        // this.soundManager.playSound("GET_BOTTLE_SOUND");
-        setTimeout(() => {
-          // this.soundManager.stopSound("GET_BOTTLE_SOUND");
-        }, 200);
         this.character.collectBottle(index);
       }
     }
@@ -375,21 +390,39 @@ class World {
    * Checks if the game is over.
    */
   checkGameOver() {
-    if (this.gameOver) return;
-    if (this.character.energy <= 0 || !this.getEndboss().isLiving) {
-      this.gameOver = true;
-      this.gameStarted = false;
+    if (this.gameOver || !this.gameStarted) return;
 
-      if (this.character.energy <= 0) {
-        setTimeout(() => {
+    if (this.character.energy <= 0) {
+      this.soundManager.stopSound("BACKGROUND_SOUND");
+      setTimeout(() => {
+        if (!this.gameOver) {
+          this.endGame();
           this.screenManager.showLoseScreen();
-        }, 1000);
-      } else if (!this.getEndboss().isLiving) {
-        setTimeout(() => {
+          this.character.clearAllIntervals();
+        }
+      }, 1000);
+    } else if (this.level.enemies.find((enemy) => enemy instanceof Endboss).energy <= 0) {
+      this.soundManager.stopSound("BACKGROUND_SOUND");
+      setTimeout(() => {
+        if (!this.gameOver) {
           this.screenManager.showWinScreen();
-        }, 1000);
-      }
+          this.endGame();
+          this.character.clearAllIntervals();
+        }
+      }, 1000);
     }
+  }
+
+  endGame() {
+    this.gameOver = true;
+    this.gameStarted = false;
+    this.removeAllObjects();
+  }
+
+  removeAllObjects() {
+    this.level.enemies.forEach((enemy) => (enemy.remove = true));
+    this.level.coins.forEach((coin) => (coin.remove = true));
+    this.level.bottles.forEach((bottle) => (bottle.remove = true));
   }
 
   /**

@@ -5,6 +5,7 @@
 class Character extends MovableObject {
   height = 100;
   jumpAnimationPlayed = false;
+  y = 320;
   groundLevel = 320;
   width = 60;
   speed = 6;
@@ -121,33 +122,33 @@ class Character extends MovableObject {
   /**
    * Handles character animations based on the current state (e.g., idle, moving, hurt).
    */
-  // handleAnimation() {
-  //   if (this.isDead()) {
-  //     this.playDeadAnimation();
-  //     this.stopSound();
-  //     this.deadSound();
-  //     return;
-  //   }
-  //   if (this.isHurt()) {
-  //     this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
-  //     this.hurtSound();
-  //     return;
-  //   }
-  //   if (this.isJumping) {
-  //     this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
-  //     return;
-  //   }
-  //   if (this.move()) {
-  //     this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
-  //     this.moveSound();
-  //   } else if (this.longIdle()) {
-  //     this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
-  //     this.idleSound();
-  //   } else {
-  //     this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
-  //     this.longIdleSound();
-  //   }
-  // }
+  handleAnimation() {
+    if (this.isDead()) {
+      this.playDeadAnimation();
+      this.deadSound();
+      return;
+    }
+    if (this.isHurt()) {
+      this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
+      this.hurtSound();
+      return;
+    }
+    if (this.isJumping) {
+      this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
+      this.JumpSound();
+      return;
+    }
+    if (this.move()) {
+      this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
+      this.moveSound();
+    } else if (this.longIdle()) {
+      this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
+      this.longIdleSound();
+    } else {
+      this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
+      this.soundManager.stopSound("WALKING_SOUND");
+    }
+  }
 
   /**
    * Handles the throwing action for bottles.
@@ -179,63 +180,34 @@ class Character extends MovableObject {
    */
   handleJump() {
     if ((this.world.keyboard.SPACE || this.world.keyboard.UP) && !this.isJumping && !this.aboveGround()) {
-      // this.soundManager.playExclusiveSound("JUMP_SOUND");
       this.jump();
     }
   }
-  
-  handleAnimation() {
-    if (this.isDead()) {
-      this.playDeadAnimation();
-      // this.soundManager.playExclusiveSound("DEAD_SOUND");
-      return;
-    }
-    if (this.isHurt()) {
-      this.playAnimation(this.IMAGES_HURT, this.animationSpeed);
-      // this.soundManager.playExclusiveSound("HURT_SOUND");
-      return;
-    }
-    if (this.isJumping) {
-      this.playAnimation(this.IMAGES_JUMPING, this.animationSpeed);
-      // this.soundManager.playExclusiveSound("JUMP_SOUND");
-      return;
-    }
-    if (this.move()) {
-      this.playAnimation(this.IMAGES_WALKING, this.animationSpeed);
-      // this.soundManager.playExclusiveSound("WALKING_SOUND");
-    } else if (this.longIdle()) {
-      this.playAnimation(this.IMAGES_STAND_LONG, this.animationSpeed);
-    //   this.soundManager.playExclusiveSound("LONGIDLE_SOUND");
-    } else {
-      this.playAnimation(this.IMAGES_STAND, this.animationSpeed);
-      // this.soundManager.playExclusiveSound("IDLE_SOUND");
-    }
+
+  hurtSound() {
+    this.soundManager.stopSound("WALKING_SOUND");
+    this.soundManager.stopSound("LONGIDLE_SOUND");
+    this.soundManager.playSound("HURT_SOUND");
+    setTimeout(() => {
+      this.soundManager.stopSound("HURT_SOUND");
+    }, 400);
+    return;
   }
-  
-  // hurtSound() {
-  //   // this.soundManager.stopSound("IDLE_SOUND");
-  //   // this.soundManager.stopSound("WALKING_SOUND");
-  //   // this.soundManager.stopSound("LONGIDLE_SOUND");
-  //   this.soundManager.playSound("HURT_SOUND");
-  //   return;
-  // }
 
-  // moveSound() {
-  //   // this.soundManager.stopSound("IDLE_SOUND");
-  //   // this.soundManager.stopSound("LONGIDLE_SOUND");
-  //   this.soundManager.playSound("WALKING_SOUND");
-  //   return;
-  // }
+  moveSound() {
+    this.soundManager.stopSound("LONGIDLE_SOUND");
+    this.soundManager.playSound("WALKING_SOUND");
+    return;
+  }
 
-  // idleSound() {
-  //   // this.soundManager.stopSound("IDLE_SOUND");
-  //   this.soundManager.playSound("LONGIDLE_SOUND");
-  //   return;
-  // }
+  JumpSound() {
+    this.soundManager.stopSound("WALKING_SOUND");
+    this.soundManager.stopSound("LONGIDLE_SOUND");
+    this.soundManager.playSound("JUMP_SOUND");
+  }
 
   longIdleSound() {
-    this.soundManager.playSound("IDLE_SOUND");
-    if( this.soundManager.playSound("IDLE_SOUND"))
+    if (this.longIdle()) this.soundManager.playSound("LONGIDLE_SOUND");
     this.soundManager.stopSound("WALKING_SOUND");
     this.soundManager.stopSound("HURT_SOUND");
     this.soundManager.stopSound("JUMP_SOUND");
@@ -243,15 +215,14 @@ class Character extends MovableObject {
   }
 
   deadSound() {
-    this.soundManager.playSound("DEAD_SOUND");
-  }
-
-  stopSound() {
-    // this.soundManager.stopSound("WALKING_SOUND");
-    // this.soundManager.stopSound("HURT_SOUND");
-    // this.soundManager.stopSound("JUMP_SOUND");
-    // this.soundManager.stopSound("IDLE_SOUND");
     this.soundManager.stopSound("LONGIDLE_SOUND");
+    this.soundManager.stopSound("WALKING_SOUND");
+    this.soundManager.stopSound("HURT_SOUND");
+    this.soundManager.stopSound("JUMP_SOUND");
+    this.soundManager.playSound("DEAD_SOUND");
+    setTimeout(() => {
+      this.soundManager.stopSound("DEAD_SOUND");
+    }, 1000);
   }
 
   /**
@@ -266,14 +237,21 @@ class Character extends MovableObject {
     }
   }
 
-  /**
+ /**
    * Collects a bottle and increases the bottle count, up to a maximum of 5.
    * @param {number} index - The index of the bottle to collect in the level's bottle array.
    */
   collectBottle(index) {
-    this.world.level.bottles.splice(index, 1);
-    if (this.bottles < 5) this.bottles++;
-    this.world.statusBarBottle.setpercentage(this.bottles);
+    let bottle = this.world.level.bottles[index];
+    if (!bottle.remove && this.bottles < 5) {
+      bottle.remove = true;
+      this.world.soundManager.playSound("GET_BOTTLE_SOUND");
+      this.bottles++;
+      setTimeout(() => {
+        this.world.soundManager.stopSound("GET_BOTTLE_SOUND");
+      }, 200);
+      this.world.statusBarBottle.setpercentage(this.bottles);
+    }
   }
 
   /**
@@ -281,26 +259,16 @@ class Character extends MovableObject {
    * @param {number} index - The index of the coin to collect in the level's coin array.
    */
   collectCoin(index) {
-
-    this.world.level.coins.splice(index, 1);
-    if (this.collectedCoins < 5) this.collectedCoins++;
-    this.world.statusBarCoin.setpercentage(this.collectedCoins * 20);
-      
-
-  }
-
-  /**
-   * Resets the coin count to 0.
-   */
-  resetCoins() {
-    this.collectedCoins = 0;
-  }
-
-  /**
-   * Resets the bottle count to 0.
-   */
-  resetBottles() {
-    this.bottles = 0;
+    let coin = this.world.level.coins[index];
+    if (!coin.remove && this.collectedCoins < 5) {
+      coin.remove = true;
+      this.world.soundManager.playSound("COIN_SOUND");
+      this.collectedCoins++;
+      setTimeout(() => {
+        this.world.soundManager.stopSound("COIN_SOUND");
+      }, 200);
+      this.world.statusBarCoin.setpercentage(this.collectedCoins * 20);
+    }
   }
 
   /**
@@ -392,9 +360,11 @@ class Character extends MovableObject {
     this.energy = 100;
     this.x = 80;
     this.standingTimer = 0;
-    this.otherDirection = false;
-    this.isJumping = false;
     this.deadAnimationPlayed = false;
+    this.isJumping = false;
+    this.otherDirection = false;
+    this.bottles = 0;
+    this.collectedCoins = 0;
     this.animate();
   }
 }

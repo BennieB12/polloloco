@@ -33,6 +33,8 @@ class Coin extends DrawableObject {
    */
   rotationAngle;
 
+  remove = false;
+
   /**
    * Creates an instance of `Coin`.
    * Initializes the coin's image and starts the rotation animation.
@@ -43,6 +45,7 @@ class Coin extends DrawableObject {
     this.rotationAngle = angle;
     this.animateRotation();
     this.setOffset(30, 30, 30, 30);
+    this.remove = false;
   }
 
   /**
@@ -63,5 +66,11 @@ class Coin extends DrawableObject {
     setInterval(() => {
       this.rotateCoin();
     }, 1000 / 60);
+  }
+
+  reset() {
+    this.remove = false;
+    this.x = 300 + Math.random() * 2000;
+    this.rotationAngle = 0;
   }
 }

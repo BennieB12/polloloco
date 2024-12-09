@@ -21,6 +21,7 @@ class Bottle extends DrawableObject {
      * @type {number}
      */
     width = 40;
+    remove = false;
   
     /**
      * Array containing the paths to bottle images when placed on the ground.
@@ -39,6 +40,12 @@ class Bottle extends DrawableObject {
       super().loadImage(imagePath);
       this.x = x;
       this.setOffset(35, 35, 20, 20);
+      this.remove = false;
+    }
+
+    reset() {
+      this.remove = false;
+      this.x = 300 + Math.random() * 2000;
     }
   }
   

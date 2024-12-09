@@ -15,6 +15,7 @@ class SoundManager {
     ENDBOSS_JUMP_SOUND: "audio/minichicken-walk.mp3",
     ENDBOSS_HURT_SOUND: "audio/endboss-hurt.mp3",
     ENDBOSS_ATTACK_SOUND: "audio/endboss-attack.mp3",
+    ENDBOSS_START_SOUND: "audio/endboss-start.mp3",
     DEAD_CHICKEN_SOUND: "audio/chicken_dead.mp3",
     MC_DEAD_SOUND: "audio/minichicken-dead.mp3",
     CHICKEN_HURT: "audio/chicken-hurt.mp3",
@@ -56,33 +57,6 @@ class SoundManager {
     this.audioCache.set(key, audio);
     return audio;
   }
-
-
-
-  /**
-   * Stops all sounds and plays the given sound if it's not already playing.
-   * @param {string} soundName - Name of the sound to play.
-   */
-  playExclusiveSound(soundName) {
-    if (this.currentPlayingSound !== soundName) {
-      this.stopAllSounds();
-      this.playSound(soundName);
-      this.currentPlayingSound = soundName;
-    }
-  }
-
-  /**
-   * Stops all currently playing sounds.
-   */
-  stopAllSounds() {
-    // Hier sollten alle Sounds gestoppt werden.
-    this.stopSound("IDLE_SOUND");
-    this.stopSound("WALKING_SOUND");
-    this.stopSound("LONGIDLE_SOUND");
-    this.stopSound("HURT_SOUND");
-    this.stopSound("JUMP_SOUND");
-  }
-
 
   /**
    * @description plays a certain sound
